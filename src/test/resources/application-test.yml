@@ -1,0 +1,4 @@
+# Spring-Actuator
+management:
+  server:
+    port: 0
