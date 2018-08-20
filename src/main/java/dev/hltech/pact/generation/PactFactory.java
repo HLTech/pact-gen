@@ -1,5 +1,10 @@
 package dev.hltech.pact.generation;
 
+import dev.hltech.pact.generation.model.Interaction;
+import dev.hltech.pact.generation.model.InteractionRequest;
+import dev.hltech.pact.generation.model.Metadata;
+import dev.hltech.pact.generation.model.Pact;
+import dev.hltech.pact.generation.model.Service;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 

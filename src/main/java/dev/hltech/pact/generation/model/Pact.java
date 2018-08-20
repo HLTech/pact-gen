@@ -1,4 +1,4 @@
-package dev.hltech.pact.generation;
+package dev.hltech.pact.generation.model;
 
 import lombok.Builder;
 import lombok.Data;

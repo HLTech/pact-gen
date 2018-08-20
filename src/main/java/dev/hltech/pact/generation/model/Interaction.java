@@ -1,11 +1,11 @@
-package dev.hltech.pact.generation;
+package dev.hltech.pact.generation.model;
 
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
-class Interaction {
+public class Interaction {
 
     private final String description;
     private final InteractionRequest request;
