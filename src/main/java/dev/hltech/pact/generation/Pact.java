@@ -9,8 +9,8 @@ import java.util.List;
 @Builder
 public class Pact {
 
-    private final Provider provider;
-    private final Consumer consumer;
+    private final Service provider;
+    private final Service consumer;
     private final List<Interaction> interactions;
     private final Metadata metadata;
 }

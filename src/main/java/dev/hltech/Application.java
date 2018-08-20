@@ -12,7 +12,7 @@ public class Application {
         final FeignClientsFinder finder = new FeignClientsFinder();
         final PactFactory pactFactory = new PactFactory();
         finder.findFeignClients("dev.hltech.feign").stream()
-            .map(pactFactory::create)
+            .map(clazz -> pactFactory.create(clazz, "SomeConsumer"))
             .forEach(System.out::println);
     }
 }
