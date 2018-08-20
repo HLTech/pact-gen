@@ -20,7 +20,7 @@ public class PactFactory {
 
     private static List<Interaction> createInteractions(Method[] feignClientMethods) {
         return Arrays.stream(feignClientMethods)
-            .map(method -> new Interaction())
+            .map(method -> new Interaction(method.getName()))
             .collect(Collectors.toList());
     }
 }
