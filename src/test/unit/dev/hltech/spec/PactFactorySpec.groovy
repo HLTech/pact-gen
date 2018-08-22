@@ -22,15 +22,55 @@ class PactFactorySpec extends Specification {
             with(pact) {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
-                interactions.size() == 2
+                interactions.size() == 8
 
-                interactions[0].description == 'getTestObject'
-                interactions[0].request.method == 'GET'
-                interactions[0].request.path == '/test/objects'
+                interactions.any { interaction ->
+                    interaction.description == 'deleteTestObject' &&
+                    interaction.request.method == 'DELETE' &&
+                    interaction.request.path == '/test/objects/1'
+                }
 
-                interactions[1].description == 'deleteTestObject'
-                interactions[1].request.method == 'DELETE'
-                interactions[1].request.path == '/test/objects'
+                interactions.any { interaction ->
+                    interaction.description == 'getTestObject' &&
+                    interaction.request.method == 'GET' &&
+                    interaction.request.path == '/test/objects/2'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'headTestObject' &&
+                    interaction.request.method == 'HEAD' &&
+                    interaction.request.path == '/test/objects/3'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'optionsTestObject' &&
+                    interaction.request.method == 'OPTIONS' &&
+                    interaction.request.path == '/test/objects/4'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'patchTestObject' &&
+                    interaction.request.method == 'PATCH' &&
+                    interaction.request.path == '/test/objects/5'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'createTestObject' &&
+                    interaction.request.method == 'POST' &&
+                    interaction.request.path == '/test/objects'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'updateTestObject' &&
+                    interaction.request.method == 'PUT' &&
+                    interaction.request.path == '/test/objects/6'
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'traceTestObject' &&
+                    interaction.request.method == 'TRACE' &&
+                    interaction.request.path == '/test/objects/7'
+                }
             }
     }
 }

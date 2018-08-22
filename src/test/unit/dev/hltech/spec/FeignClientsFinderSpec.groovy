@@ -1,7 +1,6 @@
 package dev.hltech.spec
 
 import dev.hltech.pact.generation.FeignClientsFinder
-import org.springframework.cloud.openfeign.FeignClient
 import spock.lang.Specification
 import spock.lang.Subject
 
