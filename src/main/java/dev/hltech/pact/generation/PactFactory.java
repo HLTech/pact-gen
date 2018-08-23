@@ -28,7 +28,7 @@ public class PactFactory {
             .provider(new Service(feignClient.getAnnotation(FeignClient.class).value()))
             .consumer(new Service(consumerName))
             .interactions(createInteractions(feignClient.getMethods()))
-            .metadata(new Metadata())
+            .metadata(new Metadata("1.0.0"))
             .build();
     }
 
