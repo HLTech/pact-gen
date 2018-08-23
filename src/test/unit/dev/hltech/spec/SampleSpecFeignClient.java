@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient("SpecProvider")
 public interface SampleSpecFeignClient {
 
-    @DeleteMapping(path = "/test/objects/1")
+    @DeleteMapping(path = "/test/objects/1", headers = { "key1=val1", "key2=val2" })
     Object deleteTestObject();
 
     @GetMapping(path = "/test/objects/2")
@@ -27,7 +27,7 @@ public interface SampleSpecFeignClient {
     @PatchMapping(path = "/test/objects/5")
     Object patchTestObject();
 
-    @PostMapping(path = "/test/objects")
+    @PostMapping(path = "/test/objects", headers = { "key1=val1", "key2=val2" })
     Object createTestObject();
 
     @PutMapping(path = "/test/objects/6")

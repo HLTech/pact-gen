@@ -23,11 +23,15 @@ class PactFactorySpec extends Specification {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
                 interactions.size() == 8
-
+                println interactions
                 interactions.any { interaction ->
                     interaction.description == 'deleteTestObject' &&
                     interaction.request.method == 'DELETE' &&
-                    interaction.request.path == '/test/objects/1'
+                    interaction.request.path == '/test/objects/1' &&
+                    interaction.request.headers[0].name == 'key1' &&
+                    interaction.request.headers[0].value == 'val1' &&
+                    interaction.request.headers[1].name == 'key2' &&
+                    interaction.request.headers[1].value == 'val2'
                 }
 
                 interactions.any { interaction ->
@@ -57,7 +61,11 @@ class PactFactorySpec extends Specification {
                 interactions.any { interaction ->
                     interaction.description == 'createTestObject' &&
                     interaction.request.method == 'POST' &&
-                    interaction.request.path == '/test/objects'
+                    interaction.request.path == '/test/objects' &&
+                    interaction.request.headers.get(0).name == 'key1' &&
+                    interaction.request.headers.get(0).value == 'val1' &&
+                    interaction.request.headers.get(1).name == 'key2' &&
+                    interaction.request.headers.get(1).value == 'val2'
                 }
 
                 interactions.any { interaction ->

@@ -10,4 +10,5 @@ public class RequestProperties {
 
     private final HttpMethod httpMethod;
     private final String path;
+    private final String[] headers;
 }
