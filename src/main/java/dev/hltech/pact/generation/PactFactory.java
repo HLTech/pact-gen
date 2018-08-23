@@ -54,7 +54,7 @@ public class PactFactory {
             .headers(Arrays
                 .stream(requestProperties.getHeaders())
                 .map(stringHeader -> stringHeader.split("="))
-                .map(stringHeaderArray -> Header.builder().name(stringHeaderArray[0]).value(stringHeaderArray[1]).build())
+                .map(PactFactory::buildHeader)
                 .collect(Collectors.toList()))
             .build();
     }
@@ -105,5 +105,12 @@ public class PactFactory {
         }
 
         throw new IllegalArgumentException("Unknown method");
+    }
+
+    private static Header buildHeader(String[] stringHeaderArray) {
+        return Header.builder()
+            .name(stringHeaderArray[0])
+            .value(stringHeaderArray[1])
+            .build();
     }
 }
