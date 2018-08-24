@@ -9,4 +9,5 @@ public class Interaction {
 
     private final String description;
     private final InteractionRequest request;
+    private final InteractionResponse response;
 }

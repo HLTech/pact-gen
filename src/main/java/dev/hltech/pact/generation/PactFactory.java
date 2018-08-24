@@ -7,6 +7,8 @@ import dev.hltech.pact.generation.model.Service;
 import dev.hltech.pact.generation.model.Interaction;
 import dev.hltech.pact.generation.model.InteractionRequest;
 import dev.hltech.pact.generation.model.Header;
+import dev.hltech.pact.generation.model.InteractionResponse;
+import dev.hltech.pact.generation.model.ResponseProperties;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -42,6 +44,7 @@ public class PactFactory {
         return Interaction.builder()
             .description(feignClientMethod.getName())
             .request(createInteractionRequest(feignClientMethod))
+            .response(createInteractionResponse(feignClientMethod))
             .build();
     }
 
@@ -57,6 +60,12 @@ public class PactFactory {
                 .map(PactFactory::buildHeader)
                 .collect(Collectors.toList()))
             .build();
+    }
+
+    private static InteractionResponse createInteractionResponse(Method feignClientMethod) {
+        final ResponseProperties responseProperties = extractResponseProperties(feignClientMethod);
+        
+        return InteractionResponse.builder().build();
     }
 
     private static RequestProperties extractRequestProperties(Method feignClientMethod) {
@@ -105,6 +114,11 @@ public class PactFactory {
         }
 
         throw new IllegalArgumentException("Unknown method");
+    }
+
+    private static ResponseProperties extractResponseProperties(Method feignClientMethod) {
+        
+        return ResponseProperties.builder().build();
     }
 
     private static Header buildHeader(String[] stringHeaderArray) {
