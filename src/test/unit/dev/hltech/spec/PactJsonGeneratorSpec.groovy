@@ -50,8 +50,8 @@ class PactJsonGeneratorSpec extends Specification {
             jsonRoot.interactions[0].request.headers[0].name == 'Authorization'
             jsonRoot.interactions[0].request.headers[0].value == 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='
             jsonRoot.interactions[0].response.status == '200'
-            jsonRoot.interactions[0].response.headers[0].name == 'Authorization'
-            jsonRoot.interactions[0].response.headers[0].value == 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='
+            jsonRoot.interactions[0].response.headers[0].name == 'Location'
+            jsonRoot.interactions[0].response.headers[0].value == '/test/objects/123'
             jsonRoot.metadata.pactSpecificationVersion == '1.0.0'
     }
 
@@ -69,7 +69,7 @@ class PactJsonGeneratorSpec extends Specification {
                             .build())
                         .response(InteractionResponse.builder()
                             .status('200')
-                            .headers([new Header('Authorization', 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU=')])
+                            .headers([new Header('Location', '/test/objects/123')])
                             .build())
                         .build()
             ])
