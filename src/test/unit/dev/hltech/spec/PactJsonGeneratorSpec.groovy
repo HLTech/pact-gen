@@ -5,6 +5,7 @@ import dev.hltech.pact.generation.PactJsonGenerator
 import dev.hltech.pact.generation.model.Header
 import dev.hltech.pact.generation.model.Interaction
 import dev.hltech.pact.generation.model.InteractionRequest
+import dev.hltech.pact.generation.model.InteractionResponse
 import dev.hltech.pact.generation.model.Metadata
 import dev.hltech.pact.generation.model.Pact
 import dev.hltech.pact.generation.model.Service
@@ -48,6 +49,7 @@ class PactJsonGeneratorSpec extends Specification {
             jsonRoot.interactions[0].request.path == '/test/objects'
             jsonRoot.interactions[0].request.headers[0].name == 'Authorization'
             jsonRoot.interactions[0].request.headers[0].value == 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='
+            jsonRoot.interactions[0].response.status == '200'
             jsonRoot.metadata.pactSpecificationVersion == '1.0.0'
     }
 
@@ -62,6 +64,9 @@ class PactJsonGeneratorSpec extends Specification {
                             .method('POST')
                             .path('/test/objects')
                             .headers([new Header('Authorization', 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU=')])
+                            .build())
+                        .response(InteractionResponse.builder()
+                            .status('200')
                             .build())
                         .build()
             ])

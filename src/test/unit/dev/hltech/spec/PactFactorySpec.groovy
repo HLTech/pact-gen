@@ -31,31 +31,36 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers[0].name == 'key1' &&
                     interaction.request.headers[0].value == 'val1' &&
                     interaction.request.headers[1].name == 'key2' &&
-                    interaction.request.headers[1].value == 'val2'
+                    interaction.request.headers[1].value == 'val2' &&
+                    interaction.response.status == '200'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'getTestObject' &&
                     interaction.request.method == 'GET' &&
-                    interaction.request.path == '/test/objects/2'
+                    interaction.request.path == '/test/objects/2' &&
+                    interaction.response.status == '200'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'headTestObject' &&
                     interaction.request.method == 'HEAD' &&
-                    interaction.request.path == '/test/objects/3'
+                    interaction.request.path == '/test/objects/3' &&
+                    interaction.response.status == '200'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'optionsTestObject' &&
                     interaction.request.method == 'OPTIONS' &&
-                    interaction.request.path == '/test/objects/4'
+                    interaction.request.path == '/test/objects/4' &&
+                    interaction.response.status == '200'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'patchTestObject' &&
                     interaction.request.method == 'PATCH' &&
-                    interaction.request.path == '/test/objects/5'
+                    interaction.request.path == '/test/objects/5' &&
+                    interaction.response.status == '202'
                 }
 
                 interactions.any { interaction ->
@@ -65,19 +70,22 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers.get(0).name == 'key1' &&
                     interaction.request.headers.get(0).value == 'val1' &&
                     interaction.request.headers.get(1).name == 'key2' &&
-                    interaction.request.headers.get(1).value == 'val2'
+                    interaction.request.headers.get(1).value == 'val2' &&
+                    interaction.response.status == '202'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'updateTestObject' &&
                     interaction.request.method == 'PUT' &&
-                    interaction.request.path == '/test/objects/6'
+                    interaction.request.path == '/test/objects/6' &&
+                    interaction.response.status == '200'
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'traceTestObject' &&
                     interaction.request.method == 'TRACE' &&
-                    interaction.request.path == '/test/objects/7'
+                    interaction.request.path == '/test/objects/7' &&
+                    interaction.response.status == '200'
                 }
             }
     }

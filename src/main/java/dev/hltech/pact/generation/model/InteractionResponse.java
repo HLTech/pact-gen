@@ -6,5 +6,8 @@ import lombok.Data;
 @Data
 @Builder
 public class InteractionResponse {
+
+    private String status;
+
     
 }

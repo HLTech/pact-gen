@@ -65,7 +65,9 @@ public class PactFactory {
     private static InteractionResponse createInteractionResponse(Method feignClientMethod) {
         final ResponseProperties responseProperties = extractResponseProperties(feignClientMethod);
         
-        return InteractionResponse.builder().build();
+        return InteractionResponse.builder()
+            .status(responseProperties.getStatus().toString())
+            .build();
     }
 
     private static RequestProperties extractRequestProperties(Method feignClientMethod) {
@@ -118,7 +120,9 @@ public class PactFactory {
 
     private static ResponseProperties extractResponseProperties(Method feignClientMethod) {
         
-        return ResponseProperties.builder().build();
+        return ResponseProperties.builder()
+            .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
+            .build();
     }
 
     private static Header buildHeader(String[] stringHeaderArray) {
