@@ -19,7 +19,7 @@ public interface SampleSpecFeignClient {
     Object deleteTestObject();
 
     @GetMapping(path = "/test/objects/2")
-    @ResponseInfo(status = HttpStatus.OK)
+    @ResponseInfo(status = HttpStatus.OK, headers = {"key3=val3"})
     Object getTestObject();
 
     @RequestMapping(path = "/test/objects/3", method = RequestMethod.HEAD)
@@ -39,7 +39,7 @@ public interface SampleSpecFeignClient {
     Object createTestObject();
 
     @PutMapping(path = "/test/objects/6")
-    @ResponseInfo(status = HttpStatus.OK)
+    @ResponseInfo(status = HttpStatus.OK, headers = {"key3=val3", "key4=val4"})
     Object updateTestObject();
 
     @RequestMapping(path = "/test/objects/7", method = RequestMethod.TRACE)

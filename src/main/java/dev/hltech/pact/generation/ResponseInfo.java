@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface ResponseInfo {
 
     HttpStatus status();
-    
+    String[] headers() default {};
 }

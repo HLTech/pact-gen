@@ -50,23 +50,18 @@ public class PactFactory {
 
     private static InteractionRequest createInteractionRequest(Method feignClientMethod) {
         final RequestProperties requestProperties = extractRequestProperties(feignClientMethod);
-
         return InteractionRequest.builder()
             .method(requestProperties.getHttpMethod().name())
             .path(requestProperties.getPath())
-            .headers(Arrays
-                .stream(requestProperties.getHeaders())
-                .map(stringHeader -> stringHeader.split("="))
-                .map(PactFactory::buildHeader)
-                .collect(Collectors.toList()))
+            .headers(fetchHeaders(requestProperties.getHeaders()))
             .build();
     }
 
     private static InteractionResponse createInteractionResponse(Method feignClientMethod) {
         final ResponseProperties responseProperties = extractResponseProperties(feignClientMethod);
-        
         return InteractionResponse.builder()
             .status(responseProperties.getStatus().toString())
+            .headers(fetchHeaders(responseProperties.getHeaders()))
             .build();
     }
 
@@ -119,13 +114,20 @@ public class PactFactory {
     }
 
     private static ResponseProperties extractResponseProperties(Method feignClientMethod) {
-        
         return ResponseProperties.builder()
             .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
+            .headers(feignClientMethod.getAnnotation(ResponseInfo.class).headers())
             .build();
     }
 
-    private static Header buildHeader(String[] stringHeaderArray) {
+    private static List<Header> fetchHeaders(String[] stringHeaderArray) {
+        return Arrays.stream(stringHeaderArray)
+            .map(stringHeader -> stringHeader.split("="))
+            .map(PactFactory::parseHeader)
+            .collect(Collectors.toList());
+    }
+
+    private static Header parseHeader(String[] stringHeaderArray) {
         return Header.builder()
             .name(stringHeaderArray[0])
             .value(stringHeaderArray[1])

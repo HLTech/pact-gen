@@ -9,6 +9,5 @@ import org.springframework.http.HttpStatus;
 public class ResponseProperties {
 
     private final HttpStatus status;
-
-    
+    private final String[] headers;
 }

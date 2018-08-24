@@ -39,7 +39,9 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'getTestObject' &&
                     interaction.request.method == 'GET' &&
                     interaction.request.path == '/test/objects/2' &&
-                    interaction.response.status == '200'
+                    interaction.response.status == '200' &&
+                    interaction.response.headers[0].name == 'key3' &&
+                    interaction.response.headers[0].value == 'val3'
                 }
 
                 interactions.any { interaction ->
@@ -78,7 +80,11 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'updateTestObject' &&
                     interaction.request.method == 'PUT' &&
                     interaction.request.path == '/test/objects/6' &&
-                    interaction.response.status == '200'
+                    interaction.response.status == '200' &&
+                    interaction.response.headers[0].name == 'key3' &&
+                    interaction.response.headers[0].value == 'val3' &&
+                    interaction.response.headers[1].name == 'key4' &&
+                    interaction.response.headers[1].value == 'val4'
                 }
 
                 interactions.any { interaction ->
