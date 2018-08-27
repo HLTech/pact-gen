@@ -55,6 +55,8 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'optionsTestObject' &&
                     interaction.request.method == 'OPTIONS' &&
                     interaction.request.path == '/test/objects/4' &&
+                    interaction.request.headers[0].name == 'key4' &&
+                    interaction.request.headers[0].value == 'val4' &&
                     interaction.response.status == '200'
                 }
 
@@ -80,6 +82,8 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'updateTestObject' &&
                     interaction.request.method == 'PUT' &&
                     interaction.request.path == '/test/objects/6' &&
+                    interaction.request.headers[0].name == 'key1' &&
+                    !interaction.request.headers[0].value.isEmpty() &&
                     interaction.response.status == '200' &&
                     interaction.response.headers[0].name == 'key3' &&
                     interaction.response.headers[0].value == 'val3' &&

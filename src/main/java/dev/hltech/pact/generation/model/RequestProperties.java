@@ -4,11 +4,14 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
+import java.util.List;
+
 @Data
 @Builder
 public class RequestProperties {
 
     private final HttpMethod httpMethod;
     private final String path;
-    private final String[] headers;
+    private final String[] requestMappingHeaders;
+    private final List<RawHeader> requestHeaderHeaders;
 }
