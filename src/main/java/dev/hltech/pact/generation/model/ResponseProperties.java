@@ -10,4 +10,5 @@ public class ResponseProperties {
 
     private final HttpStatus status;
     private final String[] headers;
+    private final Class<?> returnType;
 }

@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 public class InteractionResponse {
 
-    private String status;
+    private final String status;
     private final List<Header> headers;
+    private final String body;
 }
