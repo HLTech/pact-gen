@@ -4,7 +4,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpMethod;
 
-import java.lang.reflect.Parameter;
 import java.util.List;
 
 @Data
@@ -15,5 +14,5 @@ public class RequestProperties {
     private final String path;
     private final String[] requestMappingHeaders;
     private final List<RawHeader> requestHeaderHeaders;
-    private final List<Parameter> parameters;
+    private final Class<?> bodyType;
 }

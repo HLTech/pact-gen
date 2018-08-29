@@ -66,13 +66,12 @@ public class PactFactory {
             .method(requestProperties.getHttpMethod().name())
             .path(requestProperties.getPath())
             .headers(combineHeaders(requestProperties))
-            .body(BodySerializer.serializeBody(
-                findRequestBodyClass(requestProperties.getParameters()), new ObjectMapper()))
+            .body(BodySerializer.serializeBody(requestProperties.getBodyType(), new ObjectMapper()))
             .build();
     }
 
-    private static Class<?> findRequestBodyClass(List<Parameter> parameters) {
-        return parameters.stream()
+    private static Class<?> findRequestBodyClass(Parameter[] parameters) {
+        return Arrays.stream(parameters)
             .filter(PactFactory::isRequestBody)
             .findFirst()
             .map(Parameter::getType)
@@ -107,7 +106,7 @@ public class PactFactory {
             .status(responseProperties.getStatus().toString())
             .headers(parseHeaders(responseProperties.getHeaders()))
             .body(BodySerializer.serializeBody(
-                responseProperties.getReturnType(), new ObjectMapper()))
+                responseProperties.getBodyType(), new ObjectMapper()))
             .build();
     }
 
@@ -119,7 +118,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(DeleteMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(DeleteMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(GetMapping.class)) {
             return RequestProperties.builder()
@@ -128,7 +127,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(GetMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(GetMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PatchMapping.class)) {
             return RequestProperties.builder()
@@ -137,7 +136,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(PatchMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PatchMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PostMapping.class)) {
             return RequestProperties.builder()
@@ -146,7 +145,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(PostMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PostMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PutMapping.class)) {
             return RequestProperties.builder()
@@ -155,7 +154,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(PutMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PutMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(RequestMapping.class)) {
             return RequestProperties.builder()
@@ -164,7 +163,7 @@ public class PactFactory {
                 .path(feignClientMethod.getAnnotation(RequestMapping.class).path()[0])
                 .requestMappingHeaders(feignClientMethod.getAnnotation(RequestMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
-                .parameters(Arrays.asList(feignClientMethod.getParameters()))
+                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
                 .build();
         }
 
@@ -214,7 +213,7 @@ public class PactFactory {
         return ResponseProperties.builder()
             .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
             .headers(feignClientMethod.getAnnotation(ResponseInfo.class).headers())
-            .returnType(feignClientMethod.getReturnType())
+            .bodyType(feignClientMethod.getReturnType())
             .build();
     }
 
