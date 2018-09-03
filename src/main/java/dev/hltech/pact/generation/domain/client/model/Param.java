@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class RawParam {
+public class Param {
     String name;
     Object value;
 }

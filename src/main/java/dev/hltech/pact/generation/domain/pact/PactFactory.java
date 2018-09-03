@@ -3,11 +3,10 @@ package dev.hltech.pact.generation.domain.pact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.hltech.pact.generation.domain.client.model.ClientRepresentation;
 import dev.hltech.pact.generation.domain.client.ClientRepresentationFactory;
-import dev.hltech.pact.generation.domain.client.model.RawHeader;
-import dev.hltech.pact.generation.domain.client.model.RawParam;
+import dev.hltech.pact.generation.domain.client.model.Header;
+import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
-import dev.hltech.pact.generation.domain.pact.model.Header;
 import dev.hltech.pact.generation.domain.pact.model.Interaction;
 import dev.hltech.pact.generation.domain.pact.model.InteractionRequest;
 import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
@@ -59,14 +58,14 @@ public class PactFactory {
             .build();
     }
 
-    private static String parseParametersToQuery(List<RawParam> requestParameters) {
+    private static String parseParametersToQuery(List<Param> requestParameters) {
         StringBuilder queryBuilder = new StringBuilder();
 
         requestParameters
-            .forEach(rawParam -> queryBuilder
-                .append(rawParam.getName())
+            .forEach(param -> queryBuilder
+                .append(param.getName())
                 .append("=")
-                .append(String.valueOf(rawParam.getValue()))
+                .append(String.valueOf(param.getValue()))
                 .append("&"));
 
         if (queryBuilder.length() != 0) {
@@ -85,11 +84,11 @@ public class PactFactory {
             .build();
     }
 
-    private static List<Header> mapHeaders(List<RawHeader> headers) {
+    private static List<dev.hltech.pact.generation.domain.pact.model.Header> mapHeaders(List<Header> headers) {
         return headers.stream()
-            .map(rawHeader -> Header.builder()
-                .name(rawHeader.getName())
-                .value(String.valueOf(rawHeader.getValue()))
+            .map(header -> dev.hltech.pact.generation.domain.pact.model.Header.builder()
+                .name(header.getName())
+                .value(String.valueOf(header.getValue()))
                 .build())
             .collect(Collectors.toList());
     }

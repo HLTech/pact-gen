@@ -1,8 +1,8 @@
 package dev.hltech.pact.generation.domain.client.feign;
 
 import dev.hltech.pact.generation.domain.client.ClientRepresentationExtractor;
-import dev.hltech.pact.generation.domain.client.model.RawHeader;
-import dev.hltech.pact.generation.domain.client.model.RawParam;
+import dev.hltech.pact.generation.domain.client.model.Header;
+import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
 import org.springframework.http.HttpHeaders;
@@ -125,7 +125,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
             || parameter.isAnnotationPresent(RequestBody.class);
     }
 
-    private static List<RawParam> extractRequestParameters(Method feignClientMethod) {
+    private static List<Param> extractRequestParameters(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestParam.class) != null)
             .filter(param -> param.getType() != Map.class)
@@ -133,8 +133,8 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
             .collect(Collectors.toList());
     }
 
-    private static RawParam extractRequestParameter(Parameter param) {
-        return RawParam.builder()
+    private static Param extractRequestParameter(Parameter param) {
+        return Param.builder()
             .name(extractParamName(param))
             .value(extractParamValue(param))
             .build();
@@ -162,7 +162,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
         return annotation.defaultValue();
     }
 
-    private static List<RawHeader> extractRequestHeaderParams(Method feignClientMethod) {
+    private static List<Header> extractRequestHeaderParams(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestHeader.class) != null)
             .filter(param -> param.getType() != Map.class
@@ -172,8 +172,8 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
             .collect(Collectors.toList());
     }
 
-    private static RawHeader extractRequestHeaderParam(Parameter param) {
-        return RawHeader.builder()
+    private static Header extractRequestHeaderParam(Parameter param) {
+        return Header.builder()
             .name(extractHeaderName(param))
             .value(extractHeaderValue(param))
             .build();
@@ -201,21 +201,21 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
         return annotation.defaultValue();
     }
 
-    private static List<RawHeader> combineHeaders(String[] rawHeaders, List<RawHeader> headers) {
+    private static List<Header> combineHeaders(String[] rawHeaders, List<Header> headers) {
         return Stream
             .concat(parseHeaders(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
     }
 
-    private static List<RawHeader> parseHeaders(String[] stringHeaderArray) {
+    private static List<Header> parseHeaders(String[] stringHeaderArray) {
         return Arrays.stream(stringHeaderArray)
             .map(stringHeader -> stringHeader.split("="))
             .map(FeignRepresentationExtractor::parseHeader)
             .collect(Collectors.toList());
     }
 
-    private static RawHeader parseHeader(String[] stringHeaderArray) {
-        return RawHeader.builder()
+    private static Header parseHeader(String[] stringHeaderArray) {
+        return Header.builder()
             .name(stringHeaderArray[0])
             .value(stringHeaderArray[1])
             .build();

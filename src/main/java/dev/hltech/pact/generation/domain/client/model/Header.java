@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class RawHeader {
+public class Header {
     String name;
     Object value;
 }
