@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FeignRepresentationExtractor implements ClientRepresentationExtractor {
 
@@ -35,60 +36,66 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(DeleteMapping.class).annotationType()
                     .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(DeleteMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(DeleteMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(DeleteMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(GetMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(GetMapping.class).annotationType()
                     .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(GetMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(GetMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(GetMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PatchMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PatchMapping.class).annotationType()
                     .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(PatchMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(PatchMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(PatchMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PostMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PostMapping.class).annotationType()
                     .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(PostMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(PostMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(PostMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PutMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PutMapping.class).annotationType()
                     .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(PutMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(PutMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(PutMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(RequestMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(RequestMapping.class)
                     .method()[0].name().toUpperCase()))
                 .path(feignClientMethod.getAnnotation(RequestMapping.class).path()[0])
-                .requestMappingHeaders(feignClientMethod.getAnnotation(RequestMapping.class).headers())
-                .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
+                .headers(combineHeaders(
+                    feignClientMethod.getAnnotation(RequestMapping.class).headers(),
+                    extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
+                .parameters(extractRequestParameters(feignClientMethod))
                 .build();
         }
 
@@ -99,7 +106,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
     public ResponseProperties extractResponseProperties(Method feignClientMethod) {
         return ResponseProperties.builder()
             .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
-            .headers(feignClientMethod.getAnnotation(ResponseInfo.class).headers())
+            .headers(parseHeaders(feignClientMethod.getAnnotation(ResponseInfo.class).headers()))
             .bodyType(feignClientMethod.getReturnType())
             .build();
     }
@@ -191,5 +198,25 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
         }
 
         return annotation.defaultValue();
+    }
+
+    private static List<RawHeader> combineHeaders(String[] rawHeaders, List<RawHeader> headers) {
+        return Stream
+            .concat(parseHeaders(rawHeaders).stream(), headers.stream())
+            .collect(Collectors.toList());
+    }
+
+    private static List<RawHeader> parseHeaders(String[] stringHeaderArray) {
+        return Arrays.stream(stringHeaderArray)
+            .map(stringHeader -> stringHeader.split("="))
+            .map(FeignRepresentationExtractor::parseHeader)
+            .collect(Collectors.toList());
+    }
+
+    private static RawHeader parseHeader(String[] stringHeaderArray) {
+        return RawHeader.builder()
+            .name(stringHeaderArray[0])
+            .value(stringHeaderArray[1])
+            .build();
     }
 }

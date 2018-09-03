@@ -12,8 +12,7 @@ public class RequestProperties {
 
     private final HttpMethod httpMethod;
     private final String path;
-    private final String[] requestMappingHeaders;
-    private final List<RawHeader> requestHeaderHeaders;
+    private final List<RawHeader> headers;
     private final Class<?> bodyType;
-    private final List<RawParam> requestParameters;
+    private final List<RawParam> parameters;
 }

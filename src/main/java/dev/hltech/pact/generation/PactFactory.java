@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class PactFactory {
 
@@ -55,8 +54,8 @@ public class PactFactory {
         return InteractionRequest.builder()
             .method(requestProperties.getHttpMethod().name())
             .path(requestProperties.getPath())
-            .headers(combineHeaders(requestProperties))
-            .query(parseParametersToQuery(requestProperties.getRequestParameters()))
+            .headers(mapHeaders(requestProperties.getHeaders()))
+            .query(parseParametersToQuery(requestProperties.getParameters()))
             .body(BodySerializer.serializeBody(requestProperties.getBodyType(), new ObjectMapper()))
             .build();
     }
@@ -78,12 +77,13 @@ public class PactFactory {
         return queryBuilder.toString();
     }
 
-    private static List<Header> combineHeaders(RequestProperties requestProperties) {
-        return Stream
-            .concat(
-                parseHeaders(requestProperties.getRequestMappingHeaders()).stream(),
-                mapHeaders(requestProperties.getRequestHeaderHeaders()).stream())
-            .collect(Collectors.toList());
+    private static InteractionResponse createInteractionResponse(ResponseProperties responseProperties) {
+        return InteractionResponse.builder()
+            .status(responseProperties.getStatus().toString())
+            .headers(mapHeaders(responseProperties.getHeaders()))
+            .body(BodySerializer.serializeBody(
+                responseProperties.getBodyType(), new ObjectMapper()))
+            .build();
     }
 
     private static List<Header> mapHeaders(List<RawHeader> headers) {
@@ -93,28 +93,5 @@ public class PactFactory {
                 .value(String.valueOf(rawHeader.getValue()))
                 .build())
             .collect(Collectors.toList());
-    }
-
-    private static InteractionResponse createInteractionResponse(ResponseProperties responseProperties) {
-        return InteractionResponse.builder()
-            .status(responseProperties.getStatus().toString())
-            .headers(parseHeaders(responseProperties.getHeaders()))
-            .body(BodySerializer.serializeBody(
-                responseProperties.getBodyType(), new ObjectMapper()))
-            .build();
-    }
-
-    private static List<Header> parseHeaders(String[] stringHeaderArray) {
-        return Arrays.stream(stringHeaderArray)
-            .map(stringHeader -> stringHeader.split("="))
-            .map(PactFactory::parseHeader)
-            .collect(Collectors.toList());
-    }
-
-    private static Header parseHeader(String[] stringHeaderArray) {
-        return Header.builder()
-            .name(stringHeaderArray[0])
-            .value(stringHeaderArray[1])
-            .build();
     }
 }
