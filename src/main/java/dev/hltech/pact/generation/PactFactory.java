@@ -8,6 +8,7 @@ import dev.hltech.pact.generation.model.InteractionResponse;
 import dev.hltech.pact.generation.model.Metadata;
 import dev.hltech.pact.generation.model.Pact;
 import dev.hltech.pact.generation.model.RawHeader;
+import dev.hltech.pact.generation.model.RawParam;
 import dev.hltech.pact.generation.model.RequestProperties;
 import dev.hltech.pact.generation.model.ResponseProperties;
 import dev.hltech.pact.generation.model.Service;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -66,8 +68,26 @@ public class PactFactory {
             .method(requestProperties.getHttpMethod().name())
             .path(requestProperties.getPath())
             .headers(combineHeaders(requestProperties))
+            .query(parseParametersToQuery(requestProperties.getRequestParameters()))
             .body(BodySerializer.serializeBody(requestProperties.getBodyType(), new ObjectMapper()))
             .build();
+    }
+
+    private static String parseParametersToQuery(List<RawParam> requestParameters) {
+        StringBuilder queryBuilder = new StringBuilder();
+
+        requestParameters
+            .forEach(rawParam -> queryBuilder
+                .append(rawParam.getName())
+                .append("=")
+                .append(String.valueOf(rawParam.getValue()))
+                .append("&"));
+
+        if (queryBuilder.length() != 0) {
+            queryBuilder.deleteCharAt(queryBuilder.length() - 1);
+        }
+
+        return queryBuilder.toString();
     }
 
     private static Class<?> findRequestBodyClass(Parameter[] parameters) {
@@ -119,6 +139,7 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(DeleteMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(GetMapping.class)) {
             return RequestProperties.builder()
@@ -128,6 +149,7 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(GetMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PatchMapping.class)) {
             return RequestProperties.builder()
@@ -137,6 +159,7 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PatchMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PostMapping.class)) {
             return RequestProperties.builder()
@@ -146,6 +169,7 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PostMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PutMapping.class)) {
             return RequestProperties.builder()
@@ -155,6 +179,7 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(PutMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(RequestMapping.class)) {
             return RequestProperties.builder()
@@ -164,10 +189,48 @@ public class PactFactory {
                 .requestMappingHeaders(feignClientMethod.getAnnotation(RequestMapping.class).headers())
                 .requestHeaderHeaders(extractRequestHeaderParams(feignClientMethod))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
+                .requestParameters(extractRequestParameters(feignClientMethod))
                 .build();
         }
 
         throw new IllegalArgumentException("Unknown method");
+    }
+
+    private static List<RawParam> extractRequestParameters(Method feignClientMethod) {
+        return Arrays.stream(feignClientMethod.getParameters())
+            .filter(param -> param.getAnnotation(RequestParam.class) != null)
+            .filter(param -> param.getType() != Map.class)
+            .map(PactFactory::extractRequestParameter)
+            .collect(Collectors.toList());
+    }
+
+    private static RawParam extractRequestParameter(Parameter param) {
+        return RawParam.builder()
+            .name(extractParamName(param))
+            .value(extractParamValue(param))
+            .build();
+    }
+
+    private static String extractParamName(Parameter param) {
+        RequestParam annotation = param.getAnnotation(RequestParam.class);
+
+        if (!annotation.name().isEmpty()) {
+            return annotation.name();
+        } else if (!annotation.value().isEmpty()) {
+            return annotation.value();
+        }
+
+        return param.getName();
+    }
+
+    private static Object extractParamValue(Parameter param) {
+        RequestParam annotation = param.getAnnotation(RequestParam.class);
+
+        if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {
+            return new PodamFactoryImpl().manufacturePojo(param.getType());
+        }
+
+        return annotation.defaultValue();
     }
 
     private static List<RawHeader> extractRequestHeaderParams(Method feignClientMethod) {
@@ -182,12 +245,12 @@ public class PactFactory {
 
     private static RawHeader extractRequestHeaderParam(Parameter param) {
         return RawHeader.builder()
-            .name(extractParamName(param))
-            .value(extractParamValue(param))
+            .name(extractHeaderName(param))
+            .value(extractHeaderValue(param))
             .build();
     }
 
-    private static String extractParamName(Parameter param) {
+    private static String extractHeaderName(Parameter param) {
         RequestHeader annotation = param.getAnnotation(RequestHeader.class);
 
         if (!annotation.name().isEmpty()) {
@@ -199,7 +262,7 @@ public class PactFactory {
         return param.getName();
     }
 
-    private static Object extractParamValue(Parameter param) {
+    private static Object extractHeaderValue(Parameter param) {
         RequestHeader annotation = param.getAnnotation(RequestHeader.class);
 
         if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {

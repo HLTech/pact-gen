@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
@@ -39,7 +40,9 @@ public interface SampleSpecFeignClient {
 
     @PatchMapping(path = "/test/objects/5")
     @ResponseInfo(status = HttpStatus.ACCEPTED)
-    void patchTestObject();
+    void patchTestObject(
+        @RequestParam(name = "longP", defaultValue = "abc") Long longParam,
+        @RequestParam(name = "very_long_name", defaultValue = "def") String stringParam);
 
     @PostMapping(path = "/test/objects", headers = { "key1=val1", "key2=val2" })
     @ResponseInfo(status = HttpStatus.ACCEPTED)
@@ -52,5 +55,5 @@ public interface SampleSpecFeignClient {
 
     @RequestMapping(path = "/test/objects/7", method = RequestMethod.TRACE)
     @ResponseInfo(status = HttpStatus.OK)
-    ResponseType traceTestObject();
+    ResponseType traceTestObject(@RequestParam String param);
 }

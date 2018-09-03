@@ -68,6 +68,7 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'patchTestObject' &&
                     interaction.request.method == 'PATCH' &&
                     interaction.request.path == '/test/objects/5' &&
+                    interaction.request.query == 'longP=abc&very_long_name=def' &&
                     interaction.response.status == '202' &&
                     interaction.response.body == null
                 }
@@ -104,6 +105,7 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'traceTestObject' &&
                     interaction.request.method == 'TRACE' &&
                     interaction.request.path == '/test/objects/7' &&
+                    interaction.request.query.contains('param=')
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }

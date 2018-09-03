@@ -15,4 +15,5 @@ public class RequestProperties {
     private final String[] requestMappingHeaders;
     private final List<RawHeader> requestHeaderHeaders;
     private final Class<?> bodyType;
+    private final List<RawParam> requestParameters;
 }

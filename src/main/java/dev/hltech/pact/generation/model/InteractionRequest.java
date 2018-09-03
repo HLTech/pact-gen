@@ -12,5 +12,6 @@ public class InteractionRequest {
     private final String method;
     private final String path;
     private final List<Header> headers;
+    private final String query;
     private final String body;
 }
