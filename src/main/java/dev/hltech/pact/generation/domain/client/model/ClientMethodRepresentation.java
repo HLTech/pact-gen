@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ClientRepresentation {
+public class ClientMethodRepresentation {
 
     private RequestProperties requestProperties;
     private ResponseProperties responseProperties;

@@ -5,7 +5,7 @@ import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
 
 import java.lang.reflect.Method;
 
-public interface ClientRepresentationExtractor {
+public interface ClientMethodRepresentationExtractor {
 
     RequestProperties extractRequestProperties(Method clientMethod);
 

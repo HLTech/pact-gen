@@ -1,8 +1,8 @@
 package dev.hltech.pact.generation.domain.pact;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.hltech.pact.generation.domain.client.model.ClientRepresentation;
-import dev.hltech.pact.generation.domain.client.ClientRepresentationFactory;
+import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
+import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationFactory;
 import dev.hltech.pact.generation.domain.client.model.Header;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
@@ -37,13 +37,13 @@ public class PactFactory {
     }
 
     private static Interaction createInteraction(Method feignClientMethod) {
-        ClientRepresentation clientRepresentation =
-            ClientRepresentationFactory.createClientRepresentation(feignClientMethod);
+        ClientMethodRepresentation clientMethodRepresentation =
+            ClientMethodRepresentationFactory.createClientRepresentation(feignClientMethod);
 
         return Interaction.builder()
             .description(feignClientMethod.getName())
-            .request(createInteractionRequest(clientRepresentation.getRequestProperties()))
-            .response(createInteractionResponse(clientRepresentation.getResponseProperties()))
+            .request(createInteractionRequest(clientMethodRepresentation.getRequestProperties()))
+            .response(createInteractionResponse(clientMethodRepresentation.getResponseProperties()))
             .build();
     }
 

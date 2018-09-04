@@ -1,6 +1,6 @@
 package dev.hltech.pact.generation.domain.client.feign;
 
-import dev.hltech.pact.generation.domain.client.ClientRepresentationExtractor;
+import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.Header;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FeignRepresentationExtractor implements ClientRepresentationExtractor {
+public class FeignMethodRepresentationExtractor implements ClientMethodRepresentationExtractor {
 
     @Override
     public RequestProperties extractRequestProperties(Method feignClientMethod) {
@@ -114,7 +114,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
 
     private static Class<?> findRequestBodyClass(Parameter[] parameters) {
         return Arrays.stream(parameters)
-            .filter(FeignRepresentationExtractor::isRequestBody)
+            .filter(FeignMethodRepresentationExtractor::isRequestBody)
             .findFirst()
             .map(Parameter::getType)
             .orElse(null);
@@ -129,7 +129,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestParam.class) != null)
             .filter(param -> param.getType() != Map.class)
-            .map(FeignRepresentationExtractor::extractRequestParameter)
+            .map(FeignMethodRepresentationExtractor::extractRequestParameter)
             .collect(Collectors.toList());
     }
 
@@ -168,7 +168,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
             .filter(param -> param.getType() != Map.class
                 && param.getType() != MultiValueMap.class
                 && param.getType() != HttpHeaders.class)
-            .map(FeignRepresentationExtractor::extractRequestHeaderParam)
+            .map(FeignMethodRepresentationExtractor::extractRequestHeaderParam)
             .collect(Collectors.toList());
     }
 
@@ -210,7 +210,7 @@ public class FeignRepresentationExtractor implements ClientRepresentationExtract
     private static List<Header> parseHeaders(String[] stringHeaderArray) {
         return Arrays.stream(stringHeaderArray)
             .map(stringHeader -> stringHeader.split("="))
-            .map(FeignRepresentationExtractor::parseHeader)
+            .map(FeignMethodRepresentationExtractor::parseHeader)
             .collect(Collectors.toList());
     }
 
