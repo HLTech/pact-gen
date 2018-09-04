@@ -1,7 +1,6 @@
 package dev.hltech.pact.generation.domain.pact
 
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
-import dev.hltech.pact.generation.domain.pact.PactFactory
 import dev.hltech.pact.generation.domain.pact.model.Pact
 import spock.lang.Specification
 import spock.lang.Subject
@@ -15,7 +14,7 @@ class PactFactorySpec extends Specification {
 
     def "should create object representing pact file out of feign client"() {
         when:
-            final Pact pact = pactFactory.create(
+            final Pact pact = pactFactory.createFromFeignClient(
                 feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain')[0], 'SpecConsumer')
 
         then:

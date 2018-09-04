@@ -1,8 +1,9 @@
 package dev.hltech.pact.generation.domain.pact;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
+import dev.hltech.pact.generation.domain.client.feign.FeignMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
-import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationFactory;
 import dev.hltech.pact.generation.domain.client.model.Header;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
@@ -21,29 +22,31 @@ import java.util.stream.Collectors;
 
 public class PactFactory {
 
-    public Pact create(Class<?> feignClient, String consumerName) {
+    
+    public Pact createFromFeignClient(Class<?> feignClient, String consumerName) {
+        ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();
+
         return Pact.builder()
             .provider(new Service(feignClient.getAnnotation(FeignClient.class).value()))
             .consumer(new Service(consumerName))
-            .interactions(createInteractions(feignClient.getMethods()))
+            .interactions(createInteractions(methodExtractor, feignClient.getMethods()))
             .metadata(new Metadata("1.0.0"))
             .build();
     }
 
-    private static List<Interaction> createInteractions(Method[] feignClientMethods) {
-        return Arrays.stream(feignClientMethods)
-            .map(PactFactory::createInteraction)
+    private static List<Interaction> createInteractions(
+        ClientMethodRepresentationExtractor extractor, Method[] clientMethods) {
+        return Arrays.stream(clientMethods)
+            .map(clientMethod -> createInteraction(extractor, clientMethod))
             .collect(Collectors.toList());
     }
 
-    private static Interaction createInteraction(Method feignClientMethod) {
-        ClientMethodRepresentation clientMethodRepresentation =
-            ClientMethodRepresentationFactory.createClientRepresentation(feignClientMethod);
-
+    private static Interaction createInteraction(ClientMethodRepresentationExtractor extractor, Method clientMethod) {
+        ClientMethodRepresentation methodRepresentation = extractor.extractClientMethodRepresentation(clientMethod);
         return Interaction.builder()
-            .description(feignClientMethod.getName())
-            .request(createInteractionRequest(clientMethodRepresentation.getRequestProperties()))
-            .response(createInteractionResponse(clientMethodRepresentation.getResponseProperties()))
+            .description(clientMethod.getName())
+            .request(createInteractionRequest(methodRepresentation.getRequestProperties()))
+            .response(createInteractionResponse(methodRepresentation.getResponseProperties()))
             .build();
     }
 

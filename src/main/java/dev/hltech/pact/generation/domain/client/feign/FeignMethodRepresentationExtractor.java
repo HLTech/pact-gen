@@ -1,6 +1,7 @@
 package dev.hltech.pact.generation.domain.client.feign;
 
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
+import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
 import dev.hltech.pact.generation.domain.client.model.Header;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
@@ -31,6 +32,13 @@ import java.util.stream.Stream;
 public class FeignMethodRepresentationExtractor implements ClientMethodRepresentationExtractor {
 
     @Override
+    public ClientMethodRepresentation extractClientMethodRepresentation(Method clientMethod) {
+        return ClientMethodRepresentation.builder()
+            .requestProperties(extractRequestProperties(clientMethod))
+            .responseProperties(extractResponseProperties(clientMethod))
+            .build();
+    }
+
     public RequestProperties extractRequestProperties(Method feignClientMethod) {
         if (feignClientMethod.isAnnotationPresent(DeleteMapping.class)) {
             return RequestProperties.builder()
@@ -103,7 +111,6 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
         throw new IllegalArgumentException("Unknown method");
     }
 
-    @Override
     public ResponseProperties extractResponseProperties(Method feignClientMethod) {
         return ResponseProperties.builder()
             .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())

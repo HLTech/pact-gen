@@ -44,7 +44,7 @@ class PactJsonGeneratorSpec extends Specification {
             jsonRoot.provider.name == 'Provider'
             jsonRoot.consumer.name == 'Consumer'
             jsonRoot.interactions.size() == 1
-            jsonRoot.interactions[0].description == 'create test object'
+            jsonRoot.interactions[0].description == 'createFromFeignClient test object'
             jsonRoot.interactions[0].request.method == 'POST'
             jsonRoot.interactions[0].request.path == '/test/objects'
             jsonRoot.interactions[0].request.headers[0].name == 'Authorization'
@@ -61,7 +61,7 @@ class PactJsonGeneratorSpec extends Specification {
             .consumer(new Service('Consumer'))
             .interactions([
                     Interaction.builder()
-                        .description('create test object')
+                        .description('createFromFeignClient test object')
                         .request(InteractionRequest.builder()
                             .method('POST')
                             .path('/test/objects')
