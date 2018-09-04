@@ -6,6 +6,8 @@ import lombok.Data;
 @Builder
 @Data
 public class Header {
+
     String name;
-    Object value;
+    Class<?> headerType;
+    Object defaultValue;
 }

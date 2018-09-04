@@ -6,6 +6,8 @@ import lombok.Data;
 @Builder
 @Data
 public class Param {
+
     String name;
-    Object value;
+    Class<?> paramType;
+    Object defaultValue;
 }

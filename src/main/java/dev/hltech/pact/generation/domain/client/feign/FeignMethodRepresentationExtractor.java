@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
-import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -131,7 +131,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
 
         return Param.builder()
             .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
-            .value(new PodamFactoryImpl().manufacturePojo(param.getType()))
+            .paramType(param.getType())
             .build();
     }
 
@@ -165,9 +165,13 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     }
 
     private static Param extractRequestParameter(Parameter param) {
-        return Param.builder()
+        Param.ParamBuilder builder = Param.builder();
+
+        extractParamDefaultValue(param).ifPresent(builder::defaultValue);
+
+        return builder
             .name(extractParamName(param))
-            .value(extractParamValue(param))
+            .paramType(param.getType())
             .build();
     }
 
@@ -183,14 +187,14 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
         return param.getName();
     }
 
-    private static Object extractParamValue(Parameter param) {
+    private static Optional<Object> extractParamDefaultValue(Parameter param) {
         RequestParam annotation = param.getAnnotation(RequestParam.class);
 
         if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {
-            return new PodamFactoryImpl().manufacturePojo(param.getType());
+            return Optional.empty();
         }
 
-        return annotation.defaultValue();
+        return Optional.of(annotation.defaultValue());
     }
 
     private static List<Header> extractRequestHeaderParams(Method feignClientMethod) {
@@ -204,9 +208,13 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     }
 
     private static Header extractRequestHeaderParam(Parameter param) {
-        return Header.builder()
+        Header.HeaderBuilder builder = Header.builder();
+
+        extractHeaderDefaultValue(param).ifPresent(builder::defaultValue);
+
+        return builder
             .name(extractHeaderName(param))
-            .value(extractHeaderValue(param))
+            .headerType(param.getType())
             .build();
     }
 
@@ -222,14 +230,14 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
         return param.getName();
     }
 
-    private static Object extractHeaderValue(Parameter param) {
+    private static Optional<Object> extractHeaderDefaultValue(Parameter param) {
         RequestHeader annotation = param.getAnnotation(RequestHeader.class);
 
         if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {
-            return new PodamFactoryImpl().manufacturePojo(param.getType());
+            return Optional.empty();
         }
 
-        return annotation.defaultValue();
+        return Optional.of(annotation.defaultValue());
     }
 
     private static List<Header> combineHeaders(String[] rawHeaders, List<Header> headers) {
@@ -248,7 +256,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     private static Header parseHeader(String[] stringHeaderArray) {
         return Header.builder()
             .name(stringHeaderArray[0])
-            .value(stringHeaderArray[1])
+            .defaultValue(stringHeaderArray[1])
             .build();
     }
 }

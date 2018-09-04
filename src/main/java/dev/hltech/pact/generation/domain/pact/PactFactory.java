@@ -14,6 +14,7 @@ import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
 import dev.hltech.pact.generation.domain.pact.model.Metadata;
 import dev.hltech.pact.generation.domain.pact.model.Pact;
 import org.springframework.cloud.openfeign.FeignClient;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -68,9 +69,27 @@ public class PactFactory {
     private static String parsePath(String path, List<Param> pathParameters) {
         String resultPath = path;
         for (Param param : pathParameters) {
-            resultPath = path.replace("{" + param.getName() + "}", String.valueOf(param.getValue()));
+            Object paramValue = getParamValue(param);
+
+            resultPath = path.replace("{" + param.getName() + "}", String.valueOf(paramValue));
         }
         return resultPath;
+    }
+
+    private static Object getParamValue(Param param) {
+        if (param.getDefaultValue() == null) {
+            return new PodamFactoryImpl().manufacturePojo(param.getParamType());
+        }
+
+        return param.getDefaultValue();
+    }
+
+    private static Object getHeaderValue(Header header) {
+        if (header.getDefaultValue() == null) {
+            return new PodamFactoryImpl().manufacturePojo(header.getHeaderType());
+        }
+
+        return header.getDefaultValue();
     }
 
     private static String parseParametersToQuery(List<Param> requestParameters) {
@@ -80,7 +99,7 @@ public class PactFactory {
             .forEach(param -> queryBuilder
                 .append(param.getName())
                 .append("=")
-                .append(String.valueOf(param.getValue()))
+                .append(String.valueOf(getParamValue(param)))
                 .append("&"));
 
         if (queryBuilder.length() != 0) {
@@ -105,7 +124,7 @@ public class PactFactory {
         return headers.stream()
             .map(header -> dev.hltech.pact.generation.domain.pact.model.Header.builder()
                 .name(header.getName())
-                .value(String.valueOf(header.getValue()))
+                .value(String.valueOf(getHeaderValue(header)))
                 .build())
             .collect(Collectors.toList());
     }
