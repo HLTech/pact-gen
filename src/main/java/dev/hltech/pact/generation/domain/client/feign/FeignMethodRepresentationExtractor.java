@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,7 +40,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
             .build();
     }
 
-    public RequestProperties extractRequestProperties(Method feignClientMethod) {
+    private static RequestProperties extractRequestProperties(Method feignClientMethod) {
         if (feignClientMethod.isAnnotationPresent(DeleteMapping.class)) {
             return RequestProperties.builder()
                 .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(DeleteMapping.class).annotationType()
@@ -49,7 +50,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(DeleteMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(GetMapping.class)) {
             return RequestProperties.builder()
@@ -60,7 +62,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(GetMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PatchMapping.class)) {
             return RequestProperties.builder()
@@ -71,7 +74,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(PatchMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PostMapping.class)) {
             return RequestProperties.builder()
@@ -82,7 +86,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(PostMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(PutMapping.class)) {
             return RequestProperties.builder()
@@ -93,7 +98,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(PutMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         } else if (feignClientMethod.isAnnotationPresent(RequestMapping.class)) {
             return RequestProperties.builder()
@@ -104,14 +110,32 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     feignClientMethod.getAnnotation(RequestMapping.class).headers(),
                     extractRequestHeaderParams(feignClientMethod)))
                 .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .parameters(extractRequestParameters(feignClientMethod))
+                .requestParameters(extractRequestParameters(feignClientMethod))
+                .pathParameters(extractPathParameters(feignClientMethod))
                 .build();
         }
 
         throw new IllegalArgumentException("Unknown method");
     }
 
-    public ResponseProperties extractResponseProperties(Method feignClientMethod) {
+    private static List<Param> extractPathParameters(Method feignClientMethod) {
+        return Arrays.stream(feignClientMethod.getParameters())
+            .filter(param -> param.getAnnotation(PathVariable.class) != null)
+            .filter(param -> param.getType() != Map.class)
+            .map(FeignMethodRepresentationExtractor::extractPathParameter)
+            .collect(Collectors.toList());
+    }
+
+    private static Param extractPathParameter(Parameter param) {
+        PathVariable annotation = param.getAnnotation(PathVariable.class);
+
+        return Param.builder()
+            .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
+            .value(new PodamFactoryImpl().manufacturePojo(param.getType()))
+            .build();
+    }
+
+    private static ResponseProperties extractResponseProperties(Method feignClientMethod) {
         return ResponseProperties.builder()
             .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
             .headers(parseHeaders(feignClientMethod.getAnnotation(ResponseInfo.class).headers()))

@@ -2,6 +2,7 @@ package dev.hltech.pact.generation.domain.pact
 
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
 import dev.hltech.pact.generation.domain.pact.model.Pact
+import org.apache.commons.lang.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -26,7 +27,7 @@ class PactFactorySpec extends Specification {
                 interactions.any { interaction ->
                     interaction.description == 'deleteTestObject' &&
                     interaction.request.method == 'DELETE' &&
-                    interaction.request.path == '/test/objects/1' &&
+                    !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
                     interaction.request.headers[0].name == 'key1' &&
                     interaction.request.headers[0].value == 'val1' &&
                     interaction.request.headers[1].name == 'key2' &&
@@ -38,7 +39,7 @@ class PactFactorySpec extends Specification {
                 interactions.any { interaction ->
                     interaction.description == 'getTestObject' &&
                     interaction.request.method == 'GET' &&
-                    interaction.request.path == '/test/objects/2' &&
+                    !StringUtils.substringBetween(interaction.request.path,'/test/', '/objects/2').isEmpty() &&
                     interaction.response.status == '200' &&
                     interaction.response.headers[0].name == 'key3' &&
                     interaction.response.headers[0].value == 'val3' &&

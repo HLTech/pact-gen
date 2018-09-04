@@ -14,5 +14,6 @@ public class RequestProperties {
     private final String path;
     private final List<Header> headers;
     private final Class<?> bodyType;
-    private final List<Param> parameters;
+    private final List<Param> requestParameters;
+    private final List<Param> pathParameters;
 }

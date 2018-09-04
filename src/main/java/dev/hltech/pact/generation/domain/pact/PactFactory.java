@@ -54,11 +54,19 @@ public class PactFactory {
 
         return InteractionRequest.builder()
             .method(requestProperties.getHttpMethod().name())
-            .path(requestProperties.getPath())
+            .path(parsePath(requestProperties.getPath(), requestProperties.getPathParameters()))
             .headers(mapHeaders(requestProperties.getHeaders()))
-            .query(parseParametersToQuery(requestProperties.getParameters()))
+            .query(parseParametersToQuery(requestProperties.getRequestParameters()))
             .body(BodySerializer.serializeBody(requestProperties.getBodyType(), new ObjectMapper()))
             .build();
+    }
+
+    private static String parsePath(String path, List<Param> pathParameters) {
+        String resultPath = path;
+        for (Param param : pathParameters) {
+            resultPath = path.replace("{" + param.getName() + "}", String.valueOf(param.getValue()));
+        }
+        return resultPath;
     }
 
     private static String parseParametersToQuery(List<Param> requestParameters) {

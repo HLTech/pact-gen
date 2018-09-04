@@ -8,6 +8,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,13 +22,13 @@ import java.util.Map;
 @FeignClient("SpecProvider")
 public interface SampleSpecFeignClient {
 
-    @DeleteMapping(path = "/test/objects/1", headers = { "key1=val1", "key2=val2" })
+    @DeleteMapping(path = "/test/{testId}/objects/1", headers = { "key1=val1", "key2=val2" })
     @ResponseInfo(status = HttpStatus.OK)
-    ResponseType deleteTestObject(@RequestHeader HttpHeaders headers);
+    ResponseType deleteTestObject(@RequestHeader HttpHeaders headers, @PathVariable("testId") String id);
 
-    @GetMapping(path = "/test/objects/2")
+    @GetMapping(path = "/test/{testId}/objects/2")
     @ResponseInfo(status = HttpStatus.OK, headers = {"key3=val3"})
-    ResponseType getTestObject(@RequestHeader MultiValueMap<String, String> headers);
+    ResponseType getTestObject(@RequestHeader MultiValueMap<String, String> headers, @PathVariable("testId") Long id);
 
     @RequestMapping(path = "/test/objects/3", method = RequestMethod.HEAD)
     @ResponseInfo(status = HttpStatus.OK)
