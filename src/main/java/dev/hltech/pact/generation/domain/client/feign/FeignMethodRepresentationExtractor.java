@@ -5,8 +5,13 @@ import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.DeleteMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.GetMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.PatchMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.PostMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.PutMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.RequestMappingMethodsHandler;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,77 +46,17 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
 
     private static RequestProperties extractRequestProperties(Method feignClientMethod) {
         if (feignClientMethod.isAnnotationPresent(DeleteMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(DeleteMapping.class).annotationType()
-                    .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(DeleteMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(DeleteMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new DeleteMappingMethodsHandler().handle(feignClientMethod);
         } else if (feignClientMethod.isAnnotationPresent(GetMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(GetMapping.class).annotationType()
-                    .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(GetMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(GetMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new GetMappingMethodsHandler().handle(feignClientMethod);
         } else if (feignClientMethod.isAnnotationPresent(PatchMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PatchMapping.class).annotationType()
-                    .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(PatchMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(PatchMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new PatchMappingMethodsHandler().handle(feignClientMethod);
         } else if (feignClientMethod.isAnnotationPresent(PostMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PostMapping.class).annotationType()
-                    .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(PostMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(PostMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new PostMappingMethodsHandler().handle(feignClientMethod);
         } else if (feignClientMethod.isAnnotationPresent(PutMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(PutMapping.class).annotationType()
-                    .getAnnotation(RequestMapping.class).method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(PutMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(PutMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new PutMappingMethodsHandler().handle(feignClientMethod);
         } else if (feignClientMethod.isAnnotationPresent(RequestMapping.class)) {
-            return RequestProperties.builder()
-                .httpMethod(HttpMethod.resolve(feignClientMethod.getAnnotation(RequestMapping.class)
-                    .method()[0].name().toUpperCase()))
-                .path(feignClientMethod.getAnnotation(RequestMapping.class).path()[0])
-                .headers(combineHeaders(
-                    feignClientMethod.getAnnotation(RequestMapping.class).headers(),
-                    extractRequestHeaderParams(feignClientMethod)))
-                .bodyType(findRequestBodyClass(feignClientMethod.getParameters()))
-                .requestParameters(extractRequestParameters(feignClientMethod))
-                .pathParameters(extractPathParameters(feignClientMethod))
-                .build();
+            return new RequestMappingMethodsHandler().handle(feignClientMethod);
         }
 
         throw new IllegalArgumentException("Unknown method");
