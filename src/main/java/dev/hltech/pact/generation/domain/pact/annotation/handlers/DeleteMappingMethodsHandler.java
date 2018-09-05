@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DeleteMappingMethodsHandler implements AnnotationHandler {
+public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
 
     @Override
     public boolean isSupported(Method method) {

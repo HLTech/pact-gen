@@ -5,7 +5,7 @@ import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.AnnotationHandler;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.AnnotatedMethodHandler;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.DeleteMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.GetMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.PatchMappingMethodsHandler;
@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
 
 public class FeignMethodRepresentationExtractor implements ClientMethodRepresentationExtractor {
 
-    private final Collection<AnnotationHandler> annotationHandlers;
+    private final Collection<AnnotatedMethodHandler> annotatedMethodHandlers;
 
     public FeignMethodRepresentationExtractor() {
-        this.annotationHandlers = Arrays.asList(
+        this.annotatedMethodHandlers = Arrays.asList(
             new DeleteMappingMethodsHandler(), new GetMappingMethodsHandler(), new PatchMappingMethodsHandler(),
             new PostMappingMethodsHandler(), new PutMappingMethodsHandler(), new RequestMappingMethodsHandler());
     }
@@ -38,7 +38,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     }
 
     private RequestProperties extractRequestProperties(Method feignClientMethod) {
-        return this.annotationHandlers.stream()
+        return this.annotatedMethodHandlers.stream()
             .filter(annotationHandler -> annotationHandler.isSupported(feignClientMethod))
             .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method"))
             .handle(feignClientMethod);

@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RequestMappingMethodsHandler implements AnnotationHandler {
+public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
 
     @Override
     public boolean isSupported(Method method) {

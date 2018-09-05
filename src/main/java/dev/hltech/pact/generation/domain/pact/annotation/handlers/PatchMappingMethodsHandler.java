@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class PatchMappingMethodsHandler implements AnnotationHandler {
+public class PatchMappingMethodsHandler implements AnnotatedMethodHandler {
 
     @Override
     public boolean isSupported(Method method) {
