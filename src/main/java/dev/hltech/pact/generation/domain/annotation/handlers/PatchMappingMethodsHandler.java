@@ -1,35 +1,34 @@
-package dev.hltech.pact.generation.domain.pact.annotation.handlers;
+package dev.hltech.pact.generation.domain.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.PathParametersExtractor;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RawHeadersParser;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestBodyTypeFinder;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestHeaderParamsExtractor;
-import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestParametersExtractor;
+import dev.hltech.pact.generation.domain.util.PathParametersExtractor;
+import dev.hltech.pact.generation.domain.util.RawHeadersParser;
+import dev.hltech.pact.generation.domain.util.RequestBodyTypeFinder;
+import dev.hltech.pact.generation.domain.util.RequestHeaderParamsExtractor;
+import dev.hltech.pact.generation.domain.util.RequestParametersExtractor;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
+public class PatchMappingMethodsHandler implements AnnotatedMethodHandler {
 
     @Override
     public boolean isSupported(Method method) {
-        return method.isAnnotationPresent(RequestMapping.class);
+        return method.isAnnotationPresent(PatchMapping.class);
     }
 
     @Override
     public RequestProperties handle(Method method) {
         return RequestProperties.builder()
-            .httpMethod(HttpMethod.resolve(method.getAnnotation(RequestMapping.class)
-                .method()[0].name().toUpperCase()))
-            .path(method.getAnnotation(RequestMapping.class).path()[0])
+            .httpMethod(HttpMethod.PATCH)
+            .path(method.getAnnotation(PatchMapping.class).path()[0])
             .headers(combineHeaders(
-                method.getAnnotation(RequestMapping.class).headers(),
+                method.getAnnotation(PatchMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
             .bodyType(RequestBodyTypeFinder.find(method.getParameters()))
             .requestParameters(RequestParametersExtractor.extractAll(method))

@@ -1,4 +1,4 @@
-package dev.hltech.pact.generation.domain.pact.annotation.handlers;
+package dev.hltech.pact.generation.domain.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 

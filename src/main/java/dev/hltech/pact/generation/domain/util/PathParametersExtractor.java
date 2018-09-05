@@ -1,4 +1,4 @@
-package dev.hltech.pact.generation.domain.pact.annotation.handlers.util;
+package dev.hltech.pact.generation.domain.util;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import org.springframework.web.bind.annotation.PathVariable;
