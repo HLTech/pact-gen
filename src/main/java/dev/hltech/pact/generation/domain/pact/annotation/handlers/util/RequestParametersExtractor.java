@@ -16,15 +16,15 @@ public final class RequestParametersExtractor {
 
     private RequestParametersExtractor() {}
 
-    public static List<Param> extractRequestParameters(Method feignClientMethod) {
+    public static List<Param> extractAll(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestParam.class) != null)
             .filter(param -> param.getType() != Map.class)
-            .map(RequestParametersExtractor::extractRequestParameter)
+            .map(RequestParametersExtractor::extract)
             .collect(Collectors.toList());
     }
 
-    private static Param extractRequestParameter(Parameter param) {
+    private static Param extract(Parameter param) {
         Param.ParamBuilder builder = Param.builder();
 
         extractParamDefaultValue(param).ifPresent(builder::defaultValue);

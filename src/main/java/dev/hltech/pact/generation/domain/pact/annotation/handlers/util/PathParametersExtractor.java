@@ -14,15 +14,15 @@ public final class PathParametersExtractor {
 
     private PathParametersExtractor() {}
 
-    public static List<Param> extractPathParameters(Method feignClientMethod) {
+    public static List<Param> extractAll(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(PathVariable.class) != null)
             .filter(param -> param.getType() != Map.class)
-            .map(PathParametersExtractor::extractPathParameter)
+            .map(PathParametersExtractor::extract)
             .collect(Collectors.toList());
     }
 
-    private static Param extractPathParameter(Parameter param) {
+    private static Param extract(Parameter param) {
         PathVariable annotation = param.getAnnotation(PathVariable.class);
 
         return Param.builder()

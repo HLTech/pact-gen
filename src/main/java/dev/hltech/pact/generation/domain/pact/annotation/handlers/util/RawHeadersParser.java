@@ -10,14 +10,14 @@ public final class RawHeadersParser {
 
     private RawHeadersParser() {}
 
-    public static List<Param> parseHeaders(String[] stringHeaderArray) {
+    public static List<Param> parseAll(String[] stringHeaderArray) {
         return Arrays.stream(stringHeaderArray)
             .map(stringHeader -> stringHeader.split("="))
-            .map(RawHeadersParser::parseHeader)
+            .map(RawHeadersParser::parse)
             .collect(Collectors.toList());
     }
 
-    private static Param parseHeader(String[] stringHeaderArray) {
+    private static Param parse(String[] stringHeaderArray) {
         return Param.builder()
             .name(stringHeaderArray[0])
             .defaultValue(stringHeaderArray[1])

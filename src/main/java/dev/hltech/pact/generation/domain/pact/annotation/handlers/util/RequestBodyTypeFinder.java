@@ -9,7 +9,7 @@ public final class RequestBodyTypeFinder {
 
     private RequestBodyTypeFinder() {}
 
-    public static Class<?> findRequestBodyType(Parameter[]parameters) {
+    public static Class<?> find(Parameter[]parameters) {
         return Arrays.stream(parameters)
             .filter(RequestBodyTypeFinder::isRequestBody)
             .findFirst()

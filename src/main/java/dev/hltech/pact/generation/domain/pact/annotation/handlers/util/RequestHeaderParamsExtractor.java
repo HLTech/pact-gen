@@ -18,17 +18,17 @@ public final class RequestHeaderParamsExtractor {
 
     private RequestHeaderParamsExtractor() {}
 
-    public static List<Param> extractRequestHeaderParams(Method feignClientMethod) {
+    public static List<Param> extractAll(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestHeader.class) != null)
             .filter(param -> param.getType() != Map.class
                 && param.getType() != MultiValueMap.class
                 && param.getType() != HttpHeaders.class)
-            .map(RequestHeaderParamsExtractor::extractRequestHeaderParam)
+            .map(RequestHeaderParamsExtractor::extract)
             .collect(Collectors.toList());
     }
 
-    private static Param extractRequestHeaderParam(Parameter param) {
+    private static Param extract(Parameter param) {
         Param.ParamBuilder builder = Param.builder();
 
         extractHeaderDefaultValue(param).ifPresent(builder::defaultValue);

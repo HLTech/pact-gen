@@ -29,16 +29,16 @@ public class PutMappingMethodsHandler implements AnnotatedMethodHandler {
             .path(method.getAnnotation(PutMapping.class).path()[0])
             .headers(combineHeaders(
                 method.getAnnotation(PutMapping.class).headers(),
-                RequestHeaderParamsExtractor.extractRequestHeaderParams(method)))
-            .bodyType(RequestBodyTypeFinder.findRequestBodyType(method.getParameters()))
-            .requestParameters(RequestParametersExtractor.extractRequestParameters(method))
-            .pathParameters(PathParametersExtractor.extractPathParameters(method))
+                RequestHeaderParamsExtractor.extractAll(method)))
+            .bodyType(RequestBodyTypeFinder.find(method.getParameters()))
+            .requestParameters(RequestParametersExtractor.extractAll(method))
+            .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
         return Stream
-            .concat(RawHeadersParser.parseHeaders(rawHeaders).stream(), headers.stream())
+            .concat(RawHeadersParser.parseAll(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
     }
 }
