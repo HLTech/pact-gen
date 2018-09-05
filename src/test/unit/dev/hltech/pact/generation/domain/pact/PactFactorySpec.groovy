@@ -1,5 +1,6 @@
 package dev.hltech.pact.generation.domain.pact
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
 import dev.hltech.pact.generation.domain.pact.model.Pact
 import org.apache.commons.lang.StringUtils
@@ -14,9 +15,12 @@ class PactFactorySpec extends Specification {
     private PactFactory pactFactory = new PactFactory()
 
     def "should create object representing pact file out of feign client"() {
+        given:
+            final ObjectMapper objectMapper = new ObjectMapper()
+
         when:
             final Pact pact = pactFactory.createFromFeignClient(
-                feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain')[0], 'SpecConsumer')
+                feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain')[0], 'SpecConsumer', objectMapper)
 
         then:
             with(pact) {

@@ -23,41 +23,45 @@ import java.util.stream.Collectors;
 public class PactFactory {
 
     
-    public Pact createFromFeignClient(Class<?> feignClient, String consumerName) {
+    public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
         ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();
 
         return Pact.builder()
             .provider(new Service(feignClient.getAnnotation(FeignClient.class).value()))
             .consumer(new Service(consumerName))
-            .interactions(createInteractions(methodExtractor, feignClient.getMethods()))
+            .interactions(createInteractions(methodExtractor, feignClient.getMethods(), objectMapper))
             .metadata(new Metadata("1.0.0"))
             .build();
     }
 
     private static List<Interaction> createInteractions(
-        ClientMethodRepresentationExtractor extractor, Method[] clientMethods) {
+        ClientMethodRepresentationExtractor extractor, Method[] clientMethods, ObjectMapper objectMapper) {
+
         return Arrays.stream(clientMethods)
-            .map(clientMethod -> createInteraction(extractor, clientMethod))
+            .map(clientMethod -> createInteraction(extractor, clientMethod, objectMapper))
             .collect(Collectors.toList());
     }
 
-    private static Interaction createInteraction(ClientMethodRepresentationExtractor extractor, Method clientMethod) {
+    private static Interaction createInteraction(
+        ClientMethodRepresentationExtractor extractor, Method clientMethod, ObjectMapper objectMapper) {
+
         ClientMethodRepresentation methodRepresentation = extractor.extractClientMethodRepresentation(clientMethod);
         return Interaction.builder()
             .description(clientMethod.getName())
-            .request(createInteractionRequest(methodRepresentation.getRequestProperties()))
-            .response(createInteractionResponse(methodRepresentation.getResponseProperties()))
+            .request(createInteractionRequest(methodRepresentation.getRequestProperties(), objectMapper))
+            .response(createInteractionResponse(methodRepresentation.getResponseProperties(), objectMapper))
             .build();
     }
 
-    private static InteractionRequest createInteractionRequest(RequestProperties requestProperties) {
+    private static InteractionRequest createInteractionRequest(
+        RequestProperties requestProperties, ObjectMapper objectMapper) {
 
         return InteractionRequest.builder()
             .method(requestProperties.getHttpMethod().name())
             .path(parsePath(requestProperties.getPath(), requestProperties.getPathParameters()))
             .headers(mapHeaders(requestProperties.getHeaders()))
             .query(parseParametersToQuery(requestProperties.getRequestParameters()))
-            .body(BodySerializer.serializeBody(requestProperties.getBodyType(), new ObjectMapper()))
+            .body(BodySerializer.serializeBody(requestProperties.getBodyType(), objectMapper))
             .build();
     }
 
@@ -86,12 +90,14 @@ public class PactFactory {
         return queryBuilder.toString();
     }
 
-    private static InteractionResponse createInteractionResponse(ResponseProperties responseProperties) {
+    private static InteractionResponse createInteractionResponse(
+        ResponseProperties responseProperties, ObjectMapper objectMapper) {
+
         return InteractionResponse.builder()
             .status(responseProperties.getStatus().toString())
             .headers(mapHeaders(responseProperties.getHeaders()))
             .body(BodySerializer.serializeBody(
-                responseProperties.getBodyType(), new ObjectMapper()))
+                responseProperties.getBodyType(), objectMapper))
             .build();
     }
 

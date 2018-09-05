@@ -1,14 +1,12 @@
 package dev.hltech.pact.generation.domain.pact
 
 
-import dev.hltech.pact.generation.domain.pact.PactJsonGenerator
 import dev.hltech.pact.generation.domain.pact.model.Header
 import dev.hltech.pact.generation.domain.pact.model.Interaction
 import dev.hltech.pact.generation.domain.pact.model.InteractionRequest
 import dev.hltech.pact.generation.domain.pact.model.InteractionResponse
 import dev.hltech.pact.generation.domain.pact.model.Metadata
 import dev.hltech.pact.generation.domain.pact.model.Pact
-import dev.hltech.pact.generation.domain.pact.Service
 import groovy.json.JsonSlurper
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -31,7 +29,7 @@ class PactJsonGeneratorSpec extends Specification {
             File pactsDirectory = temporaryFolder.newFolder('pactsDirectory')
 
         when:
-            generator.generatePactFiles(pactsDirectory, [pact])
+            generator.writePactFiles(pactsDirectory, [pact])
 
         then: 'pact file exists'
             final File pactFile = pactsDirectory.listFiles().find { file ->
