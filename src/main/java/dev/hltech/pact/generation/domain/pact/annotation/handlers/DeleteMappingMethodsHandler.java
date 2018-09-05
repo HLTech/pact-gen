@@ -2,19 +2,16 @@ package dev.hltech.pact.generation.domain.pact.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.PathParametersExtractor;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestBodyTypeFinder;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestHeaderParamsExtractor;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestParametersExtractor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,7 +32,7 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
                 RequestHeaderParamsExtractor.extractRequestHeaderParams(method)))
             .bodyType(RequestBodyTypeFinder.findRequestBodyType(method.getParameters()))
             .requestParameters(RequestParametersExtractor.extractRequestParameters(method))
-            .pathParameters(extractPathParameters(method))
+            .pathParameters(PathParametersExtractor.extractPathParameters(method))
             .build();
     }
 
@@ -43,22 +40,5 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
         return Stream
             .concat(RawHeadersParser.parseHeaders(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
-    }
-
-    private static List<Param> extractPathParameters(Method feignClientMethod) {
-        return Arrays.stream(feignClientMethod.getParameters())
-            .filter(param -> param.getAnnotation(PathVariable.class) != null)
-            .filter(param -> param.getType() != Map.class)
-            .map(DeleteMappingMethodsHandler::extractPathParameter)
-            .collect(Collectors.toList());
-    }
-
-    private static Param extractPathParameter(Parameter param) {
-        PathVariable annotation = param.getAnnotation(PathVariable.class);
-
-        return Param.builder()
-            .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
-            .type(param.getType())
-            .build();
     }
 }
