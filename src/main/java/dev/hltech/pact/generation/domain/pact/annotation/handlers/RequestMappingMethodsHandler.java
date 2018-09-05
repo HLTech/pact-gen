@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
@@ -25,8 +24,8 @@ import java.util.stream.Stream;
 public class RequestMappingMethodsHandler implements AnnotationHandler {
 
     @Override
-    public boolean isSupported(Annotation annotation) {
-        return annotation instanceof RequestMapping;
+    public boolean isSupported(Method method) {
+        return method.isAnnotationPresent(RequestMapping.class);
     }
 
     @Override
