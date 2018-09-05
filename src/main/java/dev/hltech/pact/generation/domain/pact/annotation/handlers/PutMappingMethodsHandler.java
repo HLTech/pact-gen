@@ -2,6 +2,7 @@ package dev.hltech.pact.generation.domain.pact.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestBodyTypeFinder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -44,22 +45,8 @@ public class PutMappingMethodsHandler implements AnnotationHandler {
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
         return Stream
-            .concat(parseHeaders(rawHeaders).stream(), headers.stream())
+            .concat(RawHeadersParser.parseHeaders(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
-    }
-
-    private static List<Param> parseHeaders(String[] stringHeaderArray) {
-        return Arrays.stream(stringHeaderArray)
-            .map(stringHeader -> stringHeader.split("="))
-            .map(PutMappingMethodsHandler::parseHeader)
-            .collect(Collectors.toList());
-    }
-
-    private static Param parseHeader(String[] stringHeaderArray) {
-        return Param.builder()
-            .name(stringHeaderArray[0])
-            .defaultValue(stringHeaderArray[1])
-            .build();
     }
 
     private static List<Param> extractRequestHeaderParams(Method feignClientMethod) {
