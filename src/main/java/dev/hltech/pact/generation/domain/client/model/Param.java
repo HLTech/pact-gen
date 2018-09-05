@@ -8,6 +8,6 @@ import lombok.Data;
 public class Param {
 
     String name;
-    Class<?> paramType;
+    Class<?> type;
     Object defaultValue;
 }

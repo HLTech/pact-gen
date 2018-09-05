@@ -12,7 +12,7 @@ public class RequestProperties {
 
     private final HttpMethod httpMethod;
     private final String path;
-    private final List<Header> headers;
+    private final List<Param> headers;
     private final Class<?> bodyType;
     private final List<Param> requestParameters;
     private final List<Param> pathParameters;

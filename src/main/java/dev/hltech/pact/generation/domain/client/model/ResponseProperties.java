@@ -11,6 +11,6 @@ import java.util.List;
 public class ResponseProperties {
 
     private final HttpStatus status;
-    private final List<Header> headers;
+    private final List<Param> headers;
     private final Class<?> bodyType;
 }

@@ -2,7 +2,6 @@ package dev.hltech.pact.generation.domain.client.feign;
 
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
-import dev.hltech.pact.generation.domain.client.model.Header;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
@@ -131,7 +130,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
 
         return Param.builder()
             .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
-            .paramType(param.getType())
+            .type(param.getType())
             .build();
     }
 
@@ -171,7 +170,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
 
         return builder
             .name(extractParamName(param))
-            .paramType(param.getType())
+            .type(param.getType())
             .build();
     }
 
@@ -197,7 +196,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
         return Optional.of(annotation.defaultValue());
     }
 
-    private static List<Header> extractRequestHeaderParams(Method feignClientMethod) {
+    private static List<Param> extractRequestHeaderParams(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
             .filter(param -> param.getAnnotation(RequestHeader.class) != null)
             .filter(param -> param.getType() != Map.class
@@ -207,14 +206,14 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
             .collect(Collectors.toList());
     }
 
-    private static Header extractRequestHeaderParam(Parameter param) {
-        Header.HeaderBuilder builder = Header.builder();
+    private static Param extractRequestHeaderParam(Parameter param) {
+        Param.ParamBuilder builder = Param.builder();
 
         extractHeaderDefaultValue(param).ifPresent(builder::defaultValue);
 
         return builder
             .name(extractHeaderName(param))
-            .headerType(param.getType())
+            .type(param.getType())
             .build();
     }
 
@@ -240,21 +239,21 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
         return Optional.of(annotation.defaultValue());
     }
 
-    private static List<Header> combineHeaders(String[] rawHeaders, List<Header> headers) {
+    private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
         return Stream
             .concat(parseHeaders(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
     }
 
-    private static List<Header> parseHeaders(String[] stringHeaderArray) {
+    private static List<Param> parseHeaders(String[] stringHeaderArray) {
         return Arrays.stream(stringHeaderArray)
             .map(stringHeader -> stringHeader.split("="))
             .map(FeignMethodRepresentationExtractor::parseHeader)
             .collect(Collectors.toList());
     }
 
-    private static Header parseHeader(String[] stringHeaderArray) {
-        return Header.builder()
+    private static Param parseHeader(String[] stringHeaderArray) {
+        return Param.builder()
             .name(stringHeaderArray[0])
             .defaultValue(stringHeaderArray[1])
             .build();
