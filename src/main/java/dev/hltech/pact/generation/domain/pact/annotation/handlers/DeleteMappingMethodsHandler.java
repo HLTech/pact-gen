@@ -4,12 +4,10 @@ import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestBodyTypeFinder;
-import org.springframework.http.HttpHeaders;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestHeaderParamsExtractor;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 
@@ -36,7 +34,7 @@ public class DeleteMappingMethodsHandler implements AnnotationHandler {
             .path(method.getAnnotation(DeleteMapping.class).path()[0])
             .headers(combineHeaders(
                 method.getAnnotation(DeleteMapping.class).headers(),
-                extractRequestHeaderParams(method)))
+                RequestHeaderParamsExtractor.extractRequestHeaderParams(method)))
             .bodyType(RequestBodyTypeFinder.findRequestBodyType(method.getParameters()))
             .requestParameters(extractRequestParameters(method))
             .pathParameters(extractPathParameters(method))
@@ -47,49 +45,6 @@ public class DeleteMappingMethodsHandler implements AnnotationHandler {
         return Stream
             .concat(RawHeadersParser.parseHeaders(rawHeaders).stream(), headers.stream())
             .collect(Collectors.toList());
-    }
-
-    private static List<Param> extractRequestHeaderParams(Method feignClientMethod) {
-        return Arrays.stream(feignClientMethod.getParameters())
-            .filter(param -> param.getAnnotation(RequestHeader.class) != null)
-            .filter(param -> param.getType() != Map.class
-                && param.getType() != MultiValueMap.class
-                && param.getType() != HttpHeaders.class)
-            .map(DeleteMappingMethodsHandler::extractRequestHeaderParam)
-            .collect(Collectors.toList());
-    }
-
-    private static Param extractRequestHeaderParam(Parameter param) {
-        Param.ParamBuilder builder = Param.builder();
-
-        extractHeaderDefaultValue(param).ifPresent(builder::defaultValue);
-
-        return builder
-            .name(extractHeaderName(param))
-            .type(param.getType())
-            .build();
-    }
-
-    private static Optional<Object> extractHeaderDefaultValue(Parameter param) {
-        RequestHeader annotation = param.getAnnotation(RequestHeader.class);
-
-        if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(annotation.defaultValue());
-    }
-
-    private static String extractHeaderName(Parameter param) {
-        RequestHeader annotation = param.getAnnotation(RequestHeader.class);
-
-        if (!annotation.name().isEmpty()) {
-            return annotation.name();
-        } else if (!annotation.value().isEmpty()) {
-            return annotation.value();
-        }
-
-        return param.getName();
     }
 
     private static List<Param> extractRequestParameters(Method feignClientMethod) {
