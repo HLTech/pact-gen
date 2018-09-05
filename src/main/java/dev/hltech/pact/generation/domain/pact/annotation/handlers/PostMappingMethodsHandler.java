@@ -2,12 +2,12 @@ package dev.hltech.pact.generation.domain.pact.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
+import dev.hltech.pact.generation.domain.pact.annotation.handlers.util.RequestBodyTypeFinder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
@@ -36,7 +36,7 @@ public class PostMappingMethodsHandler implements AnnotationHandler {
             .headers(combineHeaders(
                 method.getAnnotation(PostMapping.class).headers(),
                 extractRequestHeaderParams(method)))
-            .bodyType(findRequestBodyClass(method.getParameters()))
+            .bodyType(RequestBodyTypeFinder.findRequestBodyType(method.getParameters()))
             .requestParameters(extractRequestParameters(method))
             .pathParameters(extractPathParameters(method))
             .build();
@@ -103,19 +103,6 @@ public class PostMappingMethodsHandler implements AnnotationHandler {
         }
 
         return param.getName();
-    }
-
-    private static Class<?> findRequestBodyClass(Parameter[] parameters) {
-        return Arrays.stream(parameters)
-            .filter(PostMappingMethodsHandler::isRequestBody)
-            .findFirst()
-            .map(Parameter::getType)
-            .orElse(null);
-    }
-
-    private static boolean isRequestBody(Parameter parameter) {
-        return parameter.getAnnotations().length == 0
-            || parameter.isAnnotationPresent(RequestBody.class);
     }
 
     private static List<Param> extractRequestParameters(Method feignClientMethod) {
