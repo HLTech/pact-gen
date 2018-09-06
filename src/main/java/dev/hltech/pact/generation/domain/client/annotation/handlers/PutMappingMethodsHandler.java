@@ -1,12 +1,12 @@
-package dev.hltech.pact.generation.domain.annotation.handlers;
+package dev.hltech.pact.generation.domain.client.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
-import dev.hltech.pact.generation.domain.util.PathParametersExtractor;
-import dev.hltech.pact.generation.domain.util.RawHeadersParser;
-import dev.hltech.pact.generation.domain.util.RequestBodyTypeFinder;
-import dev.hltech.pact.generation.domain.util.RequestHeaderParamsExtractor;
-import dev.hltech.pact.generation.domain.util.RequestParametersExtractor;
+import dev.hltech.pact.generation.domain.client.util.PathParametersExtractor;
+import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
+import dev.hltech.pact.generation.domain.client.util.RequestBodyTypeFinder;
+import dev.hltech.pact.generation.domain.client.util.RequestHeaderParamsExtractor;
+import dev.hltech.pact.generation.domain.client.util.RequestParametersExtractor;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.bind.annotation.PutMapping;
 

@@ -1,7 +1,9 @@
-package dev.hltech.pact.generation.domain.util;
+package dev.hltech.pact.generation.domain.client.util;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ValueConstants;
 
 import java.lang.reflect.Method;
@@ -12,31 +14,33 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class RequestParametersExtractor {
+public final class RequestHeaderParamsExtractor {
 
-    private RequestParametersExtractor() {}
+    private RequestHeaderParamsExtractor() {}
 
     public static List<Param> extractAll(Method feignClientMethod) {
         return Arrays.stream(feignClientMethod.getParameters())
-            .filter(param -> param.getAnnotation(RequestParam.class) != null)
-            .filter(param -> param.getType() != Map.class)
-            .map(RequestParametersExtractor::extract)
+            .filter(param -> param.getAnnotation(RequestHeader.class) != null)
+            .filter(param -> param.getType() != Map.class
+                && param.getType() != MultiValueMap.class
+                && param.getType() != HttpHeaders.class)
+            .map(RequestHeaderParamsExtractor::extract)
             .collect(Collectors.toList());
     }
 
     private static Param extract(Parameter param) {
         Param.ParamBuilder builder = Param.builder();
 
-        extractParamDefaultValue(param).ifPresent(builder::defaultValue);
+        extractHeaderDefaultValue(param).ifPresent(builder::defaultValue);
 
         return builder
-            .name(extractParamName(param))
+            .name(extractHeaderName(param))
             .type(param.getType())
             .build();
     }
 
-    private static Optional<Object> extractParamDefaultValue(Parameter param) {
-        RequestParam annotation = param.getAnnotation(RequestParam.class);
+    private static Optional<Object> extractHeaderDefaultValue(Parameter param) {
+        RequestHeader annotation = param.getAnnotation(RequestHeader.class);
 
         if (annotation.defaultValue().equals(ValueConstants.DEFAULT_NONE) || annotation.defaultValue().isEmpty()) {
             return Optional.empty();
@@ -45,8 +49,8 @@ public final class RequestParametersExtractor {
         return Optional.of(annotation.defaultValue());
     }
 
-    private static String extractParamName(Parameter param) {
-        RequestParam annotation = param.getAnnotation(RequestParam.class);
+    private static String extractHeaderName(Parameter param) {
+        RequestHeader annotation = param.getAnnotation(RequestHeader.class);
 
         if (!annotation.name().isEmpty()) {
             return annotation.name();

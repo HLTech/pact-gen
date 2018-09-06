@@ -1,4 +1,4 @@
-package dev.hltech.pact.generation.domain;
+package dev.hltech.pact.generation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder;

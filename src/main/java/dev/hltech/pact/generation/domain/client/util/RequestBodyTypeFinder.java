@@ -1,4 +1,4 @@
-package dev.hltech.pact.generation.domain.util;
+package dev.hltech.pact.generation.domain.client.util;
 
 import org.springframework.web.bind.annotation.RequestBody;
 

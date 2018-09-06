@@ -1,17 +1,17 @@
 package dev.hltech.pact.generation.domain.client.feign;
 
-import dev.hltech.pact.generation.domain.annotation.handlers.AnnotatedMethodHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.DeleteMappingMethodsHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.GetMappingMethodsHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.PatchMappingMethodsHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.PostMappingMethodsHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.PutMappingMethodsHandler;
-import dev.hltech.pact.generation.domain.annotation.handlers.RequestMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.AnnotatedMethodHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.DeleteMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.GetMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.PatchMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.PostMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.PutMappingMethodsHandler;
+import dev.hltech.pact.generation.domain.client.annotation.handlers.RequestMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
-import dev.hltech.pact.generation.domain.util.RawHeadersParser;
+import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
