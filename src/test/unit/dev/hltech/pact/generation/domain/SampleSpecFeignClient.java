@@ -34,7 +34,7 @@ public interface SampleSpecFeignClient {
     @ResponseInfo(status = HttpStatus.OK)
     ResponseType headTestObject(@RequestHeader Map<String, String> headers);
 
-    @RequestMapping(path = "/test/objects/4", method = RequestMethod.OPTIONS)
+    @RequestMapping(value = "/test/objects/4", method = RequestMethod.OPTIONS)
     @ResponseInfo(status = HttpStatus.OK)
     ResponseType optionsTestObject(
         @RequestHeader(required = false, name = "key4", defaultValue = "val4") String header);

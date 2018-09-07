@@ -27,7 +27,7 @@ public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
         return RequestProperties.builder()
             .httpMethod(HttpMethod.resolve(method.getAnnotation(RequestMapping.class)
                 .method()[0].name().toUpperCase()))
-            .path(method.getAnnotation(RequestMapping.class).path()[0])
+            .path(getPathFromMethod(method))
             .headers(combineHeaders(
                 method.getAnnotation(RequestMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
@@ -35,6 +35,11 @@ public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
             .requestParameters(RequestParametersExtractor.extractAll(method))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
+    }
+
+    private String getPathFromMethod(Method method) {
+        RequestMapping annotation = method.getAnnotation(RequestMapping.class);
+        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
