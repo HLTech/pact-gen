@@ -16,6 +16,8 @@ import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeignMethodRepresentationExtractor implements ClientMethodRepresentationExtractor {
 
@@ -31,7 +33,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     public ClientMethodRepresentation extractClientMethodRepresentation(Method clientMethod) {
         return ClientMethodRepresentation.builder()
             .requestProperties(extractRequestProperties(clientMethod))
-            .responseProperties(extractResponseProperties(clientMethod))
+            .responsePropertiesList(extractResponseProperties(clientMethod))
             .build();
     }
 
@@ -42,11 +44,13 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
             .handle(feignClientMethod);
     }
 
-    private static ResponseProperties extractResponseProperties(Method feignClientMethod) {
-        return ResponseProperties.builder()
-            .status(feignClientMethod.getAnnotation(ResponseInfo.class).status())
-            .headers(RawHeadersParser.parseAll(feignClientMethod.getAnnotation(ResponseInfo.class).headers()))
-            .bodyType(feignClientMethod.getReturnType())
-            .build();
+    private static List<ResponseProperties> extractResponseProperties(Method feignClientMethod) {
+        return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(ResponseInfo.class))
+            .map(annotation -> ResponseProperties.builder()
+                .status(annotation.status())
+                .headers(RawHeadersParser.parseAll(annotation.headers()))
+                .bodyType(feignClientMethod.getReturnType())
+                .build())
+            .collect(Collectors.toList());
     }
 }

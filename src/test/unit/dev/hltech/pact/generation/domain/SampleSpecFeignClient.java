@@ -26,6 +26,7 @@ public interface SampleSpecFeignClient {
 
     @DeleteMapping(path = "/test/{testId}/objects/1", headers = { "key1=val1", "key2=val2" })
     @ResponseInfo(status = HttpStatus.OK)
+    @ResponseInfo(status = HttpStatus.BAD_GATEWAY, headers = {"key3=val3"})
     ResponseType deleteTestObject(@RequestHeader HttpHeaders headers, @PathVariable("testId") String id);
 
     @GetMapping(path = "/test/{testId}/objects/2")

@@ -26,7 +26,7 @@ class PactFactorySpec extends Specification {
             with(pact) {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
-                interactions.size() == 8
+                interactions.size() == 9
 
                 interactions.any { interaction ->
                     interaction.description == 'deleteTestObject' &&
@@ -38,6 +38,20 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers[1].value == 'val2' &&
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                }
+
+                interactions.any { interaction ->
+                    interaction.description == 'deleteTestObject' &&
+                        interaction.request.method == 'DELETE' &&
+                        !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
+                        interaction.request.headers[0].name == 'key1' &&
+                        interaction.request.headers[0].value == 'val1' &&
+                        interaction.request.headers[1].name == 'key2' &&
+                        interaction.request.headers[1].value == 'val2' &&
+                        interaction.response.status == '502' &&
+                        interaction.response.headers[0].name == 'key3' &&
+                        interaction.response.headers[0].value == 'val3' &&
+                        interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
 
                 interactions.any { interaction ->
