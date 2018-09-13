@@ -12,13 +12,13 @@ class ParameterTypeExtractorSpec extends Specification {
     @Subject
     def parameterTypeExtractor = new ParameterTypeExtractor()
 
-    def "should correctly extract parameter type"(Parameter param, Class<?> type) {
+    def "should correctly extract parameter type"(Parameter param, List<Class<?>> type) {
         expect:
-            parameterTypeExtractor.extractParameterType(param) == type
+            parameterTypeExtractor.extractParameterTypes(param) == type
 
         where:
             param << ParameterTypeExtractorSpec.methods.find {it.name == 'testMethod'}.getParameters()
-            type << [String, Long, TestParam, Long, TestParam, int]
+            type << [[String], [Long], [TestParam], [Long], [TestParam], [int], [TestParam, TestParam]]
     }
 
     static void testMethod(String string,
@@ -26,6 +26,7 @@ class ParameterTypeExtractorSpec extends Specification {
                            TestParam testParam,
                            List<Long> longList,
                            Set<TestParam> paramSet,
-                           int[] ids) {
+                           int[] ids,
+                           Map<TestParam, TestParam> paramsMap) {
     }
 }

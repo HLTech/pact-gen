@@ -1,20 +1,27 @@
 package dev.hltech.pact.generation.domain.client.util;
 
+import com.google.common.collect.Lists;
+
 import java.lang.reflect.Parameter;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 class ParameterTypeExtractor {
 
-    static Class<?> extractParameterType(Parameter param) {
+    static List<Class<?>> extractParameterTypes(Parameter param) {
         if (param.getParameterizedType() instanceof ParameterizedType) {
             ParameterizedType paramType = (ParameterizedType)param.getParameterizedType();
-            return (Class<?>)paramType.getActualTypeArguments()[0];
+            return Arrays.stream(paramType.getActualTypeArguments())
+                .map(type -> (Class<?>)type)
+                .collect(Collectors.toList());
         }
 
         if (param.getType().isArray()) {
-            return param.getType().getComponentType();
+            return Lists.newArrayList(param.getType().getComponentType());
         }
 
-        return param.getType();
+        return Lists.newArrayList(param.getType());
     }
 }

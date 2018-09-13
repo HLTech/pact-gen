@@ -35,7 +35,7 @@ public final class RequestHeaderParamsExtractor {
 
         return builder
             .name(extractHeaderName(param))
-            .type(ParameterTypeExtractor.extractParameterType(param))
+            .type(ParameterTypeExtractor.extractParameterTypes(param).get(0))
             .build();
     }
 
