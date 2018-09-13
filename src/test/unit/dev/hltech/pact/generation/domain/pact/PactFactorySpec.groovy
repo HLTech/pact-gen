@@ -85,6 +85,10 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers.get(0).value == 'val1' &&
                     interaction.request.headers.get(1).name == 'key2' &&
                     interaction.request.headers.get(1).value == 'val2' &&
+                    interaction.request.headers.get(2).name == 'id' &&
+                    !interaction.request.headers.get(2).value.isEmpty() &&
+                    interaction.request.query.startsWith('parameters=') &&
+                    interaction.request.query.length() > "parameters=".length() &&
                     interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
                     interaction.response.status == '202' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
@@ -109,7 +113,9 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'traceTestObject' &&
                     interaction.request.method == 'TRACE' &&
                     interaction.request.path == '/test/objects/7' &&
-                    interaction.request.query.contains('param=')
+                    interaction.request.query.contains('param=') &&
+                    interaction.request.headers.get(0).name == 'type' &&
+                    !interaction.request.headers.get(0).value.isEmpty() &&
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }

@@ -31,7 +31,7 @@ public final class RequestParametersExtractor {
 
         return builder
             .name(extractParamName(param))
-            .type(param.getType())
+            .type(ParameterTypeExtractor.extractParameterType(param))
             .build();
     }
 
