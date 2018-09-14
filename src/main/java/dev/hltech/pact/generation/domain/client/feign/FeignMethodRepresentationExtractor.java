@@ -8,10 +8,12 @@ import dev.hltech.pact.generation.domain.client.annotation.handlers.PostMappingM
 import dev.hltech.pact.generation.domain.client.annotation.handlers.PutMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.client.annotation.handlers.RequestMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
+import dev.hltech.pact.generation.domain.client.model.Body;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
 import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
+import dev.hltech.pact.generation.domain.client.util.TypeExtractor;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -45,11 +47,17 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     }
 
     private static List<ResponseProperties> extractResponseProperties(Method feignClientMethod) {
+        feignClientMethod.getGenericReturnType();
+
         return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(ResponseInfo.class))
             .map(annotation -> ResponseProperties.builder()
                 .status(annotation.status())
                 .headers(RawHeadersParser.parseAll(annotation.headers()))
-                .bodyType(feignClientMethod.getReturnType())
+                .body(Body.builder()
+                    .bodyType(feignClientMethod.getReturnType())
+                    .genericArgumentTypes(
+                        TypeExtractor.extractGenericTypesFromType(feignClientMethod.getGenericReturnType()))
+                    .build())
                 .build())
             .collect(Collectors.toList());
     }

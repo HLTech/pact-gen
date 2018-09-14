@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
 import dev.hltech.pact.generation.domain.pact.model.Pact
 import org.apache.commons.lang.StringUtils
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -131,7 +132,7 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers.get(0).name == 'type' &&
                     !interaction.request.headers.get(0).value.isEmpty() &&
                     interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
                 }
             }
     }

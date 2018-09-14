@@ -12,5 +12,5 @@ public class ResponseProperties {
 
     private final HttpStatus status;
     private final List<Param> headers;
-    private final Class<?> bodyType;
+    private final Body body;
 }

@@ -65,7 +65,7 @@ public class PactFactory {
             .path(parsePath(requestProperties.getPath(), requestProperties.getPathParameters()))
             .headers(mapHeaders(requestProperties.getHeaders()))
             .query(parseParametersToQuery(requestProperties.getRequestParameters()))
-            .body(BodySerializer.serializeBody(requestProperties.getBodyType(), objectMapper))
+            .body(BodySerializer.serializeBody(requestProperties.getBody(), objectMapper))
             .build();
     }
 
@@ -120,7 +120,7 @@ public class PactFactory {
             .map(props -> InteractionResponse.builder()
                 .status(props.getStatus().toString())
                 .headers(mapHeaders(props.getHeaders()))
-                .body(BodySerializer.serializeBody(props.getBodyType(), objectMapper))
+                .body(BodySerializer.serializeBody(props.getBody(), objectMapper))
                 .build())
             .collect(Collectors.toList());
     }

@@ -7,17 +7,17 @@ import spock.lang.Subject
 import java.lang.reflect.Parameter
 
 
-class ParameterTypeExtractorSpec extends Specification {
+class TypeExtractorSpec extends Specification {
 
     @Subject
-    def parameterTypeExtractor = new ParameterTypeExtractor()
+    def parameterTypeExtractor = new TypeExtractor()
 
     def "should correctly extract parameter type"(Parameter param, List<Class<?>> type) {
         expect:
-            parameterTypeExtractor.extractParameterTypes(param) == type
+            parameterTypeExtractor.extractTypesFromParameter(param) == type
 
         where:
-            param << ParameterTypeExtractorSpec.methods.find {it.name == 'testMethod'}.getParameters()
+            param << TypeExtractorSpec.methods.find {it.name == 'testMethod'}.getParameters()
             type << [[String], [Long], [TestParam], [Long], [TestParam], [int], [TestParam, TestParam]]
     }
 

@@ -61,5 +61,6 @@ public interface SampleSpecFeignClient {
 
     @RequestMapping(path = "/test/objects/7", method = RequestMethod.TRACE)
     @ResponseInfo(status = HttpStatus.OK)
-    ResponseType traceTestObject(@RequestParam("param") String param, @RequestHeader(name = "type") int[] headers);
+    GenericResponseType<TestParam> traceTestObject(
+        @RequestParam("param") String param, @RequestHeader(name = "type") int[] headers);
 }

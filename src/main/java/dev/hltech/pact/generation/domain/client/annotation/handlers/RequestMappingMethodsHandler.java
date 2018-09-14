@@ -4,7 +4,7 @@ import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.util.PathParametersExtractor;
 import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
-import dev.hltech.pact.generation.domain.client.util.RequestBodyTypeFinder;
+import dev.hltech.pact.generation.domain.client.util.RequestBodyExtractor;
 import dev.hltech.pact.generation.domain.client.util.RequestHeaderParamsExtractor;
 import dev.hltech.pact.generation.domain.client.util.RequestParametersExtractor;
 import org.springframework.http.HttpMethod;
@@ -31,7 +31,7 @@ public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
             .headers(combineHeaders(
                 method.getAnnotation(RequestMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
-            .bodyType(RequestBodyTypeFinder.find(method.getParameters()))
+            .body(RequestBodyExtractor.extract(method.getParameters()))
             .requestParameters(RequestParametersExtractor.extractAll(method))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
