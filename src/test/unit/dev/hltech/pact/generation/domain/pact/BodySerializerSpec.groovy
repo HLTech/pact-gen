@@ -9,7 +9,7 @@ import spock.lang.Specification
 
 class BodySerializerSpec extends Specification {
 
-    ObjectMapper mapper = new ObjectMapper()
+    private ObjectMapper mapper = new ObjectMapper()
 
     def "Should correctly serialize body basing on its type"() {
         given:

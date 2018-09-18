@@ -10,7 +10,7 @@ public final class RequestBodyExtractor {
 
     private RequestBodyExtractor() {}
 
-    public static Body extract(Parameter[]parameters) {
+    public static Body extract(Parameter[] parameters) {
         Parameter responseParameter = Arrays.stream(parameters)
             .filter(RequestBodyExtractor::isRequestBody)
             .findFirst()
