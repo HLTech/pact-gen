@@ -26,7 +26,7 @@ public class PatchMappingMethodsHandler implements AnnotatedMethodHandler {
     public RequestProperties handle(Method method) {
         return RequestProperties.builder()
             .httpMethod(HttpMethod.PATCH)
-            .path(method.getAnnotation(PatchMapping.class).path()[0])
+            .path(getPathFromMethod(method))
             .headers(combineHeaders(
                 method.getAnnotation(PatchMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
@@ -34,6 +34,11 @@ public class PatchMappingMethodsHandler implements AnnotatedMethodHandler {
             .requestParameters(RequestParametersExtractor.extractAll(method))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
+    }
+
+    private String getPathFromMethod(Method method) {
+        PatchMapping annotation = method.getAnnotation(PatchMapping.class);
+        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {

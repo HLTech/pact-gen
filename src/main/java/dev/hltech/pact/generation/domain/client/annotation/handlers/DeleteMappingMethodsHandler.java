@@ -26,7 +26,7 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
     public RequestProperties handle(Method method) {
         return RequestProperties.builder()
             .httpMethod(HttpMethod.DELETE)
-            .path(method.getAnnotation(DeleteMapping.class).path()[0])
+            .path(getPathFromMethod(method))
             .headers(combineHeaders(
                 method.getAnnotation(DeleteMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
@@ -34,6 +34,11 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
             .requestParameters(RequestParametersExtractor.extractAll(method))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
+    }
+
+    private String getPathFromMethod(Method method) {
+        DeleteMapping annotation = method.getAnnotation(DeleteMapping.class);
+        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {

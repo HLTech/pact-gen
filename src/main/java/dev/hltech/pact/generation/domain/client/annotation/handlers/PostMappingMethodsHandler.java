@@ -26,7 +26,7 @@ public class PostMappingMethodsHandler implements AnnotatedMethodHandler {
     public RequestProperties handle(Method method) {
         return RequestProperties.builder()
             .httpMethod(HttpMethod.POST)
-            .path(method.getAnnotation(PostMapping.class).path()[0])
+            .path(getPathFromMethod(method))
             .headers(combineHeaders(
                 method.getAnnotation(PostMapping.class).headers(),
                 RequestHeaderParamsExtractor.extractAll(method)))
@@ -34,6 +34,11 @@ public class PostMappingMethodsHandler implements AnnotatedMethodHandler {
             .requestParameters(RequestParametersExtractor.extractAll(method))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
+    }
+
+    private String getPathFromMethod(Method method) {
+        PostMapping annotation = method.getAnnotation(PostMapping.class);
+        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
