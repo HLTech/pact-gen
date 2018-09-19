@@ -23,7 +23,7 @@ final class BodySerializer {
         } catch (JsonProcessingException ex) {
             System.out.println(ex.getMessage());
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
 
         return serializedBody;
