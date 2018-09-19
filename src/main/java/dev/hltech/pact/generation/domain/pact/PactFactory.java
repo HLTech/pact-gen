@@ -29,11 +29,16 @@ public class PactFactory {
         ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();
 
         return Pact.builder()
-            .provider(new Service(feignClient.getAnnotation(FeignClient.class).value()))
+            .provider(new Service(extractProviderName(feignClient)))
             .consumer(new Service(consumerName))
             .interactions(createInteractionsFromMethods(methodExtractor, feignClient.getMethods(), objectMapper))
             .metadata(new Metadata("1.0.0"))
             .build();
+    }
+
+    private String extractProviderName(Class<?> feignClient) {
+        FeignClient feignClientAnnotation = feignClient.getAnnotation(FeignClient.class);
+        return feignClientAnnotation.value().isEmpty() ? feignClientAnnotation.name() : feignClientAnnotation.value();
     }
 
     private static List<Interaction> createInteractionsFromMethods(
