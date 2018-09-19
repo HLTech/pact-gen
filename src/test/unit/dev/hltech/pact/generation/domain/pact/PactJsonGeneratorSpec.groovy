@@ -1,7 +1,6 @@
 package dev.hltech.pact.generation.domain.pact
 
-
-import dev.hltech.pact.generation.domain.pact.model.Header
+import com.google.common.collect.Lists
 import dev.hltech.pact.generation.domain.pact.model.Interaction
 import dev.hltech.pact.generation.domain.pact.model.InteractionRequest
 import dev.hltech.pact.generation.domain.pact.model.InteractionResponse
@@ -45,11 +44,9 @@ class PactJsonGeneratorSpec extends Specification {
             jsonRoot.interactions[0].description == 'createFromFeignClient test object'
             jsonRoot.interactions[0].request.method == 'POST'
             jsonRoot.interactions[0].request.path == '/test/objects'
-            jsonRoot.interactions[0].request.headers[0].name == 'Authorization'
-            jsonRoot.interactions[0].request.headers[0].value == 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='
+            jsonRoot.interactions[0].request.headers.'Authorization' == 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='
             jsonRoot.interactions[0].response.status == '200'
-            jsonRoot.interactions[0].response.headers[0].name == 'Location'
-            jsonRoot.interactions[0].response.headers[0].value == '/test/objects/123'
+            jsonRoot.interactions[0].response.headers.'Location' == '/test/objects/123'
             jsonRoot.metadata.pactSpecificationVersion == '1.0.0'
     }
 
@@ -63,15 +60,20 @@ class PactJsonGeneratorSpec extends Specification {
                         .request(InteractionRequest.builder()
                             .method('POST')
                             .path('/test/objects')
-                            .headers([new Header('Authorization', 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU=')])
+                            .headers(generateHeaders(Lists.newArrayList(new AbstractMap.SimpleEntry<String, String>('Authorization', 'Bearer T3VyUGFjdEdlbmVyYXRvcklzVG90YWxseUF3ZXNvbWU='))))
                             .build())
                         .response(InteractionResponse.builder()
                             .status('200')
-                            .headers([new Header('Location', '/test/objects/123')])
+                            .headers(generateHeaders(Lists.newArrayList(new AbstractMap.SimpleEntry<String, String>('Location', '/test/objects/123'))))
                             .build())
                         .build()
             ])
             .metadata(new Metadata('1.0.0'))
             .build()
+    }
+
+    private static Map<String, String> generateHeaders(List<Map.Entry<String, String>> entries) {
+        def map = new HashMap<String, String>()
+        map.putAll(entries)
     }
 }

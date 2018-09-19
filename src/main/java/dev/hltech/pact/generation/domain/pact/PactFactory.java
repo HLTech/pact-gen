@@ -7,7 +7,6 @@ import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
-import dev.hltech.pact.generation.domain.pact.model.Header;
 import dev.hltech.pact.generation.domain.pact.model.Interaction;
 import dev.hltech.pact.generation.domain.pact.model.InteractionRequest;
 import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
@@ -18,7 +17,9 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PactFactory {
@@ -125,12 +126,9 @@ public class PactFactory {
             .collect(Collectors.toList());
     }
 
-    private static List<Header> mapHeaders(List<Param> headers) {
-        return headers.stream()
-            .map(header -> Header.builder()
-                .name(header.getName())
-                .value(String.valueOf(getHeaderValue(header)))
-                .build())
-            .collect(Collectors.toList());
+    private static Map<String, String> mapHeaders(List<Param> headers) {
+        Map<String, String> parsedHeaders = new HashMap<>();
+        headers.forEach(header -> parsedHeaders.put(header.getName(), String.valueOf(getHeaderValue(header))));
+        return parsedHeaders;
     }
 }

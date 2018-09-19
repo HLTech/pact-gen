@@ -4,13 +4,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
 public class InteractionResponse {
 
     private final String status;
-    private final List<Header> headers;
+    private final Map<String, String> headers;
     private final JsonNode body;
 }

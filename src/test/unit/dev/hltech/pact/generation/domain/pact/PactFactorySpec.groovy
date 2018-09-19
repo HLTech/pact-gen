@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
 import dev.hltech.pact.generation.domain.pact.model.Pact
 import org.apache.commons.lang.StringUtils
-import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -33,26 +32,26 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'deleteTestObject' &&
                     interaction.request.method == 'DELETE' &&
                     !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
-                    interaction.request.headers[0].name == 'key1' &&
-                    interaction.request.headers[0].value == 'val1' &&
-                    interaction.request.headers[1].name == 'key2' &&
-                    interaction.request.headers[1].value == 'val2' &&
+                    interaction.request.headers.containsKey('key1') &&
+                    interaction.request.headers.get('key1') == 'val1' &&
+                    interaction.request.headers.containsKey('key2') &&
+                    interaction.request.headers.get('key2') == 'val2' &&
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
 
                 interactions.any { interaction ->
                     interaction.description == 'deleteTestObject' &&
-                        interaction.request.method == 'DELETE' &&
-                        !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
-                        interaction.request.headers[0].name == 'key1' &&
-                        interaction.request.headers[0].value == 'val1' &&
-                        interaction.request.headers[1].name == 'key2' &&
-                        interaction.request.headers[1].value == 'val2' &&
-                        interaction.response.status == '502' &&
-                        interaction.response.headers[0].name == 'key3' &&
-                        interaction.response.headers[0].value == 'val3' &&
-                        interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.request.method == 'DELETE' &&
+                    !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
+                    interaction.request.headers.containsKey('key1') &&
+                    interaction.request.headers.get('key1') == 'val1' &&
+                    interaction.request.headers.containsKey('key2') &&
+                    interaction.request.headers.get('key2') == 'val2' &&
+                    interaction.response.status == '502' &&
+                    interaction.response.headers.containsKey('key3') &&
+                    interaction.response.headers.get('key3') == 'val3' &&
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
 
                 interactions.any { interaction ->
@@ -60,8 +59,8 @@ class PactFactorySpec extends Specification {
                     interaction.request.method == 'GET' &&
                     !StringUtils.substringBetween(interaction.request.path,'/test/', '/objects/2').isEmpty() &&
                     interaction.response.status == '200' &&
-                    interaction.response.headers[0].name == 'key3' &&
-                    interaction.response.headers[0].value == 'val3' &&
+                    interaction.response.headers.containsKey('key3') &&
+                    interaction.response.headers.get('key3') == 'val3' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
 
@@ -77,8 +76,8 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'optionsTestObject' &&
                     interaction.request.method == 'OPTIONS' &&
                     interaction.request.path == '/test/objects/4' &&
-                    interaction.request.headers[0].name == 'key4' &&
-                    interaction.request.headers[0].value == 'val4' &&
+                    interaction.request.headers.containsKey('key4') &&
+                    interaction.request.headers.get('key4') == 'val4' &&
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
@@ -96,12 +95,12 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'createTestObject' &&
                     interaction.request.method == 'POST' &&
                     interaction.request.path == '/test/objects' &&
-                    interaction.request.headers.get(0).name == 'key1' &&
-                    interaction.request.headers.get(0).value == 'val1' &&
-                    interaction.request.headers.get(1).name == 'key2' &&
-                    interaction.request.headers.get(1).value == 'val2' &&
-                    interaction.request.headers.get(2).name == 'id' &&
-                    !interaction.request.headers.get(2).value.isEmpty() &&
+                    interaction.request.headers.containsKey('key1') &&
+                    interaction.request.headers.get('key1') == 'val1' &&
+                    interaction.request.headers.containsKey('key2') &&
+                    interaction.request.headers.get('key2') == 'val2' &&
+                    interaction.request.headers.containsKey('id') &&
+                    !interaction.request.headers.get('id').isEmpty() &&
                     interaction.request.query.startsWith('parameters=') &&
                     interaction.request.query.length() > "parameters=".length() &&
                     interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
@@ -113,14 +112,14 @@ class PactFactorySpec extends Specification {
                     interaction.description == 'updateTestObject' &&
                     interaction.request.method == 'PUT' &&
                     interaction.request.path == '/test/objects/6' &&
-                    interaction.request.headers[0].name == 'key1' &&
-                    !interaction.request.headers[0].value.isEmpty() &&
+                    interaction.request.headers.containsKey('key1') &&
+                    !interaction.request.headers.get('key1').isEmpty() &&
                     interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
                     interaction.response.status == '200' &&
-                    interaction.response.headers[0].name == 'key3' &&
-                    interaction.response.headers[0].value == 'val3' &&
-                    interaction.response.headers[1].name == 'key4' &&
-                    interaction.response.headers[1].value == 'val4' &&
+                    interaction.response.headers.containsKey('key3') &&
+                    interaction.response.headers.get('key3') == 'val3' &&
+                    interaction.response.headers.containsKey('key4') &&
+                    interaction.response.headers.get('key4') == 'val4' &&
                     interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
                 }
 
@@ -129,8 +128,8 @@ class PactFactorySpec extends Specification {
                     interaction.request.method == 'TRACE' &&
                     interaction.request.path == '/test/objects/7' &&
                     interaction.request.query.contains('param=') &&
-                    interaction.request.headers.get(0).name == 'type' &&
-                    !interaction.request.headers.get(0).value.isEmpty() &&
+                    interaction.request.headers.containsKey('type') &&
+                    !interaction.request.headers.get('type').isEmpty() &&
                     interaction.response.status == '200' &&
                     interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
                 }
