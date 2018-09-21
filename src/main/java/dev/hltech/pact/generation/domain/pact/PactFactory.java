@@ -13,6 +13,7 @@ import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
 import dev.hltech.pact.generation.domain.pact.model.Metadata;
 import dev.hltech.pact.generation.domain.pact.model.Pact;
 import org.springframework.cloud.openfeign.FeignClient;
+import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
@@ -23,8 +24,16 @@ import java.util.stream.Collectors;
 
 public class PactFactory {
 
+    private static final PodamFactory podamFactory;
+
+    static {
+        podamFactory = new PodamFactoryImpl();
+        podamFactory.getStrategy().addOrReplaceTypeManufacturer(String.class, new EnumStringManufacturer());
+    }
+
     
     public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
+
         ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();
 
         return Pact.builder()
@@ -70,7 +79,7 @@ public class PactFactory {
             .path(parsePath(requestProperties.getPath(), requestProperties.getPathParameters()))
             .headers(mapHeaders(requestProperties.getHeaders()))
             .query(parseParametersToQuery(requestProperties.getRequestParameters()))
-            .body(BodySerializer.serializeBody(requestProperties.getBody(), objectMapper))
+            .body(BodySerializer.serializeBody(requestProperties.getBody(), objectMapper, podamFactory))
             .build();
     }
 
@@ -86,7 +95,7 @@ public class PactFactory {
 
     private static Object getParamValue(Param param) {
         if (param.getDefaultValue() == null) {
-            return new PodamFactoryImpl().manufacturePojo(param.getType());
+            return podamFactory.manufacturePojo(param.getType());
         }
 
         return param.getDefaultValue();
@@ -94,7 +103,7 @@ public class PactFactory {
 
     private static Object getHeaderValue(Param header) {
         if (header.getDefaultValue() == null) {
-            return new PodamFactoryImpl().manufacturePojo(header.getType());
+            return podamFactory.manufacturePojo(header.getType());
         }
 
         return header.getDefaultValue();
@@ -125,7 +134,7 @@ public class PactFactory {
             .map(props -> InteractionResponse.builder()
                 .status(props.getStatus().toString())
                 .headers(mapHeaders(props.getHeaders()))
-                .body(BodySerializer.serializeBody(props.getBody(), objectMapper))
+                .body(BodySerializer.serializeBody(props.getBody(), objectMapper, podamFactory))
                 .build())
             .collect(Collectors.toList());
     }

@@ -37,7 +37,7 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers.containsKey('key2') &&
                     interaction.request.headers.get('key2') == 'val2' &&
                     interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -51,7 +51,7 @@ class PactFactorySpec extends Specification {
                     interaction.response.status == '502' &&
                     interaction.response.headers.containsKey('key3') &&
                     interaction.response.headers.get('key3') == 'val3' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -61,7 +61,7 @@ class PactFactorySpec extends Specification {
                     interaction.response.status == '200' &&
                     interaction.response.headers.containsKey('key3') &&
                     interaction.response.headers.get('key3') == 'val3' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -69,7 +69,7 @@ class PactFactorySpec extends Specification {
                     interaction.request.method == 'HEAD' &&
                     interaction.request.path == '/test/objects/3' &&
                     interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -79,7 +79,7 @@ class PactFactorySpec extends Specification {
                     interaction.request.headers.containsKey('key4') &&
                     interaction.request.headers.get('key4') == 'val4' &&
                     interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -105,7 +105,7 @@ class PactFactorySpec extends Specification {
                     interaction.request.query.length() > "parameters=".length() &&
                     interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
                     interaction.response.status == '202' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
@@ -120,7 +120,7 @@ class PactFactorySpec extends Specification {
                     interaction.response.headers.get('key3') == 'val3' &&
                     interaction.response.headers.containsKey('key4') &&
                     interaction.response.headers.get('key4') == 'val4' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":".+"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
                 }
 
                 interactions.any { interaction ->
