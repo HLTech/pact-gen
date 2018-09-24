@@ -58,7 +58,7 @@ class PactFactorySpec extends Specification {
                 interactions.any { interaction ->
                     interaction.description == 'getTestObject' &&
                     interaction.request.method == 'GET' &&
-                    verifyMultiplePathParameters(interaction)
+                    verifyMultiplePathVariables(interaction)
                     interaction.response.status == '200' &&
                     interaction.response.headers.containsKey('key3') &&
                     interaction.response.headers.get('key3') == 'val3' &&
@@ -137,12 +137,12 @@ class PactFactorySpec extends Specification {
             }
     }
 
-    boolean verifyMultiplePathParameters(Interaction interaction) {
+    boolean verifyMultiplePathVariables(Interaction interaction) {
         def path = interaction.request.path
 
-        def firstPathParameter = StringUtils.substringsBetween(interaction.request.path,'/test/', '/objects')[0]
-        def secondPathParameter = StringUtils.substringAfter(path, '/objects')
+        def firstPathVariable = StringUtils.substringsBetween(interaction.request.path,'/test/', '/objects')[0]
+        def secondPathVariable = StringUtils.substringAfter(path, '/objects')
 
-        !firstPathParameter.isEmpty() && firstPathParameter != {'testId'} && !secondPathParameter.isEmpty() && secondPathParameter != {'anotherTestId'}
+        !firstPathVariable.isEmpty() && firstPathVariable != {'testId'} && !secondPathVariable.isEmpty() && secondPathVariable != {'anotherTestId'}
     }
 }
