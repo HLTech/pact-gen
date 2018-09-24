@@ -29,9 +29,11 @@ public interface SampleSpecFeignClient {
     @ResponseInfo(status = HttpStatus.BAD_GATEWAY, headers = {"key3=val3"})
     ResponseType deleteTestObject(@RequestHeader HttpHeaders headers, @PathVariable("testId") String id);
 
-    @GetMapping(path = "/test/{testId}/objects/2")
+    @GetMapping(path = "/test/{testId}/objects/{anotherTestId}/item")
     @ResponseInfo(status = HttpStatus.OK, headers = {"key3=val3"})
-    ResponseType getTestObject(@RequestHeader MultiValueMap<String, String> headers, @PathVariable("testId") Long id);
+    ResponseType getTestObject(@RequestHeader MultiValueMap<String, String> headers,
+                               @PathVariable("testId") Long id,
+                               @PathVariable("anotherTestId") Long anotherId);
 
     @RequestMapping(path = "/test/objects/3", method = RequestMethod.HEAD)
     @ResponseInfo(status = HttpStatus.OK)

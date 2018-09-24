@@ -88,7 +88,7 @@ public class PactFactory {
         for (Param param : pathParameters) {
             Object paramValue = getParamValue(param);
 
-            resultPath = path.replace("{" + param.getName() + "}", String.valueOf(paramValue));
+            resultPath = resultPath.replace("{" + param.getName() + "}", String.valueOf(paramValue));
         }
         return resultPath;
     }

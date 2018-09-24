@@ -2,6 +2,7 @@ package dev.hltech.pact.generation.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
+import dev.hltech.pact.generation.domain.pact.model.Interaction
 import dev.hltech.pact.generation.domain.pact.model.Pact
 import org.apache.commons.lang.StringUtils
 import spock.lang.Specification
@@ -57,7 +58,7 @@ class PactFactorySpec extends Specification {
                 interactions.any { interaction ->
                     interaction.description == 'getTestObject' &&
                     interaction.request.method == 'GET' &&
-                    !StringUtils.substringBetween(interaction.request.path,'/test/', '/objects/2').isEmpty() &&
+                    verifyMultiplePathParameters(interaction)
                     interaction.response.status == '200' &&
                     interaction.response.headers.containsKey('key3') &&
                     interaction.response.headers.get('key3') == 'val3' &&
@@ -134,5 +135,14 @@ class PactFactorySpec extends Specification {
                     interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
                 }
             }
+    }
+
+    boolean verifyMultiplePathParameters(Interaction interaction) {
+        def path = interaction.request.path
+
+        def firstPathParameter = StringUtils.substringsBetween(interaction.request.path,'/test/', '/objects')[0]
+        def secondPathParameter = StringUtils.substringAfter(path, '/objects')
+
+        !firstPathParameter.isEmpty() && firstPathParameter != {'testId'} && !secondPathParameter.isEmpty() && secondPathParameter != {'anotherTestId'}
     }
 }
