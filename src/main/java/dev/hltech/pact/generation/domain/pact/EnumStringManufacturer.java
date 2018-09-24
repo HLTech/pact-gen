@@ -14,8 +14,8 @@ public class EnumStringManufacturer extends StringTypeManufacturerImpl {
 
     @Override
     public String getType(DataProviderStrategy strategy,
-                           AttributeMetadata attributeMetadata,
-                           Map<String, Type> genericTypesArgumentsMap) {
+                          AttributeMetadata attributeMetadata,
+                          Map<String, Type> genericTypesArgumentsMap) {
 
         Optional<Annotation> jsonPropertyAnnotation = attributeMetadata.getAttributeAnnotations().stream()
             .filter(annotation -> annotation.annotationType().equals(JsonProperty.class))

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
 import dev.hltech.pact.generation.domain.pact.model.Interaction
 import dev.hltech.pact.generation.domain.pact.model.Pact
+import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.lang.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
@@ -20,8 +21,9 @@ class PactFactorySpec extends Specification {
             final ObjectMapper objectMapper = new ObjectMapper()
 
         when:
-            final Pact pact = pactFactory.createFromFeignClient(
-                feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain')[0], 'SpecConsumer', objectMapper)
+            Set<Class<?>> feignClients = feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.single')
+
+            final Pact pact = pactFactory.createFromFeignClient(feignClients[0], 'SpecConsumer', objectMapper)
 
         then:
             with(pact) {

@@ -10,11 +10,13 @@ class FeignClientsFinderSpec extends Specification {
 
     def "should find feign client"() {
         when:
-            Set<Class<?>> feignClients = finder.findFeignClients('dev.hltech.pact.generation.domain')
+            Set<Class<?>> feignClients = finder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.multiple')
 
         then:
-            feignClients.size() == 1
-            feignClients[0].simpleName == 'SampleSpecFeignClient'
+            feignClients.size() == 2
+            feignClients[0].simpleName != feignClients[1].simpleName
+            ['FirstSampleSpecFeignClient', 'SecondSampleSpecFeignClient'].contains(feignClients[0].simpleName)
+            ['FirstSampleSpecFeignClient', 'SecondSampleSpecFeignClient'].contains(feignClients[1].simpleName)
     }
 
     def "should not find feign clients"() {

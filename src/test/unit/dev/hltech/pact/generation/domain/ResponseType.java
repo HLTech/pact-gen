@@ -2,7 +2,7 @@ package dev.hltech.pact.generation.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-class ResponseType {
+public class ResponseType {
 
     private final String responseFoo;
     private final String responseBar;

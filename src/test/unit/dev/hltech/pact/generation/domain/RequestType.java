@@ -1,6 +1,6 @@
 package dev.hltech.pact.generation.domain;
 
-class RequestType {
+public class RequestType {
 
     private final String requestFoo;
     private final String requestBar;

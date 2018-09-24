@@ -1,5 +1,9 @@
-package dev.hltech.pact.generation.domain;
+package dev.hltech.pact.generation.domain.client.feign.single;
 
+import dev.hltech.pact.generation.domain.GenericResponseType;
+import dev.hltech.pact.generation.domain.RequestType;
+import dev.hltech.pact.generation.domain.ResponseType;
+import dev.hltech.pact.generation.domain.TestParam;
 import dev.hltech.pact.generation.domain.client.feign.ResponseInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
