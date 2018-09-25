@@ -64,6 +64,7 @@ class PactGeneratorSpec extends Specification {
                     consumer.name == 'same-consumer'
                     provider.name == 'same-provider'
                     interactions.size() == 2
+
                     interactions[0].description != interactions[1].description
                     ['1', '2'].contains(interactions[0].description)
                     ['1', '2'].contains(interactions[1].description)

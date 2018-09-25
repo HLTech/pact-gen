@@ -1,145 +1,194 @@
 package dev.hltech.pact.generation.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import dev.hltech.pact.generation.domain.client.feign.FeignClientsFinder
+import dev.hltech.pact.generation.domain.client.feign.sample.DescriptionFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.PathFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.RequestBodyFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.RequestHeadersFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.RequestParamFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.RequestTypeFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.ResponseBodyFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.ResponseHeadersFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.ResponseInfoFeignClient
 import dev.hltech.pact.generation.domain.pact.model.Interaction
 import dev.hltech.pact.generation.domain.pact.model.Pact
-import org.apache.commons.lang.ArrayUtils
 import org.apache.commons.lang.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
 
 class PactFactorySpec extends Specification {
 
-    private FeignClientsFinder feignClientsFinder = new FeignClientsFinder()
-
     @Subject
     private PactFactory pactFactory = new PactFactory()
 
-    def "should create object representing pact file out of feign client"() {
-        given:
-            final ObjectMapper objectMapper = new ObjectMapper()
+    final ObjectMapper objectMapper = new ObjectMapper()
 
+    def "should get http method from feign client"() {
         when:
-            Set<Class<?>> feignClients = feignClientsFinder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.single')
-
-            final Pact pact = pactFactory.createFromFeignClient(feignClients[0], 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(RequestTypeFeignClient.class, 'SpecConsumer', objectMapper)
 
         then:
             with(pact) {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
-                interactions.size() == 9
-
-                interactions.any { interaction ->
-                    interaction.description == 'deleteTestObject' &&
-                    interaction.request.method == 'DELETE' &&
-                    !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
-                    interaction.request.headers.containsKey('key1') &&
-                    interaction.request.headers.get('key1') == 'val1' &&
-                    interaction.request.headers.containsKey('key2') &&
-                    interaction.request.headers.get('key2') == 'val2' &&
-                    interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'deleteTestObject' &&
-                    interaction.request.method == 'DELETE' &&
-                    !StringUtils.substringBetween(interaction.request.path, '/test/', '/objects/1').isEmpty() &&
-                    interaction.request.headers.containsKey('key1') &&
-                    interaction.request.headers.get('key1') == 'val1' &&
-                    interaction.request.headers.containsKey('key2') &&
-                    interaction.request.headers.get('key2') == 'val2' &&
-                    interaction.response.status == '502' &&
-                    interaction.response.headers.containsKey('key3') &&
-                    interaction.response.headers.get('key3') == 'val3' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'getTestObject' &&
-                    interaction.request.method == 'GET' &&
-                    verifyMultiplePathVariables(interaction)
-                    interaction.response.status == '200' &&
-                    interaction.response.headers.containsKey('key3') &&
-                    interaction.response.headers.get('key3') == 'val3' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'headTestObject' &&
-                    interaction.request.method == 'HEAD' &&
-                    interaction.request.path == '/test/objects/3' &&
-                    interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'optionsTestObject' &&
-                    interaction.request.method == 'OPTIONS' &&
-                    interaction.request.path == '/test/objects/4' &&
-                    interaction.request.headers.containsKey('key4') &&
-                    interaction.request.headers.get('key4') == 'val4' &&
-                    interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'patchTestObject' &&
-                    interaction.request.method == 'PATCH' &&
-                    interaction.request.path == '/test/objects/5' &&
-                    interaction.request.query == 'longP=abc&very_long_name=def' &&
-                    interaction.response.status == '202' &&
-                    interaction.response.body == null
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'createTestObject' &&
-                    interaction.request.method == 'POST' &&
-                    interaction.request.path == '/test/objects' &&
-                    interaction.request.headers.containsKey('key1') &&
-                    interaction.request.headers.get('key1') == 'val1' &&
-                    interaction.request.headers.containsKey('key2') &&
-                    interaction.request.headers.get('key2') == 'val2' &&
-                    interaction.request.headers.containsKey('id') &&
-                    !interaction.request.headers.get('id').isEmpty() &&
-                    interaction.request.query.startsWith('parameters=') &&
-                    interaction.request.query.length() > "parameters=".length() &&
-                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
-                    interaction.response.status == '202' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'updateTestObject' &&
-                    interaction.request.method == 'PUT' &&
-                    interaction.request.path == '/test/objects/6' &&
-                    interaction.request.headers.containsKey('key1') &&
-                    !interaction.request.headers.get('key1').isEmpty() &&
-                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/ &&
-                    interaction.response.status == '200' &&
-                    interaction.response.headers.containsKey('key3') &&
-                    interaction.response.headers.get('key3') == 'val3' &&
-                    interaction.response.headers.containsKey('key4') &&
-                    interaction.response.headers.get('key4') == 'val4' &&
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-                }
-
-                interactions.any { interaction ->
-                    interaction.description == 'traceTestObject' &&
-                    interaction.request.method == 'TRACE' &&
-                    interaction.request.path == '/test/objects/7' &&
-                    interaction.request.query.contains('param=') &&
-                    interaction.request.headers.containsKey('type') &&
-                    !interaction.request.headers.get('type').isEmpty() &&
-                    interaction.response.status == '200' &&
-                    interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
-                }
+                interactions.size() == 8
+                verifyHTTPMethod(interactions, 'DELETE')
+                verifyHTTPMethod(interactions, 'GET')
+                verifyHTTPMethod(interactions, 'HEAD')
+                verifyHTTPMethod(interactions, 'OPTIONS')
+                verifyHTTPMethod(interactions, 'PATCH')
+                verifyHTTPMethod(interactions, 'POST')
+                verifyHTTPMethod(interactions, 'PUT')
+                verifyHTTPMethod(interactions, 'TRACE')
             }
     }
 
-    boolean verifyMultiplePathVariables(Interaction interaction) {
+    def "should get description from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(DescriptionFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 1
+            interactions[0].description == 'getTestObject'
+        }
+    }
+
+    def "should get path from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(PathFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 1
+            verifyMultiplePathVariables(interactions[0])
+        }
+    }
+
+    def "should get request headers from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(RequestHeadersFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 1
+            interactions[0].request.headers.containsKey('key1')
+            interactions[0].request.headers.get('key1') == 'val1'
+            interactions[0].request.headers.containsKey('key2')
+            interactions[0].request.headers.get('key2') == 'val2'
+            interactions[0].request.headers.containsKey('key3')
+            !interactions[0].request.headers.get('key3').isEmpty()
+            interactions[0].request.headers.containsKey('key4')
+            !interactions[0].request.headers.get('key4').isEmpty()
+            interactions[0].request.headers.containsKey('key5')
+            !interactions[0].request.headers.get('key5').isEmpty()
+        }
+    }
+
+    def "should get response info from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(ResponseInfoFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 2
+            verifyHTTPStatus(interactions, '200')
+            verifyHTTPStatus(interactions, '202')
+        }
+    }
+
+    def "should get response headers from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(ResponseHeadersFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 1
+            interactions[0].response.headers.containsKey('key1')
+            interactions[0].response.headers.get('key1') == 'val1'
+            interactions[0].response.headers.containsKey('key2')
+            interactions[0].response.headers.get('key2') == 'val2'
+        }
+    }
+
+    def "should get request body from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 2
+            interactions.every { interaction ->
+                interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/
+            }
+        }
+    }
+
+    def "should get request param from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(RequestParamFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 1
+            interactions[0].request.query =~ /longP=123&parameter=.+&params=.+/
+        }
+    }
+
+    def "should get response body from feign client"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(ResponseBodyFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            consumer.name == 'SpecConsumer'
+            provider.name == 'SpecProvider'
+            interactions.size() == 3
+
+            interactions.any { interaction ->
+                interaction.request.method == 'GET'
+                interaction.response.body == null
+            }
+
+            interactions.any { interaction ->
+                interaction.request.method == 'POST'
+                interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
+            }
+
+            interactions.any { interaction ->
+                interaction.request.method == 'PUT'
+                interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
+            }
+        }
+    }
+
+    private static boolean verifyHTTPMethod(List<Interaction> interactions, String method) {
+        interactions.any { interaction ->
+            interaction.request.method == method
+        }
+    }
+
+    private static boolean verifyHTTPStatus(List<Interaction> interactions, String status) {
+        interactions.any { interaction ->
+            interaction.response.status == status
+        }
+    }
+
+    private static boolean verifyMultiplePathVariables(Interaction interaction) {
         def path = interaction.request.path
 
         def firstPathVariable = StringUtils.substringsBetween(interaction.request.path,'/test/', '/objects')[0]
