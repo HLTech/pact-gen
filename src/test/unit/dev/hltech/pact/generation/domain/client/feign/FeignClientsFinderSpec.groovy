@@ -10,13 +10,21 @@ class FeignClientsFinderSpec extends Specification {
 
     def "should find feign client"() {
         when:
-            Set<Class<?>> feignClients = finder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.multiple')
+            Set<Class<?>> feignClients = finder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.sample')
 
         then:
-            feignClients.size() == 2
-            feignClients[0].simpleName != feignClients[1].simpleName
-            ['FirstSampleSpecFeignClient', 'SecondSampleSpecFeignClient'].contains(feignClients[0].simpleName)
-            ['FirstSampleSpecFeignClient', 'SecondSampleSpecFeignClient'].contains(feignClients[1].simpleName)
+            feignClients.size() == 11
+            verifyFeignClient(feignClients, 'DescriptionFeignClient')
+            verifyFeignClient(feignClients, 'FirstEmptyFeignClient')
+            verifyFeignClient(feignClients, 'PathFeignClient')
+            verifyFeignClient(feignClients, 'RequestBodyFeignClient')
+            verifyFeignClient(feignClients, 'RequestHeadersFeignClient')
+            verifyFeignClient(feignClients, 'RequestParamFeignClient')
+            verifyFeignClient(feignClients, 'RequestTypeFeignClient')
+            verifyFeignClient(feignClients, 'ResponseBodyFeignClient')
+            verifyFeignClient(feignClients, 'ResponseHeadersFeignClient')
+            verifyFeignClient(feignClients, 'ResponseInfoFeignClient')
+            verifyFeignClient(feignClients, 'SecondEmptyFeignClient')
     }
 
     def "should not find feign clients"() {
@@ -25,5 +33,11 @@ class FeignClientsFinderSpec extends Specification {
 
         then:
             feignClients.size() == 0
+    }
+
+    private static boolean verifyFeignClient(Set<Class<?>> feignClients, String name) {
+        feignClients.any { client ->
+            client.simpleName == name
+        }
     }
 }
