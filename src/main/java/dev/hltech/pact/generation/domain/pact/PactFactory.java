@@ -3,6 +3,7 @@ package dev.hltech.pact.generation.domain.pact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.feign.FeignMethodRepresentationExtractor;
+import dev.hltech.pact.generation.domain.client.model.Body;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
 import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestProperties;
@@ -13,10 +14,12 @@ import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
 import dev.hltech.pact.generation.domain.pact.model.Metadata;
 import dev.hltech.pact.generation.domain.pact.model.Pact;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.util.CollectionUtils;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +65,8 @@ public class PactFactory {
 
         ClientMethodRepresentation methodRepresentation = extractor.extractClientMethodRepresentation(clientMethod);
 
+        validatePojos(methodRepresentation);
+
         return createInteractionResponse(methodRepresentation.getResponsePropertiesList(), objectMapper).stream()
             .map(interactionResponse -> Interaction.builder()
                 .description(clientMethod.getName())
@@ -69,6 +74,36 @@ public class PactFactory {
                 .response(interactionResponse)
                 .build())
             .collect(Collectors.toList());
+    }
+
+    private static void validatePojos(ClientMethodRepresentation methodRepresentation) {
+        List<Class<?>> pojoClasses = new ArrayList<>();
+
+        final Body requestBody = methodRepresentation.getRequestProperties().getBody();
+
+        if (requestBody.getBodyType() != null) {
+            pojoClasses.add(requestBody.getBodyType());
+        }
+        if (!CollectionUtils.isEmpty(requestBody.getGenericArgumentTypes())) {
+            pojoClasses.addAll(requestBody.getGenericArgumentTypes());
+        }
+
+        final List<ResponseProperties> responsePropertiesList = methodRepresentation.getResponsePropertiesList();
+
+        responsePropertiesList.forEach(responseProperties -> {
+            final Body responsePropertyBody = responseProperties.getBody();
+
+            if (responsePropertyBody.getBodyType() != null) {
+                pojoClasses.add(responsePropertyBody.getBodyType());
+            }
+            if (!CollectionUtils.isEmpty(responsePropertyBody.getGenericArgumentTypes())) {
+                pojoClasses.addAll(responsePropertyBody.getGenericArgumentTypes());
+            }
+        });
+
+        new PojoValidator().validateAll(pojoClasses.stream()
+            .filter(clazz -> clazz != void.class)
+            .collect(Collectors.toList()));
     }
 
     private static InteractionRequest createInteractionRequest(

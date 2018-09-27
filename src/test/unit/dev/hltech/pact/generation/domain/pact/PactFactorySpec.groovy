@@ -1,6 +1,7 @@
 package dev.hltech.pact.generation.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.hltech.pact.generation.domain.client.feign.sample.BrokenRequestFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.DescriptionFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.PathFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.RequestBodyFeignClient
@@ -147,6 +148,14 @@ class PactFactorySpec extends Specification {
             interactions.size() == 1
             interactions[0].request.query =~ /longP=123&parameter=.+&params=.+/
         }
+    }
+
+    def "should throw request when trying to generate pacts out from feign client with broken request"() {
+        when:
+            pactFactory.createFromFeignClient(BrokenRequestFeignClient.class, 'SpecConsumer', objectMapper)
+
+        then:
+            thrown(IllegalArgumentException)
     }
 
     def "should get response body from feign client"() {

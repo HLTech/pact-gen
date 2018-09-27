@@ -13,7 +13,8 @@ class FeignClientsFinderSpec extends Specification {
             Set<Class<?>> feignClients = finder.findFeignClients('dev.hltech.pact.generation.domain.client.feign.sample')
 
         then:
-            feignClients.size() == 11
+            feignClients.size() == 12
+            verifyFeignClient(feignClients, 'BrokenRequestFeignClient')
             verifyFeignClient(feignClients, 'DescriptionFeignClient')
             verifyFeignClient(feignClients, 'FirstEmptyFeignClient')
             verifyFeignClient(feignClients, 'PathFeignClient')
