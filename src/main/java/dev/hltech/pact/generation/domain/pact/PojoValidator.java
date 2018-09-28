@@ -11,13 +11,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-class PojoValidator {
+final class PojoValidator {
 
-    void validateAll(Collection<Class<?>> classes) {
-        classes.forEach(this::validate);
+    private PojoValidator() {}
+
+    static void validateAll(Collection<Class<?>> classes) {
+        classes.forEach(PojoValidator::validate);
     }
 
-    private void validate(Class<?> clazz) {
+    private static void validate(Class<?> clazz) {
         List<Constructor<?>> constructors = Arrays.asList(clazz.getConstructors());
         List<Method> methods = Arrays.asList(clazz.getMethods());
         int fieldsCount = Arrays.stream(clazz.getDeclaredFields())
@@ -30,7 +32,7 @@ class PojoValidator {
         boolean hasAllArgsConstructor = constructors.stream()
             .anyMatch(constructor -> constructor.getParameterCount() == fieldsCount);
         boolean hasSetterForEveryField = methods.stream()
-            .filter(this::isSetter)
+            .filter(PojoValidator::isSetter)
             .collect(Collectors.toList()).size() >= fieldsCount;
 
         if (!(hasNoArgsConstructor && hasSetterForEveryField) && !(hasAllArgsConstructor)) {
@@ -40,7 +42,7 @@ class PojoValidator {
 
         boolean hasGetterForEveryField = methods.stream()
             .filter(method -> !method.getName().contains("getClass"))
-            .filter(this::isGetter)
+            .filter(PojoValidator::isGetter)
             .collect(Collectors.toList()).size() >= fieldsCount;
 
         if (!hasGetterForEveryField) {
@@ -49,14 +51,14 @@ class PojoValidator {
         }
     }
 
-    private boolean isSetter(Method method) {
+    private static boolean isSetter(Method method) {
         return Modifier.isPublic(method.getModifiers())
             && method.getReturnType().equals(void.class)
             && method.getParameterTypes().length == 1
             && method.getName().matches("^set[A-Z].*");
     }
 
-    private boolean isGetter(Method method) {
+    private static boolean isGetter(Method method) {
         if (Modifier.isPublic(method.getModifiers()) && method.getParameterTypes().length == 0) {
             return (method.getName().matches("^get[A-Z].*") && !method.getReturnType().equals(void.class))
                 || (method.getName().matches("^is[A-Z].*") && method.getReturnType().equals(boolean.class));
