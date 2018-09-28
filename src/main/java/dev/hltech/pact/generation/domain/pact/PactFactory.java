@@ -62,7 +62,7 @@ public class PactFactory {
 
         ClientMethodRepresentation methodRepresentation = extractor.extractClientMethodRepresentation(clientMethod);
 
-        PojoValidator.validateAll((PojoExtractor.extractPojoTypes(methodRepresentation)));
+        PojoValidator.validateAll(PojoExtractor.extractPojoTypes(methodRepresentation));
 
         return createInteractionResponse(methodRepresentation.getResponsePropertiesList(), objectMapper).stream()
             .map(interactionResponse -> Interaction.builder()

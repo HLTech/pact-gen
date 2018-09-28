@@ -20,6 +20,11 @@ final class PojoValidator {
     }
 
     private static void validate(Class<?> clazz) {
+        validateComplianceWithPodam(clazz);
+        validateComplianceWithJackson(clazz);
+    }
+
+    private static void validateComplianceWithPodam(Class<?> clazz) {
         List<Constructor<?>> constructors = Arrays.asList(clazz.getConstructors());
         List<Method> methods = Arrays.asList(clazz.getMethods());
         int fieldsCount = Arrays.stream(clazz.getDeclaredFields())
@@ -39,6 +44,14 @@ final class PojoValidator {
             log.error("Validation failed for pojo {}", clazz.getSimpleName());
             throw new PojoNonCompliantWithPodamException(clazz.getSimpleName());
         }
+    }
+
+    private static void validateComplianceWithJackson(Class<?> clazz) {
+        List<Method> methods = Arrays.asList(clazz.getMethods());
+        int fieldsCount = Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> !field.isSynthetic())
+            .collect(Collectors.toList())
+            .size();
 
         boolean hasGetterForEveryField = methods.stream()
             .filter(method -> !method.getName().contains("getClass"))
