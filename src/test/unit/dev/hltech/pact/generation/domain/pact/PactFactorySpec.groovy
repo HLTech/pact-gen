@@ -2,6 +2,7 @@ package dev.hltech.pact.generation.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import dev.hltech.pact.generation.domain.client.feign.sample.BrokenRequestFeignClient
+import dev.hltech.pact.generation.domain.client.feign.sample.BrokenResponseFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.DescriptionFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.PathFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.RequestBodyFeignClient
@@ -26,7 +27,7 @@ class PactFactorySpec extends Specification {
 
     def "should get http method from feign client"() {
         when:
-            final Pact pact = pactFactory.createFromFeignClient(RequestTypeFeignClient.class, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(RequestTypeFeignClient, 'SpecConsumer', objectMapper)
 
         then:
             with(pact) {
@@ -46,7 +47,7 @@ class PactFactorySpec extends Specification {
 
     def "should get description from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(DescriptionFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(DescriptionFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -59,7 +60,7 @@ class PactFactorySpec extends Specification {
 
     def "should get path from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(PathFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(PathFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -72,7 +73,7 @@ class PactFactorySpec extends Specification {
 
     def "should get request headers from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestHeadersFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(RequestHeadersFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -94,7 +95,7 @@ class PactFactorySpec extends Specification {
 
     def "should get response info from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseInfoFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(ResponseInfoFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -108,7 +109,7 @@ class PactFactorySpec extends Specification {
 
     def "should get response headers from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseHeadersFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(ResponseHeadersFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -124,7 +125,7 @@ class PactFactorySpec extends Specification {
 
     def "should get request body from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -139,7 +140,7 @@ class PactFactorySpec extends Specification {
 
     def "should get request param from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestParamFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(RequestParamFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -150,17 +151,25 @@ class PactFactorySpec extends Specification {
         }
     }
 
-    def "should throw request when trying to generate pacts out from feign client with broken request"() {
+    def "should throw exception when trying to generate pacts out from feign client with broken request"() {
         when:
-            pactFactory.createFromFeignClient(BrokenRequestFeignClient.class, 'SpecConsumer', objectMapper)
+            pactFactory.createFromFeignClient(BrokenRequestFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-            thrown(IllegalArgumentException)
+            thrown(PojoNonCompliantWithPodamException)
+    }
+
+    def "should throw exception when trying to generate pacts out from feign client with broken response"() {
+        when:
+            pactFactory.createFromFeignClient(BrokenResponseFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            thrown(MissingGettersException)
     }
 
     def "should get response body from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseBodyFeignClient.class, 'SpecConsumer', objectMapper)
+        final Pact pact = pactFactory.createFromFeignClient(ResponseBodyFeignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {

@@ -13,9 +13,6 @@ import java.util.stream.Collectors;
 @Slf4j
 class PojoValidator {
 
-    private static final String VALIDATION_FAILED_MESSAGE =
-        "POJO validation failed, each one must have noArgsConstructor and setter for every field OR allArgsConstructor";
-
     void validateAll(Collection<Class<?>> classes) {
         classes.forEach(this::validate);
     }
@@ -38,16 +35,17 @@ class PojoValidator {
 
         if (!(hasNoArgsConstructor && hasSetterForEveryField) && !(hasAllArgsConstructor)) {
             log.error("Validation failed for pojo {}", clazz.getSimpleName());
-            throw new IllegalArgumentException(VALIDATION_FAILED_MESSAGE);
+            throw new PojoNonCompliantWithPodamException(clazz.getSimpleName());
         }
 
         boolean hasGetterForEveryField = methods.stream()
+            .filter(method -> !method.getName().contains("getClass"))
             .filter(this::isGetter)
             .collect(Collectors.toList()).size() >= fieldsCount;
 
         if (!hasGetterForEveryField) {
             log.error("Validation failed for pojo {}", clazz.getSimpleName());
-            throw new IllegalArgumentException(VALIDATION_FAILED_MESSAGE);
+            throw new MissingGettersException(clazz.getSimpleName());
         }
     }
 
