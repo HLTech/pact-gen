@@ -40,9 +40,7 @@ final class PojoExtractor {
             pojoClasses.addAll(requestBody.getGenericArgumentTypes());
         }
 
-        pojoClasses.addAll(extractNestedTypes(pojoClasses).stream()
-            .filter(clazz -> !clazz.isPrimitive() && !clazz.getPackage().getName().startsWith("java"))
-            .collect(Collectors.toSet()));
+        pojoClasses.addAll(extractNestedTypes(pojoClasses));
 
         return pojoClasses;
     }
@@ -70,13 +68,14 @@ final class PojoExtractor {
         return classes.stream()
             .map(PojoExtractor::extractNestedTypes)
             .flatMap(Collection::stream)
+            .filter(PojoExtractor::isNotBasicJavaType)
             .collect(Collectors.toSet());
     }
 
     private static Set<Class<?>> extractNestedTypes(Class<?> clazz) {
         Set<Class<?>> nestedClasses = new HashSet<>();
 
-        if (!clazz.isPrimitive() && !clazz.getPackage().getName().startsWith("java")) {
+        if (isNotBasicJavaType(clazz)) {
             nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> !field.isSynthetic())
                 .map(Field::getType)
@@ -90,5 +89,17 @@ final class PojoExtractor {
         }
 
         return nestedClasses;
+    }
+
+    private static boolean isNotBasicJavaType(Class<?> clazz) {
+        return !isPrimitive(clazz) && !isFromJdk(clazz);
+    }
+
+    private static boolean isPrimitive(Class<?> clazz) {
+        return clazz.isPrimitive();
+    }
+
+    private static boolean isFromJdk(Class<?> clazz) {
+        return clazz.getPackage().getName().startsWith("java");
     }
 }
