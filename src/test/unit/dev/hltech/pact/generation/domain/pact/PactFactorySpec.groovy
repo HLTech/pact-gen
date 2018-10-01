@@ -1,6 +1,7 @@
 package dev.hltech.pact.generation.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import dev.hltech.pact.generation.domain.client.feign.sample.BrokenNestedRequestFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.BrokenRequestFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.BrokenResponseFeignClient
 import dev.hltech.pact.generation.domain.client.feign.sample.DescriptionFeignClient
@@ -154,6 +155,14 @@ class PactFactorySpec extends Specification {
     def "should throw exception when trying to generate pacts out from feign client with broken request"() {
         when:
             pactFactory.createFromFeignClient(BrokenRequestFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            thrown(PojoNonCompliantWithPodamException)
+    }
+
+    def "should throw exception when trying to generate pacts out from feign client with request with nested broken type"() {
+        when:
+            pactFactory.createFromFeignClient(BrokenNestedRequestFeignClient, 'SpecConsumer', objectMapper)
 
         then:
             thrown(PojoNonCompliantWithPodamException)

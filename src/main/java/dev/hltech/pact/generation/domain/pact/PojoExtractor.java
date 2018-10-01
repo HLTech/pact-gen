@@ -5,6 +5,9 @@ import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
 import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +40,10 @@ final class PojoExtractor {
             pojoClasses.addAll(requestBody.getGenericArgumentTypes());
         }
 
+        pojoClasses.addAll(extractNestedTypes(pojoClasses).stream()
+            .filter(clazz -> !clazz.isPrimitive() && !clazz.getPackage().getName().startsWith("java"))
+            .collect(Collectors.toSet()));
+
         return pojoClasses;
     }
 
@@ -57,5 +64,31 @@ final class PojoExtractor {
         });
 
         return pojoClasses;
+    }
+
+    private static Set<Class<?>> extractNestedTypes(Collection<Class<?>> classes) {
+        return classes.stream()
+            .map(PojoExtractor::extractNestedTypes)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
+    }
+
+    private static Set<Class<?>> extractNestedTypes(Class<?> clazz) {
+        Set<Class<?>> nestedClasses = new HashSet<>();
+
+        if (!clazz.isPrimitive() && !clazz.getPackage().getName().startsWith("java")) {
+            nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
+                .map(Field::getType)
+                .collect(Collectors.toSet()));
+            nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
+                .map(Field::getType)
+                .map(PojoExtractor::extractNestedTypes)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toSet()));
+        }
+
+        return nestedClasses;
     }
 }
