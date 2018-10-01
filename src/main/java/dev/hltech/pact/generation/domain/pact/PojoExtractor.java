@@ -2,14 +2,12 @@ package dev.hltech.pact.generation.domain.pact;
 
 import dev.hltech.pact.generation.domain.client.model.Body;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
-import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,39 +27,30 @@ final class PojoExtractor {
     }
 
     private static Set<Class<?>> extractPojosFromRequestProperties(ClientMethodRepresentation methodRepresentation) {
-        Set<Class<?>> pojoClasses = new HashSet<>();
-
-        final Body requestBody = methodRepresentation.getRequestProperties().getBody();
-
-        if (requestBody.getBodyType() != null) {
-            pojoClasses.add(requestBody.getBodyType());
-        }
-        if (!CollectionUtils.isEmpty(requestBody.getGenericArgumentTypes())) {
-            pojoClasses.addAll(requestBody.getGenericArgumentTypes());
-        }
-
-        pojoClasses.addAll(extractNestedTypes(pojoClasses));
-
-        return pojoClasses;
+        return new HashSet<>(
+            extractTypesFromBody(methodRepresentation.getRequestProperties().getBody()));
     }
 
     private static Set<Class<?>> extractPojosFromResponseProperties(ClientMethodRepresentation methodRepresentation) {
         Set<Class<?>> pojoClasses = new HashSet<>();
 
-        final List<ResponseProperties> responsePropertiesList = methodRepresentation.getResponsePropertiesList();
-
-        responsePropertiesList.forEach(responseProperties -> {
-            final Body responsePropertyBody = responseProperties.getBody();
-
-            if (responsePropertyBody.getBodyType() != null) {
-                pojoClasses.add(responsePropertyBody.getBodyType());
-            }
-            if (!CollectionUtils.isEmpty(responsePropertyBody.getGenericArgumentTypes())) {
-                pojoClasses.addAll(responsePropertyBody.getGenericArgumentTypes());
-            }
-        });
+        methodRepresentation.getResponsePropertiesList().forEach(responseProperties ->
+            pojoClasses.addAll(extractTypesFromBody(responseProperties.getBody())));
 
         return pojoClasses;
+    }
+
+    private static Set<Class<?>> extractTypesFromBody(Body body) {
+        Set<Class<?>> typesFromBody = new HashSet<>();
+
+        if (body.getBodyType() != null) {
+            typesFromBody.add(body.getBodyType());
+        }
+        if (!CollectionUtils.isEmpty(body.getGenericArgumentTypes())) {
+            typesFromBody.addAll(body.getGenericArgumentTypes());
+        }
+
+        return extractNestedTypes(typesFromBody);
     }
 
     private static Set<Class<?>> extractNestedTypes(Collection<Class<?>> classes) {
@@ -76,6 +65,7 @@ final class PojoExtractor {
         Set<Class<?>> nestedClasses = new HashSet<>();
 
         if (isNotBasicJavaType(clazz)) {
+            nestedClasses.add(clazz);
             nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
                 .filter(field -> !field.isSynthetic())
                 .map(Field::getType)
