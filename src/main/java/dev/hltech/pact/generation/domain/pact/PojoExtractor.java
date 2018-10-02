@@ -66,19 +66,26 @@ final class PojoExtractor {
 
         if (isNotBasicJavaType(clazz)) {
             nestedClasses.add(clazz);
-            nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> !field.isSynthetic())
-                .map(Field::getType)
-                .collect(Collectors.toSet()));
-            nestedClasses.addAll(Arrays.stream(clazz.getDeclaredFields())
-                .filter(field -> !field.isSynthetic())
-                .map(Field::getType)
-                .map(PojoExtractor::extractNestedTypes)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toSet()));
+            Set<Class<?>> typesOfFields = getTypesOfFields(clazz);
+            nestedClasses.addAll(typesOfFields);
+            nestedClasses.addAll(collectNestedTypes(typesOfFields));
         }
 
         return nestedClasses;
+    }
+
+    private static Set<Class<?>> getTypesOfFields(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+            .filter(field -> !field.isSynthetic())
+            .map(Field::getType)
+            .collect(Collectors.toSet());
+    }
+
+    private static Set<Class<?>> collectNestedTypes(Collection<Class<?>> classes) {
+        return classes.stream()
+            .map(PojoExtractor::extractNestedTypes)
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
     }
 
     private static boolean isNotBasicJavaType(Class<?> clazz) {

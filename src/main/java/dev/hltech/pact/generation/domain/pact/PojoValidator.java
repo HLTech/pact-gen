@@ -42,7 +42,7 @@ final class PojoValidator {
         boolean hasBuilder = methods.stream()
             .anyMatch(PojoValidator::isBuilder);
 
-        if (!(hasNoArgsConstructor && hasSetterForEveryField) && !(hasAllArgsConstructor) && !hasBuilder) {
+        if (!(hasNoArgsConstructor && hasSetterForEveryField) && !hasAllArgsConstructor && !hasBuilder) {
             log.error("Validation failed for pojo {}", clazz.getSimpleName());
             throw new PojoNonCompliantWithPodamException(clazz.getSimpleName());
         }
@@ -56,7 +56,7 @@ final class PojoValidator {
             .size();
 
         boolean hasGetterForEveryField = methods.stream()
-            .filter(method -> !method.getName().contains("getClass"))
+            .filter(PojoValidator::isNotClassGetter)
             .filter(PojoValidator::isGetter)
             .collect(Collectors.toList()).size() >= fieldsCount;
 
@@ -80,6 +80,10 @@ final class PojoValidator {
         }
 
         return false;
+    }
+
+    private static boolean isNotClassGetter(Method method) {
+        return !method.getName().contains("getClass");
     }
 
     private static boolean isBuilder(Method method) {

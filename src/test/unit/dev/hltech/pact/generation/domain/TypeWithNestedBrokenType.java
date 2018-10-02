@@ -1,11 +1,11 @@
 package dev.hltech.pact.generation.domain;
 
-public class NestedBrokenType {
+public class TypeWithNestedBrokenType {
 
     private final BrokenRequestType foo;
     private final String bar;
 
-    public NestedBrokenType(BrokenRequestType foo, String bar) {
+    public TypeWithNestedBrokenType(BrokenRequestType foo, String bar) {
         this.foo = foo;
         this.bar = bar;
     }
