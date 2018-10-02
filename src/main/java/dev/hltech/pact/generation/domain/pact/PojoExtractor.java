@@ -58,13 +58,14 @@ final class PojoExtractor {
             .map(PojoExtractor::extractNestedTypes)
             .flatMap(Collection::stream)
             .filter(PojoExtractor::isNotBasicJavaType)
+            .filter(PojoExtractor::isNotEnum)
             .collect(Collectors.toSet());
     }
 
     private static Set<Class<?>> extractNestedTypes(Class<?> clazz) {
         Set<Class<?>> nestedClasses = new HashSet<>();
 
-        if (isNotBasicJavaType(clazz)) {
+        if (isNotBasicJavaType(clazz) && isNotEnum(clazz)) {
             nestedClasses.add(clazz);
             Set<Class<?>> typesOfFields = getTypesOfFields(clazz);
             nestedClasses.addAll(typesOfFields);
@@ -98,5 +99,9 @@ final class PojoExtractor {
 
     private static boolean isFromJdk(Class<?> clazz) {
         return clazz.getPackage().getName().startsWith("java");
+    }
+
+    private static boolean isNotEnum(Class<?> clazz) {
+        return !clazz.isEnum();
     }
 }

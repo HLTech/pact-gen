@@ -1,9 +1,7 @@
 package dev.hltech.pact.generation.domain.pact
 
 import dev.hltech.pact.generation.domain.GenericResponseType
-import dev.hltech.pact.generation.domain.RequestType
 import dev.hltech.pact.generation.domain.ResponseType
-import dev.hltech.pact.generation.domain.TestParam
 import dev.hltech.pact.generation.domain.client.model.Body
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
 import dev.hltech.pact.generation.domain.client.model.RequestProperties
@@ -70,6 +68,7 @@ class PojoExtractorSpec extends Specification {
     class NestedClassA {
 
         private LocalDateTime someTime
+        private NestedEnum anEnum
     }
 
     class NestedClassB {
@@ -82,5 +81,10 @@ class PojoExtractorSpec extends Specification {
     class NestedClassC {
 
         private String foo
+    }
+
+    enum NestedEnum {
+        A,
+        B
     }
 }
