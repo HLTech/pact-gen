@@ -29,7 +29,7 @@ public class PactFactory {
     static {
         podamFactory = new PodamFactoryImpl();
         podamFactory.getStrategy().addOrReplaceTypeManufacturer(String.class, new EnumStringManufacturer());
-        podamFactory.getStrategy().setDefaultNumberOfCollectionElements(2);
+        podamFactory.getStrategy().setDefaultNumberOfCollectionElements(1);
     }
 
     
