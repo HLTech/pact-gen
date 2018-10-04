@@ -49,10 +49,10 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     private static List<ResponseProperties> extractResponseProperties(Method feignClientMethod) {
         feignClientMethod.getGenericReturnType();
 
-        return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(ResponseInfo.class))
+        return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(InteractionInfo.class))
             .map(annotation -> ResponseProperties.builder()
-                .status(annotation.status())
-                .headers(RawHeadersParser.parseAll(annotation.headers()))
+                .status(annotation.responseStatus())
+                .headers(RawHeadersParser.parseAll(annotation.responseHeaders()))
                 .body(Body.builder()
                     .bodyType(feignClientMethod.getReturnType())
                     .genericArgumentTypes(

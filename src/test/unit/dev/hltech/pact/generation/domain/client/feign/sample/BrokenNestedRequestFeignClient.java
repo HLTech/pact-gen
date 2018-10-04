@@ -1,7 +1,7 @@
 package dev.hltech.pact.generation.domain.client.feign.sample;
 
 import dev.hltech.pact.generation.domain.TypeWithNestedBrokenType;
-import dev.hltech.pact.generation.domain.client.feign.ResponseInfo;
+import dev.hltech.pact.generation.domain.client.feign.InteractionInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface BrokenNestedRequestFeignClient {
 
     @GetMapping(path = "/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void getTestObject(@RequestBody TypeWithNestedBrokenType request);
 }

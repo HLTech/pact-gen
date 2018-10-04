@@ -1,6 +1,6 @@
 package dev.hltech.pact.generation.domain.client.feign.sample;
 
-import dev.hltech.pact.generation.domain.client.feign.ResponseInfo;
+import dev.hltech.pact.generation.domain.client.feign.InteractionInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,34 +15,34 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public interface RequestTypeFeignClient {
 
     @DeleteMapping("/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void deleteTestObject();
 
     @GetMapping("/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void getTestObject();
 
     @RequestMapping(path = "/", method = RequestMethod.HEAD)
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void headTestObject();
 
     @RequestMapping(path = "/", method = RequestMethod.OPTIONS)
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void optionsTestObject();
 
     @PatchMapping("/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void patchTestObject();
 
     @PostMapping("/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void postTestObject();
 
     @PutMapping("/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void putTestObject();
 
     @RequestMapping(path = "/", method = RequestMethod.TRACE)
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void traceTestObject();
 }

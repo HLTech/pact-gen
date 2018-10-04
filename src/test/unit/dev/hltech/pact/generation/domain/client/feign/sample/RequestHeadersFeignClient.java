@@ -1,6 +1,6 @@
 package dev.hltech.pact.generation.domain.client.feign.sample;
 
-import dev.hltech.pact.generation.domain.client.feign.ResponseInfo;
+import dev.hltech.pact.generation.domain.client.feign.InteractionInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.util.Set;
 public interface RequestHeadersFeignClient {
 
     @GetMapping(path = "/", headers = {"key1=val1", "key2=val2" })
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void getTestObject(@RequestHeader(name = "key3", required = false) Long tipId,
                        @RequestHeader("key4") Set<String> ids,
                        @RequestHeader("key5") int[] heads,

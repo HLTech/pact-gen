@@ -66,11 +66,15 @@ public class PactFactory {
 
         return createInteractionResponse(methodRepresentation.getResponsePropertiesList(), objectMapper).stream()
             .map(interactionResponse -> Interaction.builder()
-                .description(clientMethod.getName())
+                .description(createDescription(clientMethod))
                 .request(createInteractionRequest(methodRepresentation.getRequestProperties(), objectMapper))
                 .response(interactionResponse)
                 .build())
             .collect(Collectors.toList());
+    }
+
+    private static String createDescription(Method method) {
+        return method.getName();
     }
 
     private static InteractionRequest createInteractionRequest(

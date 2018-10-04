@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ResponsesInfo {
+public @interface InteractionsInfo {
 
-    ResponseInfo[] value();
+    InteractionInfo[] value();
 }

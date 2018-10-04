@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(ResponsesInfo.class)
-public @interface ResponseInfo {
+@Repeatable(InteractionsInfo.class)
+public @interface InteractionInfo {
 
-    HttpStatus status();
-    String[] headers() default {};
+    HttpStatus responseStatus();
+    String[] responseHeaders() default {};
 }

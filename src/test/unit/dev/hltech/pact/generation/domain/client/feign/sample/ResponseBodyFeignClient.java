@@ -3,7 +3,7 @@ package dev.hltech.pact.generation.domain.client.feign.sample;
 import dev.hltech.pact.generation.domain.GenericResponseType;
 import dev.hltech.pact.generation.domain.ResponseType;
 import dev.hltech.pact.generation.domain.TestParam;
-import dev.hltech.pact.generation.domain.client.feign.ResponseInfo;
+import dev.hltech.pact.generation.domain.client.feign.InteractionInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 public interface ResponseBodyFeignClient {
 
     @GetMapping(path = "/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     void getTestObject();
 
     @PostMapping(path = "/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     ResponseType postTestObject();
 
     @PutMapping(path = "/")
-    @ResponseInfo(status = HttpStatus.OK)
+    @InteractionInfo(responseStatus = HttpStatus.OK)
     GenericResponseType<TestParam> putTestObject();
 }
