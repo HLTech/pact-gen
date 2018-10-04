@@ -1,7 +1,7 @@
 package dev.hltech.pact.generation.domain.client.annotation.handlers;
 
 import dev.hltech.pact.generation.domain.client.model.Param;
-import dev.hltech.pact.generation.domain.client.model.RequestProperties;
+import dev.hltech.pact.generation.domain.client.model.RequestRepresentation;
 import dev.hltech.pact.generation.domain.client.util.PathParametersExtractor;
 import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.client.util.RequestBodyExtractor;
@@ -23,8 +23,8 @@ public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
     }
 
     @Override
-    public RequestProperties handle(Method method) {
-        return RequestProperties.builder()
+    public RequestRepresentation handle(Method method) {
+        return RequestRepresentation.builder()
             .httpMethod(HttpMethod.resolve(method.getAnnotation(RequestMapping.class)
                 .method()[0].name().toUpperCase()))
             .path(getPathFromMethod(method))

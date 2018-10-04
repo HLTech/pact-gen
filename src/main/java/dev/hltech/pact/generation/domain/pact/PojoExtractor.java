@@ -28,13 +28,13 @@ final class PojoExtractor {
 
     private static Set<Class<?>> extractPojosFromRequestProperties(ClientMethodRepresentation methodRepresentation) {
         return new HashSet<>(
-            extractTypesFromBody(methodRepresentation.getRequestProperties().getBody()));
+            extractTypesFromBody(methodRepresentation.getRequestRepresentation().getBody()));
     }
 
     private static Set<Class<?>> extractPojosFromResponseProperties(ClientMethodRepresentation methodRepresentation) {
         Set<Class<?>> pojoClasses = new HashSet<>();
 
-        methodRepresentation.getResponsePropertiesList().forEach(responseProperties ->
+        methodRepresentation.getResponseRepresentationList().forEach(responseProperties ->
             pojoClasses.addAll(extractTypesFromBody(responseProperties.getBody())));
 
         return pojoClasses;

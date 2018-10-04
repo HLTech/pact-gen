@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public class ClientMethodRepresentation {
 
-    private RequestProperties requestProperties;
-    private List<ResponseProperties> responsePropertiesList;
+    private RequestRepresentation requestRepresentation;
+    private List<ResponseRepresentation> responseRepresentationList;
 }

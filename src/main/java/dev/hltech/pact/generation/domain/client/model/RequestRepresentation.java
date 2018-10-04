@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class RequestProperties {
+public class RequestRepresentation {
 
     private final HttpMethod httpMethod;
     private final String path;

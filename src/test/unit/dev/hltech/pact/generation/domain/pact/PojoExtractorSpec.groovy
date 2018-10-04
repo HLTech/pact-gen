@@ -4,8 +4,8 @@ import dev.hltech.pact.generation.domain.GenericResponseType
 import dev.hltech.pact.generation.domain.ResponseType
 import dev.hltech.pact.generation.domain.client.model.Body
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation
-import dev.hltech.pact.generation.domain.client.model.RequestProperties
-import dev.hltech.pact.generation.domain.client.model.ResponseProperties
+import dev.hltech.pact.generation.domain.client.model.RequestRepresentation
+import dev.hltech.pact.generation.domain.client.model.ResponseRepresentation
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -31,8 +31,8 @@ class PojoExtractorSpec extends Specification {
 
     private ClientMethodRepresentation sampleMethodRepresentation() {
         ClientMethodRepresentation.builder()
-            .requestProperties(
-                RequestProperties.builder()
+            .requestRepresentation(
+                RequestRepresentation.builder()
                     .body(
                         Body.builder()
                             .bodyType(SampleClassWithNestedOnes)
@@ -40,15 +40,15 @@ class PojoExtractorSpec extends Specification {
                             .build())
                     .build()
             )
-            .responsePropertiesList([
-                    ResponseProperties.builder()
+            .responseRepresentationList([
+            ResponseRepresentation.builder()
                         .body(
                             Body.builder()
                                 .bodyType(void)
                                 .genericArgumentTypes([])
                                 .build())
                         .build(),
-                    ResponseProperties.builder()
+            ResponseRepresentation.builder()
                         .body(Body.builder()
                                 .bodyType(ResponseType)
                                 .genericArgumentTypes([GenericResponseType])

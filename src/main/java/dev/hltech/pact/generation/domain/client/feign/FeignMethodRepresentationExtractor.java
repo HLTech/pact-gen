@@ -10,8 +10,8 @@ import dev.hltech.pact.generation.domain.client.annotation.handlers.RequestMappi
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.Body;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
-import dev.hltech.pact.generation.domain.client.model.RequestProperties;
-import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
+import dev.hltech.pact.generation.domain.client.model.RequestRepresentation;
+import dev.hltech.pact.generation.domain.client.model.ResponseRepresentation;
 import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.client.util.TypeExtractor;
 
@@ -34,23 +34,23 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     @Override
     public ClientMethodRepresentation extractClientMethodRepresentation(Method clientMethod) {
         return ClientMethodRepresentation.builder()
-            .requestProperties(extractRequestProperties(clientMethod))
-            .responsePropertiesList(extractResponseProperties(clientMethod))
+            .requestRepresentation(extractRequestProperties(clientMethod))
+            .responseRepresentationList(extractResponseProperties(clientMethod))
             .build();
     }
 
-    private RequestProperties extractRequestProperties(Method feignClientMethod) {
+    private RequestRepresentation extractRequestProperties(Method feignClientMethod) {
         return this.annotatedMethodHandlers.stream()
             .filter(annotationHandler -> annotationHandler.isSupported(feignClientMethod))
             .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method"))
             .handle(feignClientMethod);
     }
 
-    private static List<ResponseProperties> extractResponseProperties(Method feignClientMethod) {
+    private static List<ResponseRepresentation> extractResponseProperties(Method feignClientMethod) {
         feignClientMethod.getGenericReturnType();
 
         return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(InteractionInfo.class))
-            .map(annotation -> ResponseProperties.builder()
+            .map(annotation -> ResponseRepresentation.builder()
                 .status(annotation.responseStatus())
                 .headers(RawHeadersParser.parseAll(annotation.responseHeaders()))
                 .body(Body.builder()

@@ -5,8 +5,8 @@ import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtrac
 import dev.hltech.pact.generation.domain.client.feign.FeignMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
 import dev.hltech.pact.generation.domain.client.model.Param;
-import dev.hltech.pact.generation.domain.client.model.RequestProperties;
-import dev.hltech.pact.generation.domain.client.model.ResponseProperties;
+import dev.hltech.pact.generation.domain.client.model.RequestRepresentation;
+import dev.hltech.pact.generation.domain.client.model.ResponseRepresentation;
 import dev.hltech.pact.generation.domain.pact.model.Interaction;
 import dev.hltech.pact.generation.domain.pact.model.InteractionRequest;
 import dev.hltech.pact.generation.domain.pact.model.InteractionResponse;
@@ -64,16 +64,16 @@ public class PactFactory {
 
         PojoValidator.validateAll(PojoExtractor.extractPojoTypes(methodRepresentation));
 
-        return methodRepresentation.getResponsePropertiesList().stream()
-            .map(interactionResponseProperties -> Interaction.builder()
-                .description(createDescription(clientMethod.getName(), interactionResponseProperties))
-                .request(createInteractionRequest(methodRepresentation.getRequestProperties(), objectMapper))
-                .response(createInteractionResponse(interactionResponseProperties, objectMapper))
+        return methodRepresentation.getResponseRepresentationList().stream()
+            .map(interactionResponseRepresentation -> Interaction.builder()
+                .description(createDescription(clientMethod.getName(), interactionResponseRepresentation))
+                .request(createInteractionRequest(methodRepresentation.getRequestRepresentation(), objectMapper))
+                .response(createInteractionResponse(interactionResponseRepresentation, objectMapper))
                 .build())
             .collect(Collectors.toList());
     }
 
-    private static String createDescription(String feignMethodName, ResponseProperties response) {
+    private static String createDescription(String feignMethodName, ResponseRepresentation response) {
         if (response.getDescription().isEmpty()) {
             return String.format("%s request; %s response", feignMethodName, response.getStatus());
         }
@@ -82,14 +82,14 @@ public class PactFactory {
     }
 
     private static InteractionRequest createInteractionRequest(
-        RequestProperties requestProperties, ObjectMapper objectMapper) {
+        RequestRepresentation requestRepresentation, ObjectMapper objectMapper) {
 
         return InteractionRequest.builder()
-            .method(requestProperties.getHttpMethod().name())
-            .path(parsePath(requestProperties.getPath(), requestProperties.getPathParameters()))
-            .headers(mapHeaders(requestProperties.getHeaders()))
-            .query(parseParametersToQuery(requestProperties.getRequestParameters()))
-            .body(BodySerializer.serializeBody(requestProperties.getBody(), objectMapper, podamFactory))
+            .method(requestRepresentation.getHttpMethod().name())
+            .path(parsePath(requestRepresentation.getPath(), requestRepresentation.getPathParameters()))
+            .headers(mapHeaders(requestRepresentation.getHeaders()))
+            .query(parseParametersToQuery(requestRepresentation.getRequestParameters()))
+            .body(BodySerializer.serializeBody(requestRepresentation.getBody(), objectMapper, podamFactory))
             .build();
     }
 
@@ -137,13 +137,13 @@ public class PactFactory {
     }
 
     private static InteractionResponse createInteractionResponse(
-        ResponseProperties responseProperties,
+        ResponseRepresentation responseRepresentation,
         ObjectMapper objectMapper) {
 
         return InteractionResponse.builder()
-                .status(responseProperties.getStatus().toString())
-                .headers(mapHeaders(responseProperties.getHeaders()))
-                .body(BodySerializer.serializeBody(responseProperties.getBody(), objectMapper, podamFactory))
+                .status(responseRepresentation.getStatus().toString())
+                .headers(mapHeaders(responseRepresentation.getHeaders()))
+                .body(BodySerializer.serializeBody(responseRepresentation.getBody(), objectMapper, podamFactory))
                 .build();
     }
 

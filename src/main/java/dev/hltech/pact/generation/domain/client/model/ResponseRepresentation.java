@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class ResponseProperties {
+public class ResponseRepresentation {
 
     private final HttpStatus status;
     private final List<Param> headers;
