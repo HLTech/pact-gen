@@ -199,7 +199,7 @@ class PactFactorySpec extends Specification {
 
             interactions.any { interaction ->
                 interaction.request.method == 'PUT'
-                interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)+]}/
+                interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)]}/
             }
         }
     }

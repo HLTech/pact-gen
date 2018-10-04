@@ -8,12 +8,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
+
 @FeignClient("SpecProvider")
 public interface RequestBodyFeignClient {
 
     @GetMapping(path = "/")
     @InteractionInfo(responseStatus = HttpStatus.OK)
-    void getTestObject(@RequestBody RequestType request);
+    void getTestObject(@RequestBody List<RequestType> request);
 
     @PostMapping(path = "/")
     @InteractionInfo(responseStatus = HttpStatus.OK)
