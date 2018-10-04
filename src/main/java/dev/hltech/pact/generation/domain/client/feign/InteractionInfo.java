@@ -15,4 +15,5 @@ public @interface InteractionInfo {
 
     HttpStatus responseStatus();
     String[] responseHeaders() default {};
+    String description() default "";
 }

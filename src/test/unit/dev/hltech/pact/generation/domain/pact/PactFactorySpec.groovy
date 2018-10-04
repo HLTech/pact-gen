@@ -54,8 +54,9 @@ class PactFactorySpec extends Specification {
         with(pact) {
             consumer.name == 'SpecConsumer'
             provider.name == 'SpecProvider'
-            interactions.size() == 1
-            interactions[0].description == 'getTestObject'
+            interactions.size() == 2
+            verifyDescription(interactions, 'getTestObject request; 200 response')
+            verifyDescription(interactions, 'Update test object in the test service')
         }
     }
 
@@ -212,6 +213,12 @@ class PactFactorySpec extends Specification {
     private static boolean verifyHTTPStatus(List<Interaction> interactions, String status) {
         interactions.any { interaction ->
             interaction.response.status == status
+        }
+    }
+
+    private static boolean verifyDescription(List<Interaction> interactions, String description) {
+        interactions.any { interaction ->
+            interaction.description == description
         }
     }
 

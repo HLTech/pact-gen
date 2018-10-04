@@ -64,17 +64,21 @@ public class PactFactory {
 
         PojoValidator.validateAll(PojoExtractor.extractPojoTypes(methodRepresentation));
 
-        return createInteractionResponse(methodRepresentation.getResponsePropertiesList(), objectMapper).stream()
-            .map(interactionResponse -> Interaction.builder()
-                .description(createDescription(clientMethod))
+        return methodRepresentation.getResponsePropertiesList().stream()
+            .map(interactionResponseProperties -> Interaction.builder()
+                .description(createDescription(clientMethod.getName(), interactionResponseProperties))
                 .request(createInteractionRequest(methodRepresentation.getRequestProperties(), objectMapper))
-                .response(interactionResponse)
+                .response(createInteractionResponse(interactionResponseProperties, objectMapper))
                 .build())
             .collect(Collectors.toList());
     }
 
-    private static String createDescription(Method method) {
-        return method.getName();
+    private static String createDescription(String feignMethodName, ResponseProperties response) {
+        if (response.getDescription().isEmpty()) {
+            return String.format("%s request; %s response", feignMethodName, response.getStatus());
+        }
+
+        return response.getDescription();
     }
 
     private static InteractionRequest createInteractionRequest(
@@ -132,17 +136,15 @@ public class PactFactory {
         return queryBuilder.toString();
     }
 
-    private static List<InteractionResponse> createInteractionResponse(
-        List<ResponseProperties> responseProperties,
+    private static InteractionResponse createInteractionResponse(
+        ResponseProperties responseProperties,
         ObjectMapper objectMapper) {
 
-        return responseProperties.stream()
-            .map(props -> InteractionResponse.builder()
-                .status(props.getStatus().toString())
-                .headers(mapHeaders(props.getHeaders()))
-                .body(BodySerializer.serializeBody(props.getBody(), objectMapper, podamFactory))
-                .build())
-            .collect(Collectors.toList());
+        return InteractionResponse.builder()
+                .status(responseProperties.getStatus().toString())
+                .headers(mapHeaders(responseProperties.getHeaders()))
+                .body(BodySerializer.serializeBody(responseProperties.getBody(), objectMapper, podamFactory))
+                .build();
     }
 
     private static Map<String, String> mapHeaders(List<Param> headers) {

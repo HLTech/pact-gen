@@ -13,4 +13,5 @@ public class ResponseProperties {
     private final HttpStatus status;
     private final List<Param> headers;
     private final Body body;
+    private final String description;
 }
