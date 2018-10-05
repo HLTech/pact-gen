@@ -1,6 +1,7 @@
 package dev.hltech.pact.generation.domain.pact;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.hltech.pact.generation.PactGenerationException;
 import dev.hltech.pact.generation.domain.pact.model.Pact;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +28,7 @@ public class PactJsonGenerator {
             objectMapper.writeValue(new File(destinationDir, pactFileName), pact);
         } catch (IOException ex) {
             log.error("Unable to write {} to json file", pact);
-            ex.printStackTrace();
+            throw new PactGenerationException("Unable to write pact to json file", ex);
         }
     }
 }

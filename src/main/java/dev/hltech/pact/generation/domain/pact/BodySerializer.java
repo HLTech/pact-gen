@@ -1,7 +1,9 @@
 package dev.hltech.pact.generation.domain.pact;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.hltech.pact.generation.PactGenerationException;
 import dev.hltech.pact.generation.domain.client.model.Body;
 import lombok.extern.slf4j.Slf4j;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -15,19 +17,25 @@ final class BodySerializer {
     }
 
     static JsonNode serializeBody(Body body, ObjectMapper objectMapper, PodamFactory podamFactory) {
-        JsonNode serializedBody = null;
+        String serializedBody = null;
+        JsonNode bodyJsonNode = null;
 
         try {
             if (body.getBodyType() != null && !body.getBodyType().getSimpleName().equals("void")) {
-                serializedBody = objectMapper.readTree(
-                    objectMapper.writeValueAsString(populateRequestObject(body, podamFactory)));
+                serializedBody = objectMapper.writeValueAsString(populateRequestObject(body, podamFactory));
+                bodyJsonNode = objectMapper.readTree(serializedBody);
             }
+        } catch (JsonProcessingException ex) {
+            log.error("Unable to write {} to json. Original error message '{}'",
+                body, ex.getMessage());
+            throw new PactGenerationException("Unable to serialize body", ex);
         } catch (IOException ex) {
-            log.error("Unable to write {} to json. Original error message '{}'", body, ex.getMessage());
-            throw new IllegalArgumentException("Not possible to serialize body", ex);
+            log.error("Unable to convert {} to json node. Original error message '{}'",
+                serializedBody, ex.getMessage());
+            throw new PactGenerationException("Unable to convert serialized body to json node", ex);
         }
 
-        return serializedBody;
+        return bodyJsonNode;
     }
 
     private static Object populateRequestObject(Body body, PodamFactory podamFactory) {
