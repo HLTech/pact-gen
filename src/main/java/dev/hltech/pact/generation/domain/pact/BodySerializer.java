@@ -1,13 +1,14 @@
 package dev.hltech.pact.generation.domain.pact;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.hltech.pact.generation.domain.client.model.Body;
+import lombok.extern.slf4j.Slf4j;
 import uk.co.jemos.podam.api.PodamFactory;
 
 import java.io.IOException;
 
+@Slf4j
 final class BodySerializer {
 
     private BodySerializer() {
@@ -21,10 +22,9 @@ final class BodySerializer {
                 serializedBody = objectMapper.readTree(
                     objectMapper.writeValueAsString(populateRequestObject(body, podamFactory)));
             }
-        } catch (JsonProcessingException ex) {
-            System.out.println(ex.getMessage());
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            log.error("Unable to write {} to json. Original error message '{}'", body, ex.getMessage());
+            throw new IllegalArgumentException("Not possible to serialize body", ex);
         }
 
         return serializedBody;

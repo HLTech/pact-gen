@@ -26,7 +26,7 @@ public class PactJsonGenerator {
         try {
             objectMapper.writeValue(new File(destinationDir, pactFileName), pact);
         } catch (IOException ex) {
-            log.error("Unable to convert {} to json", pact);
+            log.error("Unable to write {} to json file", pact);
             ex.printStackTrace();
         }
     }
