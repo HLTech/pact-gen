@@ -40,6 +40,12 @@ final class BodySerializer {
 
     private static Object populateRequestObject(Body body, PodamFactory podamFactory) {
         Class<?>[] types = body.getGenericArgumentTypes().toArray(new Class<?>[0]);
-        return podamFactory.manufacturePojo(body.getBodyType(), types);
+        Object manufacturedPojo = podamFactory.manufacturePojo(body.getBodyType(), types);
+
+        if (manufacturedPojo == null) {
+            throw new PactGenerationException("Podam manufacturing failed");
+        }
+        
+        return manufacturedPojo;
     }
 }

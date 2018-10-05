@@ -1,6 +1,7 @@
 package dev.hltech.pact.generation.domain.pact;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.hltech.pact.generation.PactGenerationException;
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.feign.FeignMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
@@ -106,7 +107,7 @@ public class PactFactory {
 
     private static Object getParamValue(Param param) {
         if (param.getDefaultValue() == null) {
-            return podamFactory.manufacturePojo(param.getType());
+            return manufacturePojo(param.getType());
         }
 
         return param.getDefaultValue();
@@ -114,10 +115,20 @@ public class PactFactory {
 
     private static Object getHeaderValue(Param header) {
         if (header.getDefaultValue() == null) {
-            return podamFactory.manufacturePojo(header.getType());
+            return manufacturePojo(header.getType());
         }
 
         return header.getDefaultValue();
+    }
+
+    private static Object manufacturePojo(Class<?> type) {
+        Object manufacturedPojo = podamFactory.manufacturePojo(type);
+
+        if (manufacturedPojo == null) {
+            throw new PactGenerationException("Podam manufacturing failed");
+        }
+
+        return manufacturedPojo;
     }
 
     private static String parseParametersToQuery(List<Param> requestParameters) {
