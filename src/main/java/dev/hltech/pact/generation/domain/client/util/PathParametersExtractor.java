@@ -25,10 +25,12 @@ public final class PathParametersExtractor {
     private static Param extract(Parameter param) {
         PathVariable annotation = param.getAnnotation(PathVariable.class);
 
+        List<Class<?>> paramTypes = TypeExtractor.extractParameterTypesFromType(param.getParameterizedType());
+
         return Param.builder()
             .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
             .type(param.getType())
-            .genericArgumentTypes(TypeExtractor.extractParameterTypesFromType(param.getParameterizedType()))
+            .genericArgumentType(paramTypes.isEmpty() ? null : paramTypes.get(0))
             .build();
     }
 }

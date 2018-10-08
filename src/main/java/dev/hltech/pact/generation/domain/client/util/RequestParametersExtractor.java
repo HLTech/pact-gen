@@ -29,10 +29,12 @@ public final class RequestParametersExtractor {
 
         extractParamDefaultValue(param).ifPresent(builder::defaultValue);
 
+        List<Class<?>> paramTypes = TypeExtractor.extractParameterTypesFromType(param.getParameterizedType());
+
         return builder
             .name(extractParamName(param))
             .type(param.getType())
-            .genericArgumentTypes(TypeExtractor.extractParameterTypesFromType(param.getParameterizedType()))
+            .genericArgumentType(paramTypes.isEmpty() ? null : paramTypes.get(0))
             .build();
     }
 

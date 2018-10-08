@@ -106,15 +106,19 @@ public class PactFactory {
     }
 
     private static Object getParamValue(Param param) {
-        if (param.getDefaultValue() == null) {
-            return manufacturePojo(param.getType(), param.getGenericArgumentTypes());
+        if (param.getDefaultValue() != null) {
+            return param.getDefaultValue();
         }
 
-        return param.getDefaultValue();
+        if (param.getGenericArgumentType() != null) {
+            return manufacturePojo(param.getGenericArgumentType());
+        }
+
+        return manufacturePojo(param.getType());
     }
 
-    private static Object manufacturePojo(Class<?> type, List<Class<?>> genericTypes) {
-        Object manufacturedPojo = podamFactory.manufacturePojo(type, genericTypes.toArray(new Class<?>[0]));
+    private static Object manufacturePojo(Class<?> type) {
+        Object manufacturedPojo = podamFactory.manufacturePojo(type);
 
         if (manufacturedPojo == null) {
             throw new PactGenerationException("Podam manufacturing failed");
