@@ -28,6 +28,7 @@ public final class PathParametersExtractor {
         return Param.builder()
             .name(annotation.name().isEmpty() ? annotation.value() : annotation.name())
             .type(param.getType())
+            .genericArgumentTypes(TypeExtractor.extractParameterTypesFromType(param.getParameterizedType()))
             .build();
     }
 }

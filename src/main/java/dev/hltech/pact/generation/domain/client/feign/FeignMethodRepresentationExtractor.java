@@ -56,7 +56,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                 .body(Body.builder()
                     .type(feignClientMethod.getReturnType())
                     .genericArgumentTypes(
-                        TypeExtractor.extractGenericTypesFromType(feignClientMethod.getGenericReturnType()))
+                        TypeExtractor.extractParameterTypesFromType(feignClientMethod.getGenericReturnType()))
                     .build())
                 .description(annotation.description())
                 .build())

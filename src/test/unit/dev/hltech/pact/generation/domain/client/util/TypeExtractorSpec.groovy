@@ -1,11 +1,12 @@
 package dev.hltech.pact.generation.domain.client.util
 
+import dev.hltech.pact.generation.domain.GenericResponseType
 import dev.hltech.pact.generation.domain.TestParam
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-import java.lang.reflect.Parameter
+import java.lang.reflect.Type
 
 @Unroll
 class TypeExtractorSpec extends Specification {
@@ -13,20 +14,22 @@ class TypeExtractorSpec extends Specification {
     @Subject
     def parameterTypeExtractor = new TypeExtractor()
 
-    def "should correctly extract parameter type"(Parameter param, Class<?> type) {
+    def "should correctly extract parameter type"(Type type, List<Class<?>> clazz) {
         expect:
-            parameterTypeExtractor.extractTypesFromParameter(param) == type
+            parameterTypeExtractor.extractParameterTypesFromType(type) == clazz
 
         where:
-            param << TypeExtractorSpec.methods.find {it.name == 'testMethod'}.getParameters()
-            type << [String, Long, TestParam, Long, TestParam, int]
+            type << TypeExtractorSpec.methods.find {it.name == 'testMethod'}.getParameters().collect { param ->
+                param.getParameterizedType()
+            }
+            clazz << [[], [], [], [Long], [TestParam, String], [int]]
     }
 
     static void testMethod(String string,
                            Long aLong,
                            TestParam testParam,
-                           List<Long> longList,
-                           Set<TestParam> paramSet,
+                           GenericResponseType<Long> longList,
+                           Map<TestParam, String> paramSet,
                            int[] ids) {
     }
 }

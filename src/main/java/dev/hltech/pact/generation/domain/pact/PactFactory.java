@@ -107,22 +107,14 @@ public class PactFactory {
 
     private static Object getParamValue(Param param) {
         if (param.getDefaultValue() == null) {
-            return manufacturePojo(param.getType());
+            return manufacturePojo(param.getType(), param.getGenericArgumentTypes());
         }
 
         return param.getDefaultValue();
     }
 
-    private static Object getHeaderValue(Param header) {
-        if (header.getDefaultValue() == null) {
-            return manufacturePojo(header.getType());
-        }
-
-        return header.getDefaultValue();
-    }
-
-    private static Object manufacturePojo(Class<?> type) {
-        Object manufacturedPojo = podamFactory.manufacturePojo(type);
+    private static Object manufacturePojo(Class<?> type, List<Class<?>> genericTypes) {
+        Object manufacturedPojo = podamFactory.manufacturePojo(type, genericTypes.toArray(new Class<?>[0]));
 
         if (manufacturedPojo == null) {
             throw new PactGenerationException("Podam manufacturing failed");
@@ -161,6 +153,6 @@ public class PactFactory {
 
     private static Map<String, String> mapHeaders(List<Param> headers) {
         return headers.stream()
-            .collect(Collectors.toMap(Param::getName, header -> String.valueOf(getHeaderValue(header))));
+            .collect(Collectors.toMap(Param::getName, header -> String.valueOf(getParamValue(header))));
     }
 }
