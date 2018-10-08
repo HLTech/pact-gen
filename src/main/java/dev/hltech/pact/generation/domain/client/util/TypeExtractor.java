@@ -12,16 +12,33 @@ import java.util.stream.Collectors;
 public class TypeExtractor {
 
     public static List<Class<?>> extractGenericTypesFromType(Type type) {
+        if (type == null) {
+            return null;
+        }
+
         if (type instanceof ParameterizedType) {
             ParameterizedType paramType = (ParameterizedType)type;
             return Arrays.stream(paramType.getActualTypeArguments())
                 .map(a -> (Class<?>)a)
                 .collect(Collectors.toList());
         }
+
+        if (type.getClass().isArray()) {
+            return Lists.newArrayList((Class<?>)type);
+        }
+
+        if (type.getClass().getDeclaredFields().length > 0) {
+            return Arrays.stream(((Class<?>)type).getDeclaredFields())
+                .filter(field -> field.getGenericType() instanceof ParameterizedType)
+                .flatMap(fld -> (Arrays.stream(((ParameterizedType) fld.getGenericType()).getActualTypeArguments())))
+                .map(a -> (Class<?>)a)
+                .collect(Collectors.toList());
+        }
+
         return Lists.newArrayList();
     }
 
-    static List<Class<?>> extractTypesFromParameter(Parameter param) {
+    static Class<?> extractTypesFromParameter(Parameter param) {
         if (param == null) {
             return null;
         }
@@ -29,13 +46,14 @@ public class TypeExtractor {
             ParameterizedType paramType = (ParameterizedType)param.getParameterizedType();
             return Arrays.stream(paramType.getActualTypeArguments())
                 .map(type -> (Class<?>)type)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+                .get(0);
         }
 
         if (param.getType().isArray()) {
-            return Lists.newArrayList(param.getType().getComponentType());
+            return param.getType().getComponentType();
         }
 
-        return Lists.newArrayList(param.getType());
+        return param.getType();
     }
 }
