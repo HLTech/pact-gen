@@ -17,7 +17,7 @@ public final class RequestBodyExtractor {
             .orElse(null);
 
         return Body.builder()
-            .bodyType(responseParameter != null ? responseParameter.getType() : null)
+            .type(responseParameter != null ? responseParameter.getType() : null)
             .genericArgumentTypes(TypeExtractor.extractGenericTypesFromType(
                 responseParameter != null ? responseParameter.getParameterizedType() : null))
             .build();

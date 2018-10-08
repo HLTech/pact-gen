@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @Builder
 public class Body {
-    private final Class<?> bodyType;
+    private final Class<?> type;
     private final List<Class<?>> genericArgumentTypes;
 }

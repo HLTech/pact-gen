@@ -35,7 +35,7 @@ class PojoExtractorSpec extends Specification {
                 RequestRepresentation.builder()
                     .body(
                         Body.builder()
-                            .bodyType(SampleClassWithNestedOnes)
+                            .type(SampleClassWithNestedOnes)
                             .genericArgumentTypes([GenericResponseType])
                             .build())
                     .build()
@@ -44,13 +44,13 @@ class PojoExtractorSpec extends Specification {
             ResponseRepresentation.builder()
                         .body(
                             Body.builder()
-                                .bodyType(void)
+                                .type(void)
                                 .genericArgumentTypes([])
                                 .build())
                         .build(),
             ResponseRepresentation.builder()
                         .body(Body.builder()
-                                .bodyType(ResponseType)
+                                .type(ResponseType)
                                 .genericArgumentTypes([GenericResponseType])
                                 .build())
                         .build()

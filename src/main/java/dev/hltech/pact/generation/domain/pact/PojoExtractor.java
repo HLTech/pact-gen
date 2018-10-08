@@ -43,8 +43,8 @@ final class PojoExtractor {
     private static Set<Class<?>> extractTypesFromBody(Body body) {
         Set<Class<?>> typesFromBody = new HashSet<>();
 
-        if (body.getBodyType() != null) {
-            typesFromBody.add(body.getBodyType());
+        if (body.getType() != null) {
+            typesFromBody.add(body.getType());
         }
         if (!CollectionUtils.isEmpty(body.getGenericArgumentTypes())) {
             typesFromBody.addAll(body.getGenericArgumentTypes());

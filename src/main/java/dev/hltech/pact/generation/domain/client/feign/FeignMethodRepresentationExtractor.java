@@ -54,7 +54,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                 .status(annotation.responseStatus())
                 .headers(RawHeadersParser.parseAll(annotation.responseHeaders()))
                 .body(Body.builder()
-                    .bodyType(feignClientMethod.getReturnType())
+                    .type(feignClientMethod.getReturnType())
                     .genericArgumentTypes(
                         TypeExtractor.extractGenericTypesFromType(feignClientMethod.getGenericReturnType()))
                     .build())

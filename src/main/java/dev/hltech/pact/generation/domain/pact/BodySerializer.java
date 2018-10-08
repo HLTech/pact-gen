@@ -21,7 +21,7 @@ final class BodySerializer {
         JsonNode bodyJsonNode = null;
 
         try {
-            if (body.getBodyType() != null && !body.getBodyType().getSimpleName().equals("void")) {
+            if (body.getType() != null && !body.getType().getSimpleName().equals("void")) {
                 serializedBody = objectMapper.writeValueAsString(populateRequestObject(body, podamFactory));
                 bodyJsonNode = objectMapper.readTree(serializedBody);
             }
@@ -40,12 +40,12 @@ final class BodySerializer {
 
     private static Object populateRequestObject(Body body, PodamFactory podamFactory) {
         Class<?>[] types = body.getGenericArgumentTypes().toArray(new Class<?>[0]);
-        Object manufacturedPojo = podamFactory.manufacturePojo(body.getBodyType(), types);
+        Object manufacturedPojo = podamFactory.manufacturePojo(body.getType(), types);
 
         if (manufacturedPojo == null) {
             throw new PactGenerationException("Podam manufacturing failed");
         }
-        
+
         return manufacturedPojo;
     }
 }
