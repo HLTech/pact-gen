@@ -1,5 +1,6 @@
 package dev.hltech.pact.generation.domain.client.feign;
 
+import com.google.common.collect.Lists;
 import dev.hltech.pact.generation.domain.client.annotation.handlers.AnnotatedMethodHandler;
 import dev.hltech.pact.generation.domain.client.annotation.handlers.DeleteMappingMethodsHandler;
 import dev.hltech.pact.generation.domain.client.annotation.handlers.GetMappingMethodsHandler;
@@ -10,10 +11,12 @@ import dev.hltech.pact.generation.domain.client.annotation.handlers.RequestMappi
 import dev.hltech.pact.generation.domain.client.ClientMethodRepresentationExtractor;
 import dev.hltech.pact.generation.domain.client.model.Body;
 import dev.hltech.pact.generation.domain.client.model.ClientMethodRepresentation;
+import dev.hltech.pact.generation.domain.client.model.Param;
 import dev.hltech.pact.generation.domain.client.model.RequestRepresentation;
 import dev.hltech.pact.generation.domain.client.model.ResponseRepresentation;
 import dev.hltech.pact.generation.domain.client.util.RawHeadersParser;
 import dev.hltech.pact.generation.domain.client.util.TypeExtractor;
+import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -49,17 +52,32 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     private static List<ResponseRepresentation> extractResponseProperties(Method feignClientMethod) {
         feignClientMethod.getGenericReturnType();
 
-        return Arrays.stream(feignClientMethod.getDeclaredAnnotationsByType(InteractionInfo.class))
-            .map(annotation -> ResponseRepresentation.builder()
-                .status(annotation.responseStatus())
-                .headers(RawHeadersParser.parseAll(annotation.responseHeaders()))
-                .body(Body.builder()
-                    .type(feignClientMethod.getReturnType())
-                    .genericArgumentTypes(
-                        TypeExtractor.extractParameterTypesFromType(feignClientMethod.getGenericReturnType()))
-                    .build())
-                .description(annotation.description())
-                .build())
+        List<ResponseRepresentation> results = Arrays
+            .stream(feignClientMethod.getDeclaredAnnotationsByType(InteractionInfo.class))
+            .map(annotation -> populateResponse(
+                annotation.responseStatus(),
+                RawHeadersParser.parseAll(annotation.responseHeaders()),
+                feignClientMethod,
+                annotation.description()))
             .collect(Collectors.toList());
+
+        return results.size() > 0 ? results :
+            Lists.newArrayList(populateResponse(HttpStatus.OK, Lists.newArrayList(), feignClientMethod, ""));
     }
+
+    private static ResponseRepresentation populateResponse(
+        HttpStatus status, List<Param> headers, Method feignClientMethod, String description) {
+
+        return ResponseRepresentation.builder()
+            .status(status)
+            .headers(headers)
+            .body(Body.builder()
+                .type(feignClientMethod.getReturnType())
+                .genericArgumentTypes(
+                    TypeExtractor.extractParameterTypesFromType(feignClientMethod.getGenericReturnType()))
+                .build())
+            .description(description)
+            .build();
+    }
+
 }

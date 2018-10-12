@@ -103,8 +103,9 @@ class PactFactorySpec extends Specification {
         with(pact) {
             consumer.name == 'SpecConsumer'
             provider.name == 'SpecProvider'
-            interactions.size() == 2
+            interactions.size() == 3
             verifyHTTPStatus(interactions, '200')
+            verifyHTTPStatus(interactions, '404')
             verifyHTTPStatus(interactions, '202')
         }
     }
