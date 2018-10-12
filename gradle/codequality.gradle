@@ -1,0 +1,19 @@
+apply plugin: 'jacoco'
+apply plugin: 'checkstyle'
+
+jacoco {
+    toolVersion = "0.8.1"
+}
+
+checkstyle {
+    toolVersion "8.1"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+    executionData = files("${buildDir}/jacoco/test.exec")
+}

@@ -33,7 +33,6 @@ public class PactFactory {
         podamFactory.getStrategy().setDefaultNumberOfCollectionElements(1);
     }
 
-    
     public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
 
         ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();

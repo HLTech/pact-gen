@@ -1,0 +1,68 @@
+group = 'com.hltech'
+version = '1.0-SNAPSHOT'
+
+buildscript {
+    ext {
+        repos = {
+            gradlePluginPortal()
+            mavenLocal()
+            mavenCentral()
+        }
+        groovyAllVersion = '2.4.13'
+        lombokVersion = '1.16.18'
+        spockVersion = '1.1-groovy-2.4'
+        spockReportsVersion = '1.4.0'
+        grgitVersion = '2.2.0'
+        disruptorVersion = '3.4.0'
+        reflectionsVersion = '0.9.11'
+        feignVersion = '2.0.1.RELEASE'
+        jacksonVersion = '2.9.6'
+        podamVersion = '7.2.0.RELEASE'
+        cglibNodepVersion = '3.2.5'
+    }
+    repositories(repos)
+    dependencies {
+        classpath "org.ajoberstar:grgit:$grgitVersion"
+    }
+}
+
+repositories(repos)
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'groovy'
+apply plugin: 'org.ajoberstar.grgit'
+apply from: 'gradle/test.gradle'
+apply from: 'gradle/codequality.gradle'
+
+version = buildVersion()
+
+jar.baseName = 'pact-gen'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "com.lmax:disruptor:$disruptorVersion"
+    compile "org.reflections:reflections:$reflectionsVersion"
+    compile "org.springframework.cloud:spring-cloud-starter-openfeign:$feignVersion"
+    compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "uk.co.jemos.podam:podam:$podamVersion"
+    compile "org.projectlombok:lombok:$lombokVersion"
+
+    testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
+    testCompile "org.spockframework:spock-core:$spockVersion"
+    testCompile("com.athaydes:spock-reports:$spockReportsVersion") {
+        transitive = false //this avoids affecting your version of Groovy/Spock in Spock reports
+    }
+    testCompile "cglib:cglib-nodep:$cglibNodepVersion"
+}
+
+def buildVersion() {
+    def baseVersion = 0
+
+    def commitsCount = grgit.log().size()
+    def lastCommit = grgit.head().abbreviatedId
+    "$baseVersion.$commitsCount.0_$lastCommit"
+}

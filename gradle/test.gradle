@@ -1,0 +1,25 @@
+buildscript{
+    ext {
+        restAssuredVersion = '3.1.0'
+    }
+    repositories(repos)
+}
+
+sourceSets {
+    test.groovy.srcDirs(
+        "src/test/unit",
+        "src/test/integration",
+        "src/test/functional",
+        "src/test/commons"
+    )
+}
+
+dependencies {
+    testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
+}
+
+idea {
+    module {
+        test
+    }
+}
