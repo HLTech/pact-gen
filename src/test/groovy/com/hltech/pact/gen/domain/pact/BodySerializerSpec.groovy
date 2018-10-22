@@ -19,6 +19,6 @@ class BodySerializerSpec extends Specification {
             Body body = new Body(GenericResponseType.class, Lists.newArrayList(TestParam.class))
 
         expect:
-        BodySerializer.serializeBody(body, mapper, podamFactory) =~ /\{"data":\[(\{"testField":".+"},*)+]}/
+            BodySerializer.serializeBody(body, mapper, podamFactory) =~ /\{"data":\[(\{"testField":".+"},*)+]}/
     }
 }
