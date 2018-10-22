@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.client.feign
 
+
 import spock.lang.Specification
 import spock.lang.Subject
 
