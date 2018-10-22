@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.pact
 
+
 import com.hltech.pact.gen.domain.GenericResponseType
 import com.hltech.pact.gen.domain.ResponseType
 import com.hltech.pact.gen.domain.client.model.Body

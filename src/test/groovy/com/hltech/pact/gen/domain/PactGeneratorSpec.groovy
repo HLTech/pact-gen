@@ -5,8 +5,6 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.hltech.pact.gen.PactGenerator
 import com.hltech.pact.gen.domain.client.feign.FeignClientsFinder
-import com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient
 import com.hltech.pact.gen.domain.pact.PactFactory
 import com.hltech.pact.gen.domain.pact.PactJsonGenerator
 import com.hltech.pact.gen.domain.pact.Service
@@ -16,6 +14,8 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 import spock.lang.Subject
+import com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient
 
 class PactGeneratorSpec extends Specification {
 
@@ -48,9 +48,9 @@ class PactGeneratorSpec extends Specification {
                                   .build()
 
         and:
-            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(FirstEmptyFeignClient.class, SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
+            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)
@@ -90,9 +90,9 @@ class PactGeneratorSpec extends Specification {
                 .build()
 
         and:
-            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(FirstEmptyFeignClient.class, SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
+            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)

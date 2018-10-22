@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.client.util
 
+
 import com.hltech.pact.gen.domain.GenericResponseType
 import com.hltech.pact.gen.domain.TestParam
 import spock.lang.Specification
