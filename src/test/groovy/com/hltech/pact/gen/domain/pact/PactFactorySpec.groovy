@@ -18,6 +18,7 @@ import com.hltech.pact.gen.domain.pact.model.Pact
 import org.apache.commons.lang.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 class PactFactorySpec extends Specification {
 
@@ -60,9 +61,10 @@ class PactFactorySpec extends Specification {
         }
     }
 
-    def "should get path from feign client"() {
+    @Unroll
+    def "should get path from feign client"(Class<?> feignClient) {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(PathFeignClient, 'SpecConsumer', objectMapper)
+        Pact pact = pactFactory.createFromFeignClient(feignClient, 'SpecConsumer', objectMapper)
 
         then:
         with(pact) {
@@ -71,6 +73,12 @@ class PactFactorySpec extends Specification {
             interactions.size() == 1
             verifyMultiplePathVariables(interactions[0])
         }
+
+        where:
+        feignClient << [PathFeignClient.FirstPathFeignClient,
+                        PathFeignClient.SecondPathFeignClient,
+                        PathFeignClient.ThirdPathFeignClient,
+                        PathFeignClient.FourthPathFeignClient]
     }
 
     def "should get request headers from feign client"() {
@@ -226,7 +234,7 @@ class PactFactorySpec extends Specification {
     private static boolean verifyMultiplePathVariables(Interaction interaction) {
         def path = interaction.request.path
 
-        def firstPathVariable = StringUtils.substringsBetween(interaction.request.path,'/test/', '/objects')[0]
+        def firstPathVariable = StringUtils.substringsBetween(interaction.request.path,'/common/test/', '/objects')[0]
         def secondPathVariable = StringUtils.substringAfter(path, '/objects')
 
         !firstPathVariable.isEmpty() && firstPathVariable != {'testId'} && !secondPathVariable.isEmpty() && secondPathVariable != {'anotherTestId'}
