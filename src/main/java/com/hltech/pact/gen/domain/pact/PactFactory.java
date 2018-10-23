@@ -40,9 +40,15 @@ public class PactFactory {
         return Pact.builder()
             .provider(new Service(extractProviderName(feignClient)))
             .consumer(new Service(consumerName))
-            .interactions(createInteractionsFromMethods(methodExtractor, feignClient.getMethods(), objectMapper))
+            .interactions(createInteractionsFromMethods(
+                methodExtractor, feignClient.getMethods(), objectMapper, extractPathPrefix(feignClient)))
             .metadata(new Metadata("1.0.0"))
             .build();
+    }
+
+    private String extractPathPrefix(Class<?> feignClient) {
+        FeignClient feignClientAnnotation = feignClient.getAnnotation(FeignClient.class);
+        return feignClientAnnotation.path();
     }
 
     private String extractProviderName(Class<?> feignClient) {
@@ -51,15 +57,22 @@ public class PactFactory {
     }
 
     private static List<Interaction> createInteractionsFromMethods(
-        ClientMethodRepresentationExtractor extractor, Method[] clientMethods, ObjectMapper objectMapper) {
+        ClientMethodRepresentationExtractor extractor,
+        Method[] clientMethods,
+        ObjectMapper objectMapper,
+        String pathPrefix) {
 
         return Arrays.stream(clientMethods)
-            .flatMap(clientMethod -> createInteractionsFromMethod(extractor, clientMethod, objectMapper).stream())
+            .flatMap(clientMethod ->
+                createInteractionsFromMethod(extractor, clientMethod, objectMapper, pathPrefix).stream())
             .collect(Collectors.toList());
     }
 
     private static List<Interaction> createInteractionsFromMethod(
-        ClientMethodRepresentationExtractor extractor, Method clientMethod, ObjectMapper objectMapper) {
+        ClientMethodRepresentationExtractor extractor,
+        Method clientMethod,
+        ObjectMapper objectMapper,
+        String pathPrefix) {
 
         ClientMethodRepresentation methodRepresentation = extractor.extractClientMethodRepresentation(clientMethod);
 
@@ -68,7 +81,8 @@ public class PactFactory {
         return methodRepresentation.getResponseRepresentationList().stream()
             .map(interactionResponseRepresentation -> Interaction.builder()
                 .description(createDescription(clientMethod.getName(), interactionResponseRepresentation))
-                .request(createInteractionRequest(methodRepresentation.getRequestRepresentation(), objectMapper))
+                .request(
+                    createInteractionRequest(methodRepresentation.getRequestRepresentation(), objectMapper, pathPrefix))
                 .response(createInteractionResponse(interactionResponseRepresentation, objectMapper))
                 .build())
             .collect(Collectors.toList());
@@ -83,25 +97,43 @@ public class PactFactory {
     }
 
     private static InteractionRequest createInteractionRequest(
-        RequestRepresentation requestRepresentation, ObjectMapper objectMapper) {
+        RequestRepresentation requestRepresentation, ObjectMapper objectMapper, String pathPrefix) {
 
         return InteractionRequest.builder()
             .method(requestRepresentation.getHttpMethod().name())
-            .path(parsePath(requestRepresentation.getPath(), requestRepresentation.getPathParameters()))
+            .path(parsePath(pathPrefix, requestRepresentation.getPath(), requestRepresentation.getPathParameters()))
             .headers(mapHeaders(requestRepresentation.getHeaders()))
             .query(parseParametersToQuery(requestRepresentation.getRequestParameters()))
             .body(BodySerializer.serializeBody(requestRepresentation.getBody(), objectMapper, podamFactory))
             .build();
     }
 
-    private static String parsePath(String path, List<Param> pathParameters) {
+    private static String parsePath(String pathPrefix, String path, List<Param> pathParameters) {
         String resultPath = path;
         for (Param param : pathParameters) {
             Object paramValue = getParamValue(param);
 
             resultPath = resultPath.replace("{" + param.getName() + "}", String.valueOf(paramValue));
         }
-        return resultPath;
+        return prependPrefix(pathPrefix, path);
+    }
+
+    private static String prependPrefix(String pathPrefix, String path) {
+        if (pathPrefix.length() == 0) {
+            return path;
+        }
+
+        StringBuilder builder = new StringBuilder(pathPrefix);
+
+        if (pathPrefix.charAt(pathPrefix.length() - 1) == '/') {
+            builder.deleteCharAt(pathPrefix.length() - 1);
+        }
+
+        if (path.charAt(0) != '/') {
+            builder.append('/');
+        }
+
+        return builder.append(path).toString();
     }
 
     private static Object getParamValue(Param param) {
