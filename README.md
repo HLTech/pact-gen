@@ -1,5 +1,7 @@
 # PACT Generator
 
+[![Coverage Status](https://coveralls.io/repos/github/HLTech/pact-gen/badge.svg?branch=master)](https://coveralls.io/github/HLTech/pact-gen?branch=master)
+
 ## Table of Contents
 1. [**Overview**](#Overview)
 2. [**Prerequisites**](#Prerequisites)
