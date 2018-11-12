@@ -1,6 +1,6 @@
 # PACT Generator
 
-[![Build Status](https://travis-ci.org/HLTech/pact-gen.svg?branch=master)](https://travis-ci.org/HLTech/pact-gen.svg?branch=master)
+[![Build Status](https://travis-ci.org/HLTech/pact-gen.svg?branch=master)](https://travis-ci.org/HLTech/pact-gen)
 [![Coverage Status](https://coveralls.io/repos/github/HLTech/pact-gen/badge.svg?branch=master)](https://coveralls.io/github/HLTech/pact-gen?branch=master)
 
 ## Table of Contents
