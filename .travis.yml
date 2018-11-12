@@ -11,6 +11,6 @@ before_install:
 
 jobs:
   include:
-    - stage: build with gradle
+    - stage: build with gradle & generate reports
       script:
-      - ./gradlew clean build
+      - ./gradlew clean build jacocoTestReport coveralls

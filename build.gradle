@@ -13,6 +13,7 @@ buildscript {
         spockVersion = '1.1-groovy-2.4'
         spockReportsVersion = '1.4.0'
         grgitVersion = '2.2.0'
+        coverallsVersion = '2.8.2'
         disruptorVersion = '3.4.0'
         reflectionsVersion = '0.9.11'
         feignVersion = '2.0.1.RELEASE'
@@ -20,9 +21,10 @@ buildscript {
         podamVersion = '7.2.0.RELEASE'
         cglibNodepVersion = '3.2.5'
     }
-    repositories(repos)
+    repositories (repos)
     dependencies {
         classpath "org.ajoberstar:grgit:$grgitVersion"
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
     }
 }
 

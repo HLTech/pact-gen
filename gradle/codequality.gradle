@@ -1,5 +1,6 @@
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
+apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
     toolVersion = "0.8.1"
@@ -11,8 +12,8 @@ checkstyle {
 
 jacocoTestReport {
     reports {
-        xml.enabled false
-        csv.enabled false
+        xml.enabled true
+        html.enabled = true
         html.destination file("${buildDir}/jacocoHtml")
     }
     executionData = files("${buildDir}/jacoco/test.exec")
