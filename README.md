@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/HLTech/pact-gen.svg?branch=master)](https://travis-ci.org/HLTech/pact-gen)
 [![Coverage Status](https://coveralls.io/repos/github/HLTech/pact-gen/badge.svg?branch=master)](https://coveralls.io/github/HLTech/pact-gen?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/HLTech/pact-gen/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/HLTech/pact-gen/?branch=master)
 
 ## Table of Contents
 1. [**Overview**](#Overview)
