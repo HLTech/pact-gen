@@ -21,4 +21,9 @@ class BodySerializerSpec extends Specification {
         expect:
             BodySerializer.serializeBody(body, mapper, podamFactory) =~ /\{"data":\[(\{"testField":".+"},*)+]}/
     }
+
+    def "Should return null if type of body is void"() {
+        expect:
+            !BodySerializer.serializeBody(new Body(void.class, null), mapper, podamFactory)
+    }
 }

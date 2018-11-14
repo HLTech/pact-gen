@@ -21,7 +21,7 @@ final class BodySerializer {
         JsonNode bodyJsonNode = null;
 
         try {
-            if (body.getType() != null && !body.getType().getSimpleName().equals("void")) {
+            if (body.getType() != null && !body.getType().equals(Void.TYPE)) {
                 serializedBody = objectMapper.writeValueAsString(populateRequestObject(body, podamFactory));
                 bodyJsonNode = objectMapper.readTree(serializedBody);
             }
