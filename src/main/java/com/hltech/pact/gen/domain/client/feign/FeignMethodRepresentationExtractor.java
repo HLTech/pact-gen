@@ -61,7 +61,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                 annotation.description()))
             .collect(Collectors.toList());
 
-        return results.size() > 0 ? results :
+        return !results.isEmpty() ? results :
             Lists.newArrayList(populateResponse(HttpStatus.OK, Lists.newArrayList(), feignClientMethod, ""));
     }
 
