@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 public class TypeExtractor {
 
+    private TypeExtractor() {}
+
     public static List<Class<?>> extractParameterTypesFromType(Type type) {
         if (type == null) {
             return new ArrayList<>();
