@@ -3,6 +3,13 @@ package com.hltech.pact.gen.domain.pact;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hltech.pact.gen.PactGenerationException;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
+import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.DeleteMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.GetMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.PatchMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.PostMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.PutMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.handlers.RequestMappingMethodsHandler;
 import com.hltech.pact.gen.domain.client.feign.FeignMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
 import com.hltech.pact.gen.domain.client.model.Param;
@@ -19,6 +26,7 @@ import uk.co.jemos.podam.api.PodamFactoryImpl;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,6 +34,7 @@ import java.util.stream.Collectors;
 public class PactFactory {
 
     private static final PodamFactory podamFactory;
+    private static final Collection<AnnotatedMethodHandler> annotatedMethodHandlers;
 
     static {
         podamFactory = new PodamFactoryImpl();
@@ -33,9 +42,16 @@ public class PactFactory {
         podamFactory.getStrategy().setDefaultNumberOfCollectionElements(1);
     }
 
+    static {
+        annotatedMethodHandlers = Arrays.asList(
+            new DeleteMappingMethodsHandler(), new GetMappingMethodsHandler(), new PatchMappingMethodsHandler(),
+            new PostMappingMethodsHandler(), new PutMappingMethodsHandler(), new RequestMappingMethodsHandler());
+    }
+
     public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
 
-        ClientMethodRepresentationExtractor methodExtractor = new FeignMethodRepresentationExtractor();
+        ClientMethodRepresentationExtractor methodExtractor =
+            new FeignMethodRepresentationExtractor(annotatedMethodHandlers);
 
         return Pact.builder()
             .provider(new Service(extractProviderName(feignClient)))
@@ -63,8 +79,9 @@ public class PactFactory {
         String pathPrefix) {
 
         return Arrays.stream(clientMethods)
-            .flatMap(clientMethod ->
-                createInteractionsFromMethod(extractor, clientMethod, objectMapper, pathPrefix).stream())
+            .filter(method -> annotatedMethodHandlers.stream()
+                .anyMatch(handler -> handler.isSupported(method)))
+            .flatMap(method -> createInteractionsFromMethod(extractor, method, objectMapper, pathPrefix).stream())
             .collect(Collectors.toList());
     }
 
