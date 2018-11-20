@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import uk.co.jemos.podam.api.PodamFactory;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 final class BodySerializer {
@@ -40,7 +41,10 @@ final class BodySerializer {
 
     private static Object populateRequestObject(Body body, PodamFactory podamFactory) {
         Class<?>[] types = body.getGenericArgumentTypes().toArray(new Class<?>[0]);
-        Object manufacturedPojo = podamFactory.manufacturePojo(body.getType(), types);
+
+        Object manufacturedPojo = Optional.class.equals(body.getType())
+            ? podamFactory.manufacturePojo(types[0])
+            : podamFactory.manufacturePojo(body.getType(), types);
 
         if (manufacturedPojo == null) {
             throw new PactGenerationException("Podam manufacturing failed");

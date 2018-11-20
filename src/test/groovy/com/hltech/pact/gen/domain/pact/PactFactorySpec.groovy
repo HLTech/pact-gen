@@ -5,6 +5,7 @@ import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignCl
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenRequestFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.DescriptionFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.OptionalResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.PathFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.RequestBodyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.RequestHeadersFeignClient
@@ -101,6 +102,19 @@ class PactFactorySpec extends Specification {
             interactions[0].request.headers.containsKey('key5')
             !interactions[0].request.headers.get('key5').isEmpty()
         }
+    }
+
+    def "should get response from optional return value from feign client"() {
+        when:
+            final Pact pact = pactFactory.createFromFeignClient(OptionalResponseFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+                interactions[0].response.body =~ /[a-z A-Z0-9_]+/
+            }
     }
 
     def "should get response info from feign client"() {
