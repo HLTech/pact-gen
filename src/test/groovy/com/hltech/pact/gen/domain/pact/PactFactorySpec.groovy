@@ -1,6 +1,7 @@
 package com.hltech.pact.gen.domain.pact
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.hltech.pact.gen.domain.client.feign.sample.AdditionalNotAnnotatedMethodsFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenRequestFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenResponseFeignClient
@@ -114,6 +115,18 @@ class PactFactorySpec extends Specification {
                 provider.name == 'SpecProvider'
                 interactions.size() == 1
                 interactions[0].response.body =~ /[a-z A-Z0-9_]+/
+            }
+    }
+
+    def "should ignore methods, which do not represent interactions, in a feign client"() {
+        when:
+            final Pact pact = pactFactory.createFromFeignClient(AdditionalNotAnnotatedMethodsFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
             }
     }
 

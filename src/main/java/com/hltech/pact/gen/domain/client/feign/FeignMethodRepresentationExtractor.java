@@ -3,12 +3,6 @@ package com.hltech.pact.gen.domain.client.feign;
 import com.google.common.collect.Lists;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.DeleteMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.GetMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PatchMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PostMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PutMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.RequestMappingMethodsHandler;
 import com.hltech.pact.gen.domain.client.model.Body;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
 import com.hltech.pact.gen.domain.client.model.Param;
@@ -28,10 +22,8 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
 
     private final Collection<AnnotatedMethodHandler> annotatedMethodHandlers;
 
-    public FeignMethodRepresentationExtractor() {
-        this.annotatedMethodHandlers = Arrays.asList(
-            new DeleteMappingMethodsHandler(), new GetMappingMethodsHandler(), new PatchMappingMethodsHandler(),
-            new PostMappingMethodsHandler(), new PutMappingMethodsHandler(), new RequestMappingMethodsHandler());
+    public FeignMethodRepresentationExtractor(Collection<AnnotatedMethodHandler> annotatedMethodHandlers) {
+        this.annotatedMethodHandlers = annotatedMethodHandlers;
     }
 
     @Override
