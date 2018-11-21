@@ -132,7 +132,7 @@ public class PactFactory {
 
             resultPath = resultPath.replace("{" + param.getName() + "}", String.valueOf(paramValue));
         }
-        return prependPrefix(pathPrefix, path);
+        return prependPrefix(pathPrefix, resultPath);
     }
 
     private static String prependPrefix(String pathPrefix, String path) {
