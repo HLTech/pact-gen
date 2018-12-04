@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.pact;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hltech.pact.gen.PactGenerationException;
 import com.hltech.pact.gen.domain.pact.model.Pact;
@@ -12,7 +13,7 @@ import java.util.Collection;
 @Slf4j
 public class PactJsonGenerator {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
     public void writePactFiles(File destinationDir, Collection<Pact> pacts) {
         pacts.forEach(pact -> writePactFile(destinationDir, pact));
