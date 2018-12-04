@@ -15,7 +15,7 @@ import com.hltech.pact.gen.domain.client.feign.sample.RequestParamFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.RequestTypeFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.ResponseBodyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.ResponseHeadersFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ResponseInfoFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.InteractionInfoFeignClient
 import com.hltech.pact.gen.domain.pact.model.Interaction
 import com.hltech.pact.gen.domain.pact.model.Pact
 import org.apache.commons.lang3.StringUtils
@@ -125,7 +125,7 @@ class PactFactorySpec extends Specification {
 
     def "should get response info from feign client"() {
         when:
-            final Pact pact = pactFactory.createFromFeignClient(ResponseInfoFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(InteractionInfoFeignClient, 'SpecConsumer', objectMapper)
 
         then:
             with(pact) {

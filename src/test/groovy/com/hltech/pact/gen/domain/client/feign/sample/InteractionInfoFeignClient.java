@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient("SpecProvider")
-public interface ResponseInfoFeignClient {
+public interface InteractionInfoFeignClient {
 
     @GetMapping(path = "/")
     @InteractionsInfo({

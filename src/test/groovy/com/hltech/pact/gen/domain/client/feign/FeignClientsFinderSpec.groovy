@@ -28,7 +28,7 @@ class FeignClientsFinderSpec extends Specification {
             verifyFeignClient(feignClients, 'RequestTypeFeignClient')
             verifyFeignClient(feignClients, 'ResponseBodyFeignClient')
             verifyFeignClient(feignClients, 'ResponseHeadersFeignClient')
-            verifyFeignClient(feignClients, 'ResponseInfoFeignClient')
+            verifyFeignClient(feignClients, 'InteractionInfoFeignClient')
             verifyFeignClient(feignClients, 'SecondEmptyFeignClient')
             verifyFeignClient(feignClients, 'OptionalResponseFeignClient')
             verifyFeignClient(feignClients, 'AdditionalNotAnnotatedMethodsFeignClient')
