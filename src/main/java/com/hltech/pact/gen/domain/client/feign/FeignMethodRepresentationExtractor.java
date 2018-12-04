@@ -50,15 +50,19 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                 annotation.responseStatus(),
                 RawHeadersParser.parseAll(annotation.responseHeaders()),
                 feignClientMethod,
-                annotation.description()))
+                annotation.description(),
+                annotation.emptyBodyExpected()))
             .collect(Collectors.toList());
 
         return !results.isEmpty() ? results :
-            Lists.newArrayList(populateResponse(HttpStatus.OK, Lists.newArrayList(), feignClientMethod, ""));
+            Lists.newArrayList(populateResponse(HttpStatus.OK, Lists.newArrayList(), feignClientMethod, "", false));
     }
 
-    private static ResponseRepresentation populateResponse(
-        HttpStatus status, List<Param> headers, Method feignClientMethod, String description) {
+    private static ResponseRepresentation populateResponse(HttpStatus status,
+                                                           List<Param> headers,
+                                                           Method feignClientMethod,
+                                                           String description,
+                                                           boolean isEmptyBodyExpected) {
 
         return ResponseRepresentation.builder()
             .status(status)
@@ -69,7 +73,7 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
                     TypeExtractor.extractParameterTypesFromType(feignClientMethod.getGenericReturnType()))
                 .build())
             .description(description)
+            .emptyBodyExpected(isEmptyBodyExpected)
             .build();
     }
-
 }

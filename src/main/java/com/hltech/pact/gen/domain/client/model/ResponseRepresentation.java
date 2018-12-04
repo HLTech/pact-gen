@@ -14,4 +14,5 @@ public class ResponseRepresentation {
     private final List<Param> headers;
     private final Body body;
     private final String description;
+    private final boolean emptyBodyExpected;
 }
