@@ -16,4 +16,5 @@ public @interface InteractionInfo {
     HttpStatus responseStatus();
     String[] responseHeaders() default {};
     String description() default "";
+    boolean emptyBodyExpected() default false;
 }

@@ -1,6 +1,8 @@
 package com.hltech.pact.gen.domain.pact;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.hltech.pact.gen.PactGenerationException;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
@@ -20,6 +22,7 @@ import com.hltech.pact.gen.domain.pact.model.InteractionRequest;
 import com.hltech.pact.gen.domain.pact.model.InteractionResponse;
 import com.hltech.pact.gen.domain.pact.model.Metadata;
 import com.hltech.pact.gen.domain.pact.model.Pact;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -199,12 +202,18 @@ public class PactFactory {
         return InteractionResponse.builder()
                 .status(responseRepresentation.getStatus().toString())
                 .headers(mapHeaders(responseRepresentation.getHeaders()))
-                .body(BodySerializer.serializeBody(responseRepresentation.getBody(), objectMapper, podamFactory))
+                .body(buildBody(responseRepresentation, objectMapper))
                 .build();
     }
 
     private static Map<String, String> mapHeaders(List<Param> headers) {
         return headers.stream()
             .collect(Collectors.toMap(Param::getName, header -> String.valueOf(getParamValue(header))));
+    }
+
+    private static JsonNode buildBody(ResponseRepresentation responseRepresentation, ObjectMapper objectMapper) {
+        return responseRepresentation.isEmptyBodyExpected()
+            ? JsonNodeFactory.instance.textNode(StringUtils.EMPTY)
+            : BodySerializer.serializeBody(responseRepresentation.getBody(), objectMapper, podamFactory);
     }
 }

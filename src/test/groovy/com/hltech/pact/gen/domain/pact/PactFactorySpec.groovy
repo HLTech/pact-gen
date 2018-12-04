@@ -6,6 +6,7 @@ import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignCl
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenRequestFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.DescriptionFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.ExpectedEmptyResponseBodyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.OptionalResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.PathFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.RequestBodyFeignClient
@@ -14,10 +15,10 @@ import com.hltech.pact.gen.domain.client.feign.sample.RequestParamFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.RequestTypeFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.ResponseBodyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.ResponseHeadersFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ResponseInfoFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.InteractionInfoFeignClient
 import com.hltech.pact.gen.domain.pact.model.Interaction
 import com.hltech.pact.gen.domain.pact.model.Pact
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -50,51 +51,51 @@ class PactFactorySpec extends Specification {
 
     def "should get description from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(DescriptionFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(DescriptionFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 2
-            verifyDescription(interactions, 'getTestObject request; 200 response')
-            verifyDescription(interactions, 'Update test object in the test service')
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 2
+                verifyDescription(interactions, 'getTestObject request; 200 response')
+                verifyDescription(interactions, 'Update test object in the test service')
+            }
     }
 
     def "should get path from feign client"() {
         when:
-        Pact pact = pactFactory.createFromFeignClient(PathFeignClient, 'SpecConsumer', objectMapper)
+            Pact pact = pactFactory.createFromFeignClient(PathFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 1
-            verifyMultiplePathVariables(interactions[0])
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+                verifyMultiplePathVariables(interactions[0])
+            }
     }
 
     def "should get request headers from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestHeadersFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(RequestHeadersFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 1
-            interactions[0].request.headers.containsKey('key1')
-            interactions[0].request.headers.get('key1') == 'val1'
-            interactions[0].request.headers.containsKey('key2')
-            interactions[0].request.headers.get('key2') == 'val2'
-            interactions[0].request.headers.containsKey('key3')
-            !interactions[0].request.headers.get('key3').isEmpty()
-            interactions[0].request.headers.containsKey('key4')
-            !interactions[0].request.headers.get('key4').isEmpty()
-            interactions[0].request.headers.containsKey('key5')
-            !interactions[0].request.headers.get('key5').isEmpty()
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+                interactions[0].request.headers.containsKey('key1')
+                interactions[0].request.headers.get('key1') == 'val1'
+                interactions[0].request.headers.containsKey('key2')
+                interactions[0].request.headers.get('key2') == 'val2'
+                interactions[0].request.headers.containsKey('key3')
+                !interactions[0].request.headers.get('key3').isEmpty()
+                interactions[0].request.headers.containsKey('key4')
+                !interactions[0].request.headers.get('key4').isEmpty()
+                interactions[0].request.headers.containsKey('key5')
+                !interactions[0].request.headers.get('key5').isEmpty()
+            }
     }
 
     def "should get response from optional return value from feign client"() {
@@ -124,61 +125,61 @@ class PactFactorySpec extends Specification {
 
     def "should get response info from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseInfoFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(InteractionInfoFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 3
-            verifyHTTPStatus(interactions, '200')
-            verifyHTTPStatus(interactions, '404')
-            verifyHTTPStatus(interactions, '202')
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 3
+                verifyHTTPStatus(interactions, '200')
+                verifyHTTPStatus(interactions, '404')
+                verifyHTTPStatus(interactions, '202')
+            }
     }
 
     def "should get response headers from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseHeadersFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(ResponseHeadersFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 1
-            interactions[0].response.headers.containsKey('key1')
-            interactions[0].response.headers.get('key1') == 'val1'
-            interactions[0].response.headers.containsKey('key2')
-            interactions[0].response.headers.get('key2') == 'val2'
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+                interactions[0].response.headers.containsKey('key1')
+                interactions[0].response.headers.get('key1') == 'val1'
+                interactions[0].response.headers.containsKey('key2')
+                interactions[0].response.headers.get('key2') == 'val2'
+            }
     }
 
     def "should get request body from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 2
-            interactions.every { interaction ->
-                interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 2
+                interactions.every { interaction ->
+                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/
+                }
             }
-        }
     }
 
     def "should get request param from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(RequestParamFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(RequestParamFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 1
-            interactions[0].request.query =~ /longP=123&parameter=.+&params=.+/
-        }
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+                interactions[0].request.query =~ /longP=123&parameter=.+&params=.+/
+            }
     }
 
     def "should throw exception when trying to generate pacts out from feign client with broken request"() {
@@ -207,29 +208,46 @@ class PactFactorySpec extends Specification {
 
     def "should get response body from feign client"() {
         when:
-        final Pact pact = pactFactory.createFromFeignClient(ResponseBodyFeignClient, 'SpecConsumer', objectMapper)
+            final Pact pact = pactFactory.createFromFeignClient(ResponseBodyFeignClient, 'SpecConsumer', objectMapper)
 
         then:
-        with(pact) {
-            consumer.name == 'SpecConsumer'
-            provider.name == 'SpecProvider'
-            interactions.size() == 3
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 3
 
-            interactions.any { interaction ->
-                interaction.request.method == 'GET'
-                interaction.response.body == null
-            }
+                interactions.any { interaction ->
+                    interaction.request.method == 'GET'
+                    interaction.response.body == null
+                }
 
-            interactions.any { interaction ->
-                interaction.request.method == 'POST'
-                interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
-            }
+                interactions.any { interaction ->
+                    interaction.request.method == 'POST'
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
+                }
 
-            interactions.any { interaction ->
-                interaction.request.method == 'PUT'
-                interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)]}/
+                interactions.any { interaction ->
+                    interaction.request.method == 'PUT'
+                    interaction.response.body =~ /\{"data":\[(\{"testField":".+"},*)]}/
+                }
             }
-        }
+    }
+
+    def "should expect empty response body"() {
+        when:
+            final Pact pact = pactFactory.createFromFeignClient(ExpectedEmptyResponseBodyFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 1
+
+                interactions.any { interaction ->
+                    interaction.request.method == 'POST' &&
+                        StringUtils.isBlank(interaction.response.body.asText())
+                }
+            }
     }
 
     private static boolean verifyHTTPMethod(List<Interaction> interactions, String method) {

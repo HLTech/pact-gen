@@ -8,9 +8,10 @@
 1. [**Overview**](#Overview)
 2. [**Prerequisites**](#Prerequisites)
 3. [**Quick start**](#QuickStart)
-4. [**Built with**](#BuiltWith)
-5. [**Authors**](#Authors)
-6. [**License**](#License)
+4. [**Interaction info**](#InteractionInfo)
+5. [**Built with**](#BuiltWith)
+6. [**Authors**](#Authors)
+7. [**License**](#License)
 
 ## Overview <a name="Overview"></a>
 
@@ -29,8 +30,7 @@ Here are conventions that we made:
 * `@FeignClient` annotation has a property `name` - value of that property will be used
 as a provider name
 * Feign client's method name will be used as a name for pact interaction
-* we have added custom annotation `@ResponseInfo` that contains information about
-expected status(es) and header(s) of REST call
+* we have added custom annotation `@InteractionInfo` - more about this annotation can be found [here](#InteractionInfo)
 * example request/response body is generated using [PODAM](http://mtedone.github.io/podam/) library - so our pojos 
 have to be compliant with its requirements: 
     * no argument constructor and setters
@@ -105,6 +105,42 @@ so pact-gen doesn't overwrite any of your configurations
 
 You can take profit of your generated pact files by testing via [Judge-D](https://github.com/HLTech/judge-d) - an
 open-source engine for contract testing. 
+
+## Interaction info annotation <a name="InteractionInfo"></a>
+
+We have added custom annotation `@ResponseInfo` that contains information about:
+* HTTP status(es) (required)
+
+`@InteractionInfo(responseStatus = HttpStatus.OK)` - will add information to pact file that expected
+status is `200 OK`
+
+* header(s) (optional)
+
+`@InteractionInfo(responseStatus = HttpStatus.OK, responseHeaders = {"key1=val1", "key2=val2"})` - will
+add information to pact file, that expected status is `200 OK` and that we expect two headers in response:
+first with name `key1` and value `val1` and second with name `key2` and value `val2`
+ 
+* interaction name (optional)
+
+`@InteractionInfo(responseStatus = HttpStatus.OK, description = "Update test object in the test service")` - will
+add information to pact file, that expected status is `200 OK` and that interaction is called 
+`Update test object in the test service`
+
+* if expecting empty response (optional)
+
+`@InteractionInfo(responseStatus = HttpStatus.OK, emptyBodyExpected = true)` - will add information to pact file
+that expected status is `200 OK` and that (despite declared return type) we expect response to be empty.
+
+`@InteractionInfo` can be aggregated thanks to `@InteractionsInfo` annotation - example usage:
+
+```
+@InteractionsInfo({
+    @InteractionInfo(responseStatus = HttpStatus.NOT_FOUND),
+    @InteractionInfo(responseStatus = HttpStatus.ACCEPTED)
+})
+```
+such annotations on method will add information to pact file that we expect rest service to be able 
+to return any of `404 NOT FOUND` and `202 ACCEPTED` HTTP statuses.
 
 ## Built with <a name="BuiltWith"></a>
 

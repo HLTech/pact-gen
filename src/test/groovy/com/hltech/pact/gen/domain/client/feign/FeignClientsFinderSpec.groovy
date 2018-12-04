@@ -1,6 +1,5 @@
 package com.hltech.pact.gen.domain.client.feign
 
-
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -14,12 +13,13 @@ class FeignClientsFinderSpec extends Specification {
             Set<Class<?>> feignClients = finder.findFeignClients('com.hltech.pact.gen.domain.client.feign.sample')
 
         then:
-            feignClients.size() == 16
+            feignClients.size() == 17
             verifyFeignClient(feignClients, 'BrokenRequestFeignClient')
             verifyFeignClient(feignClients, 'BrokenNestedRequestFeignClient')
             verifyFeignClient(feignClients, 'BrokenResponseFeignClient')
             verifyFeignClient(feignClients, 'BrokenResponseFeignClient')
             verifyFeignClient(feignClients, 'DescriptionFeignClient')
+            verifyFeignClient(feignClients, 'ExpectedEmptyResponseBodyFeignClient')
             verifyFeignClient(feignClients, 'FirstEmptyFeignClient')
             verifyFeignClient(feignClients, 'PathFeignClient')
             verifyFeignClient(feignClients, 'RequestBodyFeignClient')
@@ -28,7 +28,7 @@ class FeignClientsFinderSpec extends Specification {
             verifyFeignClient(feignClients, 'RequestTypeFeignClient')
             verifyFeignClient(feignClients, 'ResponseBodyFeignClient')
             verifyFeignClient(feignClients, 'ResponseHeadersFeignClient')
-            verifyFeignClient(feignClients, 'ResponseInfoFeignClient')
+            verifyFeignClient(feignClients, 'InteractionInfoFeignClient')
             verifyFeignClient(feignClients, 'SecondEmptyFeignClient')
             verifyFeignClient(feignClients, 'OptionalResponseFeignClient')
             verifyFeignClient(feignClients, 'AdditionalNotAnnotatedMethodsFeignClient')
