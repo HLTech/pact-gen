@@ -91,3 +91,15 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+// add all the info required by Maven Central to the pom
+configure(install.repositories.mavenInstaller) {
+    pom.project {
+        licenses {
+            license {
+                name 'The MIT License'
+                url 'https://opensource.org/licenses/MIT'
+            }
+        }
+    }
+}

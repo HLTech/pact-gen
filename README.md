@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/HLTech/pact-gen.svg?branch=master)](https://travis-ci.org/HLTech/pact-gen)
 [![Coverage Status](https://coveralls.io/repos/github/HLTech/pact-gen/badge.svg?branch=master)](https://coveralls.io/github/HLTech/pact-gen?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/HLTech/pact-gen/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/HLTech/pact-gen/?branch=master)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
 1. [**Overview**](#Overview)
@@ -108,7 +109,7 @@ open-source engine for contract testing.
 
 ## Interaction info annotation <a name="InteractionInfo"></a>
 
-We have added custom annotation `@ResponseInfo` that contains information about:
+We have added custom annotation `@InteractionInfo` that contains information about:
 * HTTP status(es) (required)
 
 `@InteractionInfo(responseStatus = HttpStatus.OK)` - will add information to pact file that expected
@@ -157,4 +158,4 @@ to return any of `404 NOT FOUND` and `202 ACCEPTED` HTTP statuses.
 
 ## License <a name="License"></a>
 
-TODO
+pact-gen is [MIT licensed](./LICENSE).
