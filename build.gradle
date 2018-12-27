@@ -1,5 +1,4 @@
 group = 'com.hltech'
-version = '1.0-SNAPSHOT'
 
 buildscript {
     ext {
@@ -20,11 +19,13 @@ buildscript {
         jacksonVersion = '2.9.6'
         podamVersion = '7.2.0.RELEASE'
         cglibNodepVersion = '3.2.5'
+        axionReleasePluginVersion = '1.10.0'
     }
     repositories (repos)
     dependencies {
         classpath "org.ajoberstar:grgit:$grgitVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
+        classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
     }
 }
 
@@ -35,10 +36,17 @@ apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'org.ajoberstar.grgit'
+apply plugin: 'pl.allegro.tech.build.axion-release'
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
 
-version = buildVersion()
+scmVersion {
+    tag {
+        prefix = 'pact-gen-release'
+    }
+}
+
+project.version = scmVersion.version
 
 jar.baseName = 'pact-gen'
 sourceCompatibility = 1.8
@@ -59,12 +67,4 @@ dependencies {
         transitive = false //this avoids affecting your version of Groovy/Spock in Spock reports
     }
     testCompile "cglib:cglib-nodep:$cglibNodepVersion"
-}
-
-def buildVersion() {
-    def baseVersion = 0
-
-    def commitsCount = grgit.log().size()
-    def lastCommit = grgit.head().abbreviatedId
-    "$baseVersion.$commitsCount.0_$lastCommit"
 }
