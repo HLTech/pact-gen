@@ -20,12 +20,14 @@ buildscript {
         podamVersion = '7.2.0.RELEASE'
         cglibNodepVersion = '3.2.5'
         axionReleasePluginVersion = '1.10.0'
+        nexusStagingPluginVerion = '0.12.0'
     }
     repositories (repos)
     dependencies {
         classpath "org.ajoberstar:grgit:$grgitVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVerion"
     }
 }
 
@@ -37,6 +39,7 @@ apply plugin: 'maven'
 apply plugin: 'groovy'
 apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'pl.allegro.tech.build.axion-release'
+apply plugin: 'io.codearte.nexus-staging'
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
 
@@ -75,4 +78,11 @@ def buildVersion() {
     def commitsCount = grgit.log().size()
     def lastCommit = grgit.head().abbreviatedId
     "$baseVersion.$commitsCount.0_$lastCommit"
+}
+
+//io.codearte.gradle
+nexusStaging {
+    packageGroup = project.group
+    numberOfRetries = 20
+    delayBetweenRetriesInMillis = 3000
 }
