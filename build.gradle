@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 group = 'com.hltech'
 
 buildscript {
@@ -20,12 +22,14 @@ buildscript {
         podamVersion = '7.2.0.RELEASE'
         cglibNodepVersion = '3.2.5'
         axionReleasePluginVersion = '1.10.0'
+        nexusStagingPluginVerion = '0.12.0'
     }
     repositories (repos)
     dependencies {
         classpath "org.ajoberstar:grgit:$grgitVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVerion"
     }
 }
 
@@ -35,8 +39,10 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'groovy'
+apply plugin: 'signing'
 apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'pl.allegro.tech.build.axion-release'
+apply plugin: 'io.codearte.nexus-staging'
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
 
@@ -67,4 +73,121 @@ dependencies {
         transitive = false //this avoids affecting your version of Groovy/Spock in Spock reports
     }
     testCompile "cglib:cglib-nodep:$cglibNodepVersion"
+}
+
+def buildVersion() {
+    def baseVersion = 0
+
+    def commitsCount = grgit.log().size()
+    def lastCommit = grgit.head().abbreviatedId
+    "$baseVersion.$commitsCount.0_$lastCommit"
+}
+
+javadoc {
+    failOnError false
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+nexusStaging {
+    packageGroup project.group
+    username System.getenv('SONATYPE_USER')
+    password System.getenv('SONATYPE_PASSWORD')
+    numberOfRetries = 20
+    delayBetweenRetriesInMillis = 3000
+}
+
+Date buildTimeAndDate = new Date()
+ext {
+    buildTime = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
+    buildDate = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
+}
+
+jar {
+    manifest {
+        attributes(
+            'Built-By': System.properties['user.name'],
+            'Created-By': System.properties['java.version'] + " (" + System.properties['java.vendor'] + " " + System.getProperty("java.vm.version") + ")",
+            'Build-Date': project.buildTime,
+            'Build-Time': project.buildDate,
+            'Specification-Title': project.name,
+            'Specification-Version': project.version,
+        )
+    }
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+// ./gradlew uploadArchives (upload snapshot to Maven Central's snapshot repo)
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: System.getenv('SONATYPE_USER'), password: System.getenv('SONATYPE_PASSWORD'))
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: System.getenv('SONATYPE_USER'), password: System.getenv('SONATYPE_PASSWORD'))
+            }
+            pom {
+                version = project.version
+                artifactId = project.name
+                groupId = project.group
+                project {
+                    name project.name
+                    description 'Automated generation of pact files'
+                    url 'https://github.com/HLTech/pact-gen'
+                    inceptionYear '2018'
+                    scm {
+                        connection 'scm:git:https://github.com/HLTech/pact-gen.git'
+                        developerConnection 'scm:git:git@github.com:HLTech/pact-gen.git'
+                        url 'https://github.com/HLTech/pact-gen.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The MIT License'
+                            url 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'Felipe444'
+                            name 'Filip Łazarski'
+                            email 'filip.lazarski@hltech.com'
+                        }
+                        developer {
+                            id 'garlicsauce'
+                            name 'Adrian Michalik'
+                            email 'adrian.michali@hltech.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+uploadArchives.doLast {
+    if (!version.contains("SNAPSHOT")) {
+        println("Now go to https://oss.sonatype.org/index.html#stagingRepositories to close" +
+            " and publish the distribution")
+    }
 }

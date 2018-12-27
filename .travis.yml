@@ -8,6 +8,14 @@ cache:
 
 jobs:
   include:
-    - stage: build with gradle & generate reports
-      script:
-      - ./gradlew clean build jacocoTestReport coveralls
+  - stage: build with gradle & generate reports
+    script:
+    - ./gradlew clean build jacocoTestReport coveralls
+  - stage: release to maven central
+    deploy:
+      skip_cleanup: true
+      provider: script
+      script: travis/deploy-to-maven-central.sh
+      on:
+        branch: master
+        tags: true
