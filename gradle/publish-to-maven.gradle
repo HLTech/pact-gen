@@ -1,0 +1,92 @@
+//
+// Publish to Maven Central
+//
+
+apply plugin: 'maven-publish'
+apply plugin: 'maven'
+
+apply plugin: 'io.codearte.nexus-staging'
+
+nexusStaging {
+    packageGroup project.group
+    username System.getenv('SONATYPE_USER')
+    password System.getenv('SONATYPE_PASSWORD')
+}
+
+javadoc {
+    failOnError false
+}
+
+signing {
+    required { gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+publishing {
+    publications {
+        mavenCustom(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+
+            groupId project.group
+            artifactId project.name
+            version project.version
+        }
+    }
+}
+
+// ./gradlew uploadArchives (upload snapshot to Maven Central's snapshot repo)
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: System.getenv('SONATYPE_USER'), password: System.getenv('SONATYPE_PASSWORD'))
+            }
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots") {
+                authentication(userName: System.getenv('SONATYPE_USER'), password: System.getenv('SONATYPE_PASSWORD'))
+            }
+            pom {
+                version = project.version
+                artifactId = project.name
+                groupId = project.group
+                project {
+                    name project.name
+                    description 'Automated generation of pact files'
+                    url 'https://github.com/HLTech/pact-gen'
+                    scm {
+                        connection 'scm:git:https://github.com/HLTech/pact-gen.git'
+                        developerConnection 'scm:git:git@github.com:HLTech/pact-gen.git'
+                        url 'https://github.com/HLTech/pact-gen.git'
+                    }
+                    licenses {
+                        license {
+                            name 'The MIT License'
+                            url 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id 'Felipe444'
+                            name 'Filip Łazarski'
+                            email 'filip.lazarski@hltech.com'
+                        }
+                        developer {
+                            id 'garlicsauce'
+                            name 'Adrian Michalik'
+                            email 'adrian.michali@hltech.com'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+uploadArchives.doLast {
+    if (! version.contains("SNAPSHOT")) {
+        println("Now go to https://oss.sonatype.org/index.html#stagingRepositories to close" +
+            " and publish the distribution")
+    }
+}
