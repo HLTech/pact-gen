@@ -12,12 +12,7 @@ jobs:
     script:
     - ./gradlew clean build jacocoTestReport coveralls
   - stage: release to maven central
-    branches:
-      only:
-      - master
     deploy:
       skip_cleanup: true
       provider: script
       script: travis/deploy-to-maven-central.sh
-      on:
-        tags: true
