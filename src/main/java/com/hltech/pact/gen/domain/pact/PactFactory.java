@@ -5,13 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.hltech.pact.gen.PactGenerationException;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
+import com.hltech.pact.gen.domain.client.annotation.HandlersFactory;
 import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.DeleteMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.GetMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PatchMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PostMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.PutMappingMethodsHandler;
-import com.hltech.pact.gen.domain.client.annotation.handlers.RequestMappingMethodsHandler;
+import com.hltech.pact.gen.domain.client.annotation.MappingHandlerFactory;
 import com.hltech.pact.gen.domain.client.feign.FeignMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
 import com.hltech.pact.gen.domain.client.model.Param;
@@ -46,9 +42,7 @@ public class PactFactory {
     }
 
     static {
-        annotatedMethodHandlers = Arrays.asList(
-            new DeleteMappingMethodsHandler(), new GetMappingMethodsHandler(), new PatchMappingMethodsHandler(),
-            new PostMappingMethodsHandler(), new PutMappingMethodsHandler(), new RequestMappingMethodsHandler());
+        annotatedMethodHandlers = new MappingHandlerFactory(new HandlersFactory()).createAll();
     }
 
     public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
@@ -200,10 +194,10 @@ public class PactFactory {
         ObjectMapper objectMapper) {
 
         return InteractionResponse.builder()
-                .status(responseRepresentation.getStatus().toString())
-                .headers(mapHeaders(responseRepresentation.getHeaders()))
-                .body(buildBody(responseRepresentation, objectMapper))
-                .build();
+            .status(responseRepresentation.getStatus().toString())
+            .headers(mapHeaders(responseRepresentation.getHeaders()))
+            .body(buildBody(responseRepresentation, objectMapper))
+            .build();
     }
 
     private static Map<String, String> mapHeaders(List<Param> headers) {
