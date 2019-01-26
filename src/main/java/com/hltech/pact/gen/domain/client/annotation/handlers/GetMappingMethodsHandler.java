@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.client.annotation.handlers;
 
+import com.hltech.pact.gen.domain.client.annotation.MappingMethodHandler;
 import com.hltech.pact.gen.domain.client.model.Param;
 import com.hltech.pact.gen.domain.client.model.RequestRepresentation;
 import com.hltech.pact.gen.domain.client.util.PathParametersExtractor;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@MappingMethodHandler
 public class GetMappingMethodsHandler implements AnnotatedMethodHandler {
 
     @Override
