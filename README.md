@@ -7,16 +7,24 @@
 
 ## Table of Contents
 1. [**Overview**](#Overview)
-2. [**Prerequisites**](#Prerequisites)
-3. [**Quick start**](#QuickStart)
-4. [**Interaction info**](#InteractionInfo)
-5. [**Built with**](#BuiltWith)
-6. [**Authors**](#Authors)
-7. [**License**](#License)
+2. [**Motivation**](#Motivation)
+3. [**Prerequisites**](#Prerequisites)
+4. [**Quick start**](#QuickStart)
+5. [**Interaction info**](#InteractionInfo)
+6. [**Built with**](#BuiltWith)
+7. [**Authors**](#Authors)
+8. [**License**](#License)
 
 ## Overview <a name="Overview"></a>
 
 This repository contains library for generating [pact](https://pact.io) files out of [Feign](https://github.com/OpenFeign/feign) clients.
+
+## Motivation
+
+To generate Pact files, tests for each interaction between service consumer and provider must be written. As number of 
+microservices and hence number of interaction grows, writing such tests becomes bigger burden. As pact files are currently
+the only format of expectations supported by Judge Dredd, automatic generation of Pact files makes it much faster to perform
+contract tests. What is more developers don't need to update Pact tests each time interactions between services is changed.
 
 ## Prerequisites <a name="Prerequisites"></a>
 
