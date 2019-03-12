@@ -194,7 +194,7 @@ public class PactFactory {
         ObjectMapper objectMapper) {
 
         return InteractionResponse.builder()
-            .status(responseRepresentation.getStatus().toString())
+            .status(Integer.toString(responseRepresentation.getStatus().value()))
             .headers(mapHeaders(responseRepresentation.getHeaders()))
             .body(buildBody(responseRepresentation, objectMapper))
             .build();
