@@ -32,6 +32,7 @@ class FeignClientsFinderSpec extends Specification {
             verifyFeignClient(feignClients, 'SecondEmptyFeignClient')
             verifyFeignClient(feignClients, 'OptionalResponseFeignClient')
             verifyFeignClient(feignClients, 'AdditionalNotAnnotatedMethodsFeignClient')
+            !verifyFeignClient(feignClients, 'ExcludedFeignClient')
     }
 
     def "should not find feign clients"() {
