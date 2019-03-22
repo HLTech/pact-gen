@@ -8,6 +8,7 @@ import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.annotation.HandlersFactory;
 import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
 import com.hltech.pact.gen.domain.client.annotation.MappingHandlerFactory;
+import com.hltech.pact.gen.domain.client.feign.ExcludeFeignInteraction;
 import com.hltech.pact.gen.domain.client.feign.FeignMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
 import com.hltech.pact.gen.domain.client.model.Param;
@@ -46,15 +47,18 @@ public class PactFactory {
     }
 
     public Pact createFromFeignClient(Class<?> feignClient, String consumerName, ObjectMapper objectMapper) {
-
         ClientMethodRepresentationExtractor methodExtractor =
             new FeignMethodRepresentationExtractor(annotatedMethodHandlers);
+
+        List<Method> validFeignMethods = Arrays.stream(feignClient.getMethods())
+            .filter(method -> !method.isAnnotationPresent(ExcludeFeignInteraction.class))
+            .collect(Collectors.toList());
 
         return Pact.builder()
             .provider(new Service(extractProviderName(feignClient)))
             .consumer(new Service(consumerName))
             .interactions(createInteractionsFromMethods(
-                methodExtractor, feignClient.getMethods(), objectMapper, extractPathPrefix(feignClient)))
+                methodExtractor, validFeignMethods, objectMapper, extractPathPrefix(feignClient)))
             .metadata(new Metadata("1.0.0"))
             .build();
     }
@@ -71,11 +75,11 @@ public class PactFactory {
 
     private static List<Interaction> createInteractionsFromMethods(
         ClientMethodRepresentationExtractor extractor,
-        Method[] clientMethods,
+        List<Method> clientMethods,
         ObjectMapper objectMapper,
         String pathPrefix) {
 
-        return Arrays.stream(clientMethods)
+        return clientMethods.stream()
             .filter(method -> annotatedMethodHandlers.stream()
                 .anyMatch(handler -> handler.isSupported(method)))
             .flatMap(method -> createInteractionsFromMethod(extractor, method, objectMapper, pathPrefix).stream())

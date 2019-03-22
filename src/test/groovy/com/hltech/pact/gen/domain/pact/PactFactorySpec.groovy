@@ -6,6 +6,7 @@ import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignCl
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenRequestFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.DescriptionFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.ExcludedInteractionFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.ExpectedEmptyResponseBodyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.OptionalResponseFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.PathFeignClient
@@ -121,6 +122,16 @@ class PactFactorySpec extends Specification {
                 provider.name == 'SpecProvider'
                 interactions.size() == 1
             }
+    }
+
+    def "should ignore interactions marked with ExcludedInteractionFeignClient annotation"() {
+        when:
+        final Pact pact = pactFactory.createFromFeignClient(ExcludedInteractionFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+        with(pact) {
+            interactions.size() == 0
+        }
     }
 
     def "should get response info from feign client"() {
