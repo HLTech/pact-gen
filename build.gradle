@@ -66,6 +66,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "uk.co.jemos.podam:podam:$podamVersion"
     compile "org.projectlombok:lombok:$lombokVersion"
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
 
     testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
     testCompile "org.spockframework:spock-core:$spockVersion"
