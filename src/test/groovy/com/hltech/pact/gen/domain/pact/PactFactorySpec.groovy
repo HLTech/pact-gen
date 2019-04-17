@@ -234,7 +234,7 @@ class PactFactorySpec extends Specification {
 
                 interactions.any { interaction ->
                     interaction.request.method == 'POST'
-                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar"}/
+                    interaction.response.body =~ /\{"responseFoo":".+","responseBar":"responseReplacedBar","intArray":\[[0-9]+]}/
                 }
 
                 interactions.any { interaction ->
