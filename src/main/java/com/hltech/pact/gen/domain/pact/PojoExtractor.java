@@ -57,17 +57,28 @@ final class PojoExtractor {
         return classes.stream()
             .map(PojoExtractor::extractNestedTypes)
             .flatMap(Collection::stream)
+            .map(clazz -> isArrayOfNonprimitives(clazz) ? clazz.getComponentType() : clazz)
+            .filter(clazz -> !isArrayOfPrimitives(clazz))
             .filter(PojoExtractor::isNotBasicJavaType)
             .filter(PojoExtractor::isNotEnum)
             .collect(Collectors.toSet());
     }
 
     private static Set<Class<?>> extractNestedTypes(Class<?> clazz) {
+        Class<?> baseClass = clazz;
         Set<Class<?>> nestedClasses = new HashSet<>();
 
-        if (isNotBasicJavaType(clazz) && isNotEnum(clazz)) {
-            nestedClasses.add(clazz);
-            Set<Class<?>> typesOfFields = getTypesOfFields(clazz);
+        if (isArrayOfPrimitives(baseClass)) {
+            return nestedClasses;
+        }
+
+        if (isArrayOfNonprimitives(baseClass)) {
+            baseClass = clazz.getComponentType();
+        }
+
+        if (isNotBasicJavaType(baseClass) && isNotEnum(baseClass)) {
+            nestedClasses.add(baseClass);
+            Set<Class<?>> typesOfFields = getTypesOfFields(baseClass);
             nestedClasses.addAll(typesOfFields);
             nestedClasses.addAll(collectNestedTypes(typesOfFields));
         }
@@ -103,5 +114,13 @@ final class PojoExtractor {
 
     private static boolean isNotEnum(Class<?> clazz) {
         return !clazz.isEnum();
+    }
+
+    private static boolean isArrayOfPrimitives(Class<?> clazz) {
+        return clazz.isArray() && clazz.getComponentType().isPrimitive();
+    }
+
+    private static boolean isArrayOfNonprimitives(Class<?> clazz) {
+        return clazz.isArray() && !clazz.getComponentType().isPrimitive();
     }
 }
