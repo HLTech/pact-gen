@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 
 class PojoExtractorSpec extends Specification {
 
-    def "should extract pojos from client mtehod representation"() {
+    def "should extract pojos from client method representation"() {
         given:
             final ClientMethodRepresentation methodRepresentation = sampleMethodRepresentation()
 
@@ -62,8 +62,10 @@ class PojoExtractorSpec extends Specification {
     class SampleClassWithNestedOnes {
 
         private NestedClassA foo
-        private NestedClassB bar
+        private NestedClassB[] bars
         private String fooBar
+        private String[] fooBars
+        private byte[] barFoos
     }
 
     class NestedClassA {
@@ -74,14 +76,14 @@ class PojoExtractorSpec extends Specification {
 
     class NestedClassB {
 
-        private NestedClassC foo
-        private int someNumber
+        private NestedClassC[] foos
+        private int[] someNumbers
         private long anotherNumber
     }
 
     class NestedClassC {
 
-        private String foo
+        private String foos
     }
 
     enum NestedEnum {
