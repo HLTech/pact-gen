@@ -9,4 +9,5 @@ public class RequestType {
 
     private final String requestFoo;
     private final String requestBar;
+    private final TestParam[] testParams;
 }

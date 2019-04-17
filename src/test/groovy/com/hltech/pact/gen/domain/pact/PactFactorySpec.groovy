@@ -175,7 +175,7 @@ class PactFactorySpec extends Specification {
                 provider.name == 'SpecProvider'
                 interactions.size() == 2
                 interactions.every { interaction ->
-                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+"}/
+                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+","testParams":\[\{"testField":".+"}]}/
                 }
             }
     }
