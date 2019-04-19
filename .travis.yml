@@ -15,7 +15,7 @@ jobs:
     deploy:
       skip_cleanup: true
       provider: script
-      script: "deploy-to-maven-central.sh"
       on:
         branch: master
         tags: true
+      script: bash deploy-to-maven-central.sh
