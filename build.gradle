@@ -22,16 +22,18 @@ buildscript {
         podamVersion = '7.2.0.RELEASE'
         cglibNodepVersion = '3.2.5'
         axionReleasePluginVersion = '1.10.0'
-        nexusStagingPluginVerion = '0.20.0'
-        nexusPublishPluginVerion = '0.2.0'
+        nexusStagingPluginVersion = '0.20.0'
+        nexusPublishPluginVersion = '0.2.0'
+        sonarqubePluginVersion = '2.7'
     }
     repositories (repos)
     dependencies {
         classpath "org.ajoberstar:grgit:$grgitVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
-        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVerion"
-        classpath "de.marcphilipp.gradle:nexus-publish-plugin:$nexusPublishPluginVerion"
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVersion"
+        classpath "de.marcphilipp.gradle:nexus-publish-plugin:$nexusPublishPluginVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
     }
 }
 
@@ -44,6 +46,7 @@ apply plugin: 'groovy'
 apply plugin: 'signing'
 apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'pl.allegro.tech.build.axion-release'
+apply plugin: 'org.sonarqube'
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
 apply from: 'gradle/publishing.gradle'
