@@ -46,7 +46,7 @@ publishing {
 }
 
 nexusStaging {
-    stagingProfileId = 'com.hltech'
+    stagingProfileId = '8932a92dff8c84'
     packageGroup project.group
     username System.getenv('SONATYPE_USER')
     password System.getenv('SONATYPE_PASSWORD')
