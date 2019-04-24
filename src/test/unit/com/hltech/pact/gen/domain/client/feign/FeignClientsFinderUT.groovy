@@ -3,7 +3,7 @@ package com.hltech.pact.gen.domain.client.feign
 import spock.lang.Specification
 import spock.lang.Subject
 
-class FeignClientsFinderSpec extends Specification {
+class FeignClientsFinderUT extends Specification {
 
     @Subject
     private FeignClientsFinder finder = new FeignClientsFinder()

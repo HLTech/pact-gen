@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class MappingHandlerFactorySpec extends Specification {
+class MappingHandlerFactoryUT extends Specification {
 
     private HandlersFactory handlersFactoryMock = Mock()
 

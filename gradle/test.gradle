@@ -8,14 +8,9 @@ buildscript{
 sourceSets {
     test.groovy.srcDirs(
         "src/test/unit",
-        "src/test/integration",
         "src/test/functional",
         "src/test/commons"
     )
-}
-
-dependencies {
-    testCompile "io.rest-assured:rest-assured:$restAssuredVersion"
 }
 
 idea {
