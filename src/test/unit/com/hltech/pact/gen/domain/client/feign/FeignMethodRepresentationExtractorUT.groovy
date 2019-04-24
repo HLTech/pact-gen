@@ -12,7 +12,7 @@ import spock.lang.Subject
 
 import java.lang.reflect.Method
 
-class FeignMethodRepresentationExtractorSpec extends Specification {
+class FeignMethodRepresentationExtractorUT extends Specification {
 
     @Subject
     FeignMethodRepresentationExtractor extractor = new FeignMethodRepresentationExtractor(PactFactory.annotatedMethodHandlers)

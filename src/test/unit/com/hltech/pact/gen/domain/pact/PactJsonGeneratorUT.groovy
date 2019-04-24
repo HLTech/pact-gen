@@ -14,7 +14,7 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 import spock.lang.Subject
 
-class PactJsonGeneratorSpec extends Specification {
+class PactJsonGeneratorUT extends Specification {
 
     @Rule
     private TemporaryFolder temporaryFolder

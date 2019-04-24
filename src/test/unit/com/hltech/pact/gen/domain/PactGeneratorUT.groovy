@@ -17,7 +17,7 @@ import spock.lang.Subject
 import com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient
 
-class PactGeneratorSpec extends Specification {
+class PactGeneratorUT extends Specification {
 
     @Rule
     private TemporaryFolder temporaryFolder

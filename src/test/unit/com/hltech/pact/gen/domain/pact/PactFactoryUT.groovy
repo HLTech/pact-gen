@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
 
-class PactFactorySpec extends Specification {
+class PactFactoryUT extends Specification {
 
     @Subject
     private PactFactory pactFactory = new PactFactory()

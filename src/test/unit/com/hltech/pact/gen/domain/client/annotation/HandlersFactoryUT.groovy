@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
 
-class HandlersFactorySpec extends Specification {
+class HandlersFactoryUT extends Specification {
 
     @Subject
     private HandlersFactory factory = new HandlersFactory()

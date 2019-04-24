@@ -11,7 +11,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class PojoExtractorSpec extends Specification {
+class PojoExtractorUT extends Specification {
 
     def "should extract pojos from client method representation"() {
         given:

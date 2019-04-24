@@ -9,7 +9,7 @@ import spock.lang.Specification
 import uk.co.jemos.podam.api.PodamFactory
 import uk.co.jemos.podam.api.PodamFactoryImpl
 
-class BodySerializerSpec extends Specification {
+class BodySerializerUT extends Specification {
 
     private ObjectMapper mapper = new ObjectMapper()
     private PodamFactory podamFactory = new PodamFactoryImpl()

@@ -9,7 +9,7 @@ import uk.co.jemos.podam.api.RandomDataProviderStrategyImpl
 
 import java.lang.reflect.Field
 
-class EnumStringManufacturerSpec extends Specification {
+class EnumStringManufacturerUT extends Specification {
 
     @Subject
     EnumStringManufacturer manufacturer = new EnumStringManufacturer()
@@ -45,7 +45,7 @@ class EnumStringManufacturerSpec extends Specification {
     }
 
     private AttributeMetadata createAttributeMetadata(String name) {
-        Field field = EnumStringManufacturerSpec.getDeclaredField(name)
+        Field field = EnumStringManufacturerUT.getDeclaredField(name)
 
         new AttributeMetadata(
             field.getName(),
@@ -53,7 +53,7 @@ class EnumStringManufacturerSpec extends Specification {
             field.getGenericType(),
             null,
             Lists.newArrayList(field.getAnnotations()),
-            EnumStringManufacturerSpec.class,
+            EnumStringManufacturerUT.class,
             this)
     }
 
