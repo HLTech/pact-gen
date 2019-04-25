@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 group = 'com.hltech'
 
 buildscript {
@@ -13,7 +11,6 @@ buildscript {
         lombokVersion = '1.18.2'
         spockVersion = '1.1-groovy-2.4'
         spockReportsVersion = '1.4.0'
-        grgitVersion = '2.2.0'
         coverallsVersion = '2.8.2'
         disruptorVersion = '3.4.0'
         reflectionsVersion = '0.9.11'
@@ -28,7 +25,6 @@ buildscript {
     }
     repositories (repos)
     dependencies {
-        classpath "org.ajoberstar:grgit:$grgitVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVersion"
@@ -44,12 +40,12 @@ apply plugin: 'idea'
 apply plugin: 'maven-publish'
 apply plugin: 'groovy'
 apply plugin: 'signing'
-apply plugin: 'org.ajoberstar.grgit'
 apply plugin: 'pl.allegro.tech.build.axion-release'
 apply plugin: 'org.sonarqube'
+apply plugin: 'de.marcphilipp.nexus-publish'
+apply plugin: 'io.codearte.nexus-staging'
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
-apply from: 'gradle/publishing.gradle'
 
 scmVersion {
     tag {
@@ -59,7 +55,7 @@ scmVersion {
 
 project.version = scmVersion.version
 
-jar.baseName = 'pact-gen'
+jar.archiveBaseName = 'pact-gen'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -88,40 +84,78 @@ javadoc {
     failOnError false
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from 'build/docs/javadoc'
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
 }
 
 task sourcesJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 artifacts {
-    archives jar, javadocJar, sourcesJar
+    archives javadocJar, sourcesJar
 }
 
-Date buildTimeAndDate = new Date()
-ext {
-    buildTime = new SimpleDateFormat('yyyy-MM-dd').format(buildTimeAndDate)
-    buildDate = new SimpleDateFormat('HH:mm:ss.SSSZ').format(buildTimeAndDate)
-}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                version = project.version
+                artifactId  = project.name
+                name = project.name
+                groupId = project.group
+                packaging = 'jar'
 
-jar {
-    manifest {
-        attributes(
-            'Built-By': System.properties['user.name'],
-            'Created-By': System.properties['java.version'] + " (" + System.properties['java.vendor'] + " " + System.getProperty("java.vm.version") + ")",
-            'Build-Date': project.buildTime,
-            'Build-Time': project.buildDate,
-            'Specification-Title': project.name,
-            'Specification-Version': project.version,
-        )
+                description = 'Automated generation of pact files'
+                url = 'https://github.com/HLTech/pact-gen'
+                inceptionYear = '2018'
+
+                scm {
+                    connection = 'scm:git:https://github.com/HLTech/pact-gen.git'
+                    developerConnection = 'scm:git:git@github.com:HLTech/pact-gen.git'
+                    url = 'https://github.com/HLTech/pact-gen.git'
+                }
+
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'Felipe444'
+                        name = 'Filip Łazarski'
+                        email = 'filip.lazarski@hltech.com'
+                    }
+                    developer {
+                        id = 'garlicsauce'
+                        name = 'Adrian Michalik'
+                        email = 'adrian.michali@hltech.com'
+                    }
+                }
+            }
+        }
     }
 }
 
-signing {
-    required { gradle.taskGraph.hasTask("publish") }
-    sign configurations.archives
+if (project.hasProperty("signing.keyId")) {
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
+
+nexusStaging {
+    packageGroup project.group
+    username System.getenv('SONATYPE_USER')
+    password System.getenv('SONATYPE_PASSWORD')
+    stagingProfileId = '8932a92dff8c84'
+    numberOfRetries = 5
+    delayBetweenRetriesInMillis = 5000
 }
