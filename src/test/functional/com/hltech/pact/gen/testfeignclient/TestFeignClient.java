@@ -1,13 +1,15 @@
-package com.hltech.pact.gen.testfeignclient
+package com.hltech.pact.gen.testfeignclient;
 
-import org.springframework.cloud.openfeign.FeignClient
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 @FeignClient(decode404 = true, name = "test-provider", url = "test-url")
-interface TestFeignClient {
+public interface TestFeignClient {
 
     @GetMapping(value = "/{integerClassPathVariable}/{booleanPathVariable}/}")
     Optional<TestDto> getTestDto(
@@ -18,5 +20,5 @@ interface TestFeignClient {
     );
 
     @PostMapping(value = "/")
-    void postTestDto(TestDto testDto)
+    GenericDto<TestDto> postTestDto(TestDto testDto);
 }
