@@ -1,5 +1,6 @@
 package com.hltech.pact.gen.domain.pact
 
+import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hltech.pact.gen.domain.client.feign.sample.AdditionalNotAnnotatedMethodsFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignClient
@@ -170,12 +171,14 @@ class PactFactoryUT extends Specification {
             final Pact pact = pactFactory.createFromFeignClient(RequestBodyFeignClient, 'SpecConsumer', objectMapper)
 
         then:
+            def regexMatchingDecimalAndScientificNotation = '[+-]?([0-9]*[.])?[0-9]+(E-?[0-9]+)?'
+
             with(pact) {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
                 interactions.size() == 2
                 interactions.every { interaction ->
-                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+","testParams":\[\{"testField":".+"}]}/
+                    interaction.request.body =~ /\{"requestFoo":".+","requestBar":".+","testParams":\[\{"testField":".+"}],"monetaryValue":${regexMatchingDecimalAndScientificNotation}}/
                 }
             }
     }
