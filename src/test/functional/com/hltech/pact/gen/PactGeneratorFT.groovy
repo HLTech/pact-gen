@@ -64,6 +64,8 @@ class PactGeneratorFT extends Specification {
         and: "all required values are generated for POST request"
             def postInteraction = findInteraction(testJSON["interactions"], '"POST"')
             assertAllRequiredBodyValuesAreGenerated(postInteraction["request"]["body"])
+            postInteraction["response"]["body"]["data"].size() == 1
+            assertAllRequiredBodyValuesAreGenerated(postInteraction["response"]["body"]["data"][0])
     }
 
     def getExpectedJsonSchema() {
@@ -89,6 +91,7 @@ class PactGeneratorFT extends Specification {
         LocalDate.parse(getDateAsString(body,"localDate"))
         LocalDateTime.parse(getDateAsString(body,"localDateTime"))
         ZonedDateTime.parse(getDateAsString(body,"zonedDateTime"))
+        assert body["annotatedStringField"].toString() == '"testDefaultValue"'
         assert body["stringField"] instanceof TextNode
         assert body["charField"] instanceof TextNode
         return true
