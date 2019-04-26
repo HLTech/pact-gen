@@ -2,6 +2,7 @@ package com.hltech.pact.gen.testfeignclient;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class TestDto {
@@ -13,6 +14,7 @@ public class TestDto {
     private final int intField;
     private final Integer integerClassField;
     private final BigInteger bigIntegerField;
+    private final BigDecimal bigDecimalField;
     private final long longField;
     private final Long longClassField;
     private final double doubleField;
@@ -32,6 +34,7 @@ public class TestDto {
         int intField,
         Integer integerClassField,
         BigInteger bigIntegerField,
+        BigDecimal bigDecimalField,
         long longField,
         Long longClassField,
         double doubleField,
@@ -50,6 +53,7 @@ public class TestDto {
         this.intField = intField;
         this.integerClassField = integerClassField;
         this.bigIntegerField = bigIntegerField;
+        this.bigDecimalField = bigDecimalField;
         this.longField = longField;
         this.longClassField = longClassField;
         this.doubleField = doubleField;
@@ -130,4 +134,7 @@ public class TestDto {
         return dateTimeDto;
     }
 
+    public BigDecimal getBigDecimalField() {
+        return bigDecimalField;
+    }
 }

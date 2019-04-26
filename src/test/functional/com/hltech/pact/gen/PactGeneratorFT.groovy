@@ -88,6 +88,7 @@ class PactGeneratorFT extends Specification {
         isFloat(body["floatClassField"])
         isDouble(body["doubleField"])
         isDouble(body["doubleClassField"])
+        isBigDecimal(body["bigDecimalField"])
         LocalDate.parse(getDateAsString(body,"localDate"))
         LocalDateTime.parse(getDateAsString(body,"localDateTime"))
         ZonedDateTime.parse(getDateAsString(body,"zonedDateTime"))
@@ -126,6 +127,11 @@ class PactGeneratorFT extends Specification {
 
     def isDouble(value) {
         assert value instanceof DecimalNode && getDecimalScale(value) > 11
+    }
+
+    def isBigDecimal(value) {
+        def regexMatchingDecimalAndScientificNotation = '[+-]?([0-9]*[.])?[0-9]+(E-?[0-9]+)?'
+        assert value.toString().matches(regexMatchingDecimalAndScientificNotation)
     }
 
     def getDecimalScale(value) {
