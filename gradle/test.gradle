@@ -1,6 +1,7 @@
 buildscript{
     ext {
-        restAssuredVersion = '3.1.0'
+        jsonSchemaValidatorVersion = '2.2.10'
+        jacksonDatatypeJsr310Version = '2.8.10'
     }
     repositories(repos)
 }
@@ -11,6 +12,11 @@ sourceSets {
         "src/test/functional",
         "src/test/commons"
     )
+}
+
+dependencies {
+    testCompile "com.github.java-json-tools:json-schema-validator:$jsonSchemaValidatorVersion"
+    testCompile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatatypeJsr310Version"
 }
 
 idea {
