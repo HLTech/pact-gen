@@ -79,6 +79,7 @@ class PactGeneratorFT extends Specification {
         isShort(body["shortClassField"])
         isInteger(body["intField"])
         isInteger(body["integerClassField"])
+        isInteger(body["bigIntegerField"])
         isLong(body["longField"])
         isLong(body["longClassField"])
         isFloat(body["floatField"])

@@ -8,6 +8,7 @@ class TestDto {
     private final Short shortClassField
     private final int intField
     private final Integer integerClassField
+    private final BigInteger bigIntegerField
     private final long longField
     private final Long longClassField
     private final double doubleField
@@ -25,6 +26,7 @@ class TestDto {
         Short shortClassField,
         int intField,
         Integer integerClassField,
+        BigInteger bigIntegerField,
         long longField,
         Long longClassField,
         double doubleField,
@@ -41,6 +43,7 @@ class TestDto {
         this.shortClassField = shortClassField
         this.intField = intField
         this.integerClassField = integerClassField
+        this.bigIntegerField = bigIntegerField
         this.longField = longField
         this.longClassField = longClassField
         this.doubleField = doubleField
@@ -74,6 +77,10 @@ class TestDto {
 
     Integer getIntegerClassField() {
         return integerClassField
+    }
+
+    BigInteger getBigIntegerField() {
+        return bigIntegerField
     }
 
     long getLongField() {

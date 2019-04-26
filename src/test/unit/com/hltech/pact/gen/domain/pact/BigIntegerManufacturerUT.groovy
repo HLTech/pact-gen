@@ -8,7 +8,7 @@ import uk.co.jemos.podam.api.RandomDataProviderStrategyImpl
 
 import java.lang.reflect.Field
 
-class BigIntegerManufacturerSpec extends Specification {
+class BigIntegerManufacturerUT extends Specification {
 
     @Subject
     def manufacturer = new BigIntegerManufacturer()
@@ -22,7 +22,7 @@ class BigIntegerManufacturerSpec extends Specification {
     }
 
     private AttributeMetadata createAttributeMetadata(String name) {
-        Field field = BigIntegerManufacturerSpec.getDeclaredField(name)
+        Field field = BigIntegerManufacturerUT.getDeclaredField(name)
 
         new AttributeMetadata(
             field.getName(),
@@ -30,7 +30,7 @@ class BigIntegerManufacturerSpec extends Specification {
             field.getGenericType(),
             null,
             Lists.newArrayList(field.getAnnotations()),
-            BigIntegerManufacturerSpec.class,
+            BigIntegerManufacturerUT.class,
             this)
     }
 
