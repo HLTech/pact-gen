@@ -22,6 +22,7 @@ buildscript {
         nexusStagingPluginVersion = '0.20.0'
         nexusPublishPluginVersion = '0.2.0'
         sonarqubePluginVersion = '2.7'
+        jaxRsVersion = '2.1.1'
     }
     repositories (repos)
     dependencies {
@@ -66,6 +67,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "uk.co.jemos.podam:podam:$podamVersion"
+    compile "javax.ws.rs:javax.ws.rs-api:$jaxRsVersion"
 
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
