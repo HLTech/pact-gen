@@ -5,7 +5,9 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Sets
 import com.hltech.pact.gen.PactGenerator
 import com.hltech.pact.gen.domain.client.feign.FeignClientsFinder
-import com.hltech.pact.gen.domain.pact.PactFactory
+import com.hltech.pact.gen.domain.client.jaxrs.JaxRsClientsFinder
+import com.hltech.pact.gen.domain.pact.PactFactoryForFeign
+import com.hltech.pact.gen.domain.pact.PactFactoryForJaxRs
 import com.hltech.pact.gen.domain.pact.PactJsonGenerator
 import com.hltech.pact.gen.domain.pact.Service
 import com.hltech.pact.gen.domain.pact.model.Interaction
@@ -14,8 +16,6 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 import spock.lang.Subject
-import com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient
 
 class PactGeneratorUT extends Specification {
 
@@ -23,12 +23,14 @@ class PactGeneratorUT extends Specification {
     private TemporaryFolder temporaryFolder
 
     def feignClientsFinderMock = Mock(FeignClientsFinder)
-    def pactFactoryMock = Mock(PactFactory)
+    def jaxRsClientFinderMock = Mock(JaxRsClientsFinder)
+    def pactFactoryForFeignMock = Mock(PactFactoryForFeign)
+    def pactFactoryForJaxRsMock = Mock(PactFactoryForJaxRs)
     def pactJsonGeneratorMock = Mock(PactJsonGenerator)
     def objectMapperMock = Mock(ObjectMapper)
 
     @Subject
-    private PactGenerator pactGenerator = new PactGenerator(feignClientsFinderMock, pactFactoryMock, pactJsonGeneratorMock)
+    private PactGenerator pactGenerator = new PactGenerator(feignClientsFinderMock, jaxRsClientFinderMock, pactFactoryForFeignMock, pactFactoryForJaxRsMock, pactJsonGeneratorMock)
 
     def "should merge 2 pacts with the same provider"() {
         given:
@@ -49,8 +51,9 @@ class PactGeneratorUT extends Specification {
 
         and:
             feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            jaxRsClientFinderMock.findJaxRsClients(_) >> new HashSet<Class<?>>()
+            pactFactoryForFeignMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryForFeignMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)
@@ -91,8 +94,9 @@ class PactGeneratorUT extends Specification {
 
         and:
             feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            jaxRsClientFinderMock.findJaxRsClients(_) >> new HashSet<Class<?>>()
+            pactFactoryForFeignMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryForFeignMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)

@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.hltech.pact.gen.domain.client.feign.FeignClientsFinder;
-import com.hltech.pact.gen.domain.pact.PactFactory;
+import com.hltech.pact.gen.domain.client.jaxrs.JaxRsClientsFinder;
+import com.hltech.pact.gen.domain.pact.PactFactoryForFeign;
+import com.hltech.pact.gen.domain.pact.PactFactoryForJaxRs;
 import com.hltech.pact.gen.domain.pact.PactJsonGenerator;
 import com.hltech.pact.gen.domain.pact.Service;
 import com.hltech.pact.gen.domain.pact.model.Pact;
@@ -19,20 +21,28 @@ import java.util.stream.Collectors;
 public class PactGenerator {
 
     private final FeignClientsFinder feignClientsFinder;
-    private final PactFactory pactFactory;
+    private final JaxRsClientsFinder jaxRsClientsFinder;
+    private final PactFactoryForFeign pactFactoryForFeign;
+    private final PactFactoryForJaxRs pactFactoryForJaxRs;
     private final PactJsonGenerator pactJsonGenerator;
 
     public PactGenerator() {
         this.feignClientsFinder = new FeignClientsFinder();
-        this.pactFactory = new PactFactory();
+        this.jaxRsClientsFinder = new JaxRsClientsFinder();
+        this.pactFactoryForFeign = new PactFactoryForFeign();
+        this.pactFactoryForJaxRs = new PactFactoryForJaxRs();
         this.pactJsonGenerator = new PactJsonGenerator();
     }
 
     public PactGenerator(FeignClientsFinder feignClientsFinder,
-                         PactFactory pactFactory,
+                         JaxRsClientsFinder jaxRsClientsFinder,
+                         PactFactoryForFeign pactFactoryForFeign,
+                         PactFactoryForJaxRs pactFactoryForJaxRs,
                          PactJsonGenerator pactJsonGenerator) {
         this.feignClientsFinder = feignClientsFinder;
-        this.pactFactory = pactFactory;
+        this.jaxRsClientsFinder = jaxRsClientsFinder;
+        this.pactFactoryForFeign = pactFactoryForFeign;
+        this.pactFactoryForJaxRs = pactFactoryForJaxRs;
         this.pactJsonGenerator = pactJsonGenerator;
     }
 
@@ -63,8 +73,15 @@ public class PactGenerator {
     private Multimap<Service, Pact> generatePacts(String packageRoot, String consumerName, ObjectMapper objectMapper) {
         Multimap<Service, Pact> providerToPactMap = HashMultimap.create();
 
+
+
+
+        jaxRsClientsFinder.findJaxRsClients(packageRoot).stream()
+            .map(jaxRsClient -> pactFactoryForJaxRs.createFromJaxRsClient(jaxRsClient, consumerName, objectMapper))
+            .forEach(pact -> providerToPactMap.put(pact.getProvider(), pact));
+
         feignClientsFinder.findFeignClients(packageRoot).stream()
-            .map(feignClient -> pactFactory.createFromFeignClient(feignClient, consumerName, objectMapper))
+            .map(jaxRsClient -> pactFactoryForFeign.createFromFeignClient(jaxRsClient, consumerName, objectMapper))
             .forEach(pact -> providerToPactMap.put(pact.getProvider(), pact));
 
         return providerToPactMap;

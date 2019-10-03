@@ -10,7 +10,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.github.fge.jackson.JsonLoader
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.hltech.pact.gen.domain.client.feign.FeignClientsFinder
-import com.hltech.pact.gen.domain.pact.PactFactory
+import com.hltech.pact.gen.domain.client.jaxrs.JaxRsClientsFinder
+import com.hltech.pact.gen.domain.pact.PactFactoryForFeign
+import com.hltech.pact.gen.domain.pact.PactFactoryForJaxRs
 import com.hltech.pact.gen.domain.pact.PactJsonGenerator
 import spock.lang.Specification
 
@@ -27,9 +29,11 @@ class PactGeneratorFT extends Specification {
     static SCHEMA_FILE_PATH = "src/test/resources/pact-json-schema-v1.json"
 
     def feignClientsFinder = new FeignClientsFinder()
-    def pactFactory = new PactFactory()
+    def jaxRsClientFinder = new JaxRsClientsFinder()
+    def pactFactoryForFeign = new PactFactoryForFeign()
+    def pactFactoryForJaxRs = new PactFactoryForJaxRs()
     def jsonGenerator = new PactJsonGenerator()
-    def pactGenerator = new PactGenerator(feignClientsFinder, pactFactory, jsonGenerator)
+    def pactGenerator = new PactGenerator(feignClientsFinder, jaxRsClientFinder, pactFactoryForFeign, pactFactoryForJaxRs, jsonGenerator)
     def mapper = new ObjectMapper()
 
     def schemaFactory = JsonSchemaFactory.byDefault()

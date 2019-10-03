@@ -4,7 +4,7 @@ import com.hltech.pact.gen.domain.client.feign.sample.ResponseHeadersFeignClient
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation
 import com.hltech.pact.gen.domain.client.model.RequestRepresentation
 import com.hltech.pact.gen.domain.client.model.ResponseRepresentation
-import com.hltech.pact.gen.domain.pact.PactFactory
+import com.hltech.pact.gen.domain.pact.PactFactoryForFeign
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import spock.lang.Specification
@@ -15,7 +15,7 @@ import java.lang.reflect.Method
 class FeignMethodRepresentationExtractorUT extends Specification {
 
     @Subject
-    FeignMethodRepresentationExtractor extractor = new FeignMethodRepresentationExtractor(PactFactory.annotatedMethodHandlers)
+    FeignMethodRepresentationExtractor extractor = new FeignMethodRepresentationExtractor(PactFactoryForFeign.annotatedMethodHandlers)
 
     def "Should correctly extract feign method representation"() {
         given:

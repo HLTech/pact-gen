@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PactFactory {
+public class PactFactoryForFeign {
 
     private static final PodamFactory podamFactory;
     private static final Collection<AnnotatedMethodHandler> annotatedMethodHandlers;

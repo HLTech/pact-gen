@@ -1,6 +1,6 @@
 package com.hltech.pact.gen.domain.pact
 
-import com.fasterxml.jackson.core.JsonGenerator
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.hltech.pact.gen.domain.client.feign.sample.AdditionalNotAnnotatedMethodsFeignClient
 import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignClient
@@ -24,10 +24,10 @@ import org.apache.commons.lang3.StringUtils
 import spock.lang.Specification
 import spock.lang.Subject
 
-class PactFactoryUT extends Specification {
+class PactFactoryForFeignUT extends Specification {
 
     @Subject
-    private PactFactory pactFactory = new PactFactory()
+    private PactFactoryForFeign pactFactory = new PactFactoryForFeign()
 
     final ObjectMapper objectMapper = new ObjectMapper()
 
