@@ -25,6 +25,7 @@ class PactGeneratorFT extends Specification {
     static CONSUMER_NAME = "test-consumer"
     static PROVIDER_NAME = "test-provider"
     static SCHEMA_FILE_PATH = "src/test/resources/pact-json-schema-v1.json"
+    static TEST_PACT_FILE_PATH = "${PACT_DIRECTORY}${CONSUMER_NAME}-${PROVIDER_NAME}.json"
 
     def feignClientsFinder = new FeignClientsFinder()
     def pactFactory = new PactFactory()
@@ -39,6 +40,10 @@ class PactGeneratorFT extends Specification {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     }
 
+    def cleanup() {
+        new File(TEST_PACT_FILE_PATH).delete()
+    }
+
     def "should create pact file with proper json schema and valid values"() {
         given: "expected pact json schema for version 1"
             def schema = getExpectedJsonSchema()
@@ -47,7 +52,7 @@ class PactGeneratorFT extends Specification {
             pactGenerator.writePactFiles(PACKAGE_ROOT, CONSUMER_NAME, mapper, new File(PACT_DIRECTORY))
 
         then: "pact file is written with correct schema"
-            def testFile = new File("${PACT_DIRECTORY}${CONSUMER_NAME}-${PROVIDER_NAME}.json")
+            def testFile = new File(TEST_PACT_FILE_PATH)
             def testJSON = JsonLoader.fromFile(testFile)
             def report = schema.validate(testJSON)
             report.isSuccess()
