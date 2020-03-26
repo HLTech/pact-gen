@@ -48,9 +48,9 @@ class PactGeneratorUT extends Specification {
                                   .build()
 
         and:
-            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(FirstEmptyFeignClient.class, SecondEmptyFeignClient.class)
+            pactFactoryMock.createFromFeignClient(FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryMock.createFromFeignClient(SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)
@@ -90,9 +90,9 @@ class PactGeneratorUT extends Specification {
                 .build()
 
         and:
-            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class)
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
-            pactFactoryMock.createFromFeignClient(com.hltech.pact.gen.domain.client.feign.sample.SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
+            feignClientsFinderMock.findFeignClients(_) >> Sets.newHashSet(FirstEmptyFeignClient.class, SecondEmptyFeignClient.class)
+            pactFactoryMock.createFromFeignClient(FirstEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> pact
+            pactFactoryMock.createFromFeignClient(SecondEmptyFeignClient.class, 'same-consumer', objectMapperMock) >> anotherPact
 
         when:
             pactGenerator.writePactFiles('/', 'same-consumer', objectMapperMock, dstDir)
