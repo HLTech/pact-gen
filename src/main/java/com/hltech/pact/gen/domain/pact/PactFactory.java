@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.hltech.pact.gen.PactGenerationException;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.annotation.HandlersFactory;
-import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
 import com.hltech.pact.gen.domain.client.annotation.MappingHandlerFactory;
+import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
 import com.hltech.pact.gen.domain.client.feign.ExcludeFeignInteraction;
 import com.hltech.pact.gen.domain.client.feign.FeignMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
@@ -19,6 +19,7 @@ import com.hltech.pact.gen.domain.pact.model.InteractionRequest;
 import com.hltech.pact.gen.domain.pact.model.InteractionResponse;
 import com.hltech.pact.gen.domain.pact.model.Metadata;
 import com.hltech.pact.gen.domain.pact.model.Pact;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.openfeign.FeignClient;
 import uk.co.jemos.podam.api.PodamFactory;
@@ -29,10 +30,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class PactFactory {
 
     private static final PodamFactory podamFactory;
@@ -187,7 +190,7 @@ public class PactFactory {
             .forEach(param -> queryBuilder
                 .append(param.getName())
                 .append("=")
-                .append(String.valueOf(getParamValue(param)))
+                .append(getParamValue(param))
                 .append("&"));
 
         if (queryBuilder.length() != 0) {
@@ -209,8 +212,25 @@ public class PactFactory {
     }
 
     private static Map<String, String> mapHeaders(List<Param> headers) {
+        Map<String, List<String>> mappedHeadersWithDuplicates = mapHeadersWithDuplicates(headers);
+
+        Map<String, String> resultingHeaders = new HashMap<>();
+        for (String key: mappedHeadersWithDuplicates.keySet()) {
+            if (mappedHeadersWithDuplicates.get(key).size() > 1) {
+                log.warn("More than one value for header: {}", key);
+            }
+
+            resultingHeaders.put(key, mappedHeadersWithDuplicates.get(key).get(0));
+        }
+
+        return resultingHeaders;
+    }
+
+    private static Map<String, List<String>> mapHeadersWithDuplicates(List<Param> headers) {
         return headers.stream()
-            .collect(Collectors.toMap(Param::getName, header -> String.valueOf(getParamValue(header))));
+            .collect(Collectors.groupingBy(
+                Param::getName,
+                Collectors.mapping(param -> String.valueOf(getParamValue(param)), Collectors.toList())));
     }
 
     private static JsonNode buildBody(ResponseRepresentation responseRepresentation, ObjectMapper objectMapper) {

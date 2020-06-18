@@ -60,6 +60,8 @@ class PactGeneratorFT extends Specification {
             getInteraction["request"]["query"].toString() == '"floatRequestParam=1.2312342&stringRequestParam=abcde"'
             assertPathParams(getInteraction["request"]["path"])
             assertAllRequiredBodyValuesAreGenerated(getInteraction["response"]["body"])
+            getInteraction["request"]["headers"].toString() == '{"Accept":"application/problem+xml","Content-Type":"application/json;charset"}'
+            getInteraction["response"]["headers"].toString() == '{"Content-Type":"application/problem+xml"}'
 
         and: "all required values are generated for POST request"
             def postInteraction = findInteraction(testJSON["interactions"], '"POST"')

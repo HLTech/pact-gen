@@ -8,5 +8,7 @@ public interface AnnotatedMethodHandler {
 
     boolean isSupported(Method method);
 
-    RequestRepresentation handle(Method method);
+    RequestRepresentation handleRequest(Method method);
+
+    String[] getResponseMediaHeaders(Method method);
 }

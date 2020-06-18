@@ -10,6 +10,7 @@ import com.hltech.pact.gen.domain.client.model.RequestRepresentation;
 import com.hltech.pact.gen.domain.client.model.ResponseRepresentation;
 import com.hltech.pact.gen.domain.client.util.RawHeadersParser;
 import com.hltech.pact.gen.domain.client.util.TypeExtractor;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.http.HttpStatus;
 
 import java.lang.reflect.Method;
@@ -27,35 +28,40 @@ public class FeignMethodRepresentationExtractor implements ClientMethodRepresent
     }
 
     @Override
-    public ClientMethodRepresentation extractClientMethodRepresentation(Method clientMethod) {
+    public ClientMethodRepresentation extractClientMethodRepresentation(Method method) {
         return ClientMethodRepresentation.builder()
-            .requestRepresentation(extractRequestProperties(clientMethod))
-            .responseRepresentationList(extractResponseProperties(clientMethod))
+            .requestRepresentation(extractRequestProperties(method))
+            .responseRepresentationList(extractResponseProperties(method))
             .build();
     }
 
-    private RequestRepresentation extractRequestProperties(Method feignClientMethod) {
+    private RequestRepresentation extractRequestProperties(Method method) {
         return this.annotatedMethodHandlers.stream()
-            .filter(annotationHandler -> annotationHandler.isSupported(feignClientMethod))
+            .filter(annotationHandler -> annotationHandler.isSupported(method))
             .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method"))
-            .handle(feignClientMethod);
+            .handleRequest(method);
     }
 
-    private static List<ResponseRepresentation> extractResponseProperties(Method feignClientMethod) {
-        feignClientMethod.getGenericReturnType();
+    private List<ResponseRepresentation> extractResponseProperties(Method method) {
+        String[] responseHeaders = this.annotatedMethodHandlers.stream()
+            .filter(annotationHandler -> annotationHandler.isSupported(method))
+            .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method"))
+            .getResponseMediaHeaders(method);
 
         List<ResponseRepresentation> results = Arrays
-            .stream(feignClientMethod.getDeclaredAnnotationsByType(InteractionInfo.class))
+            .stream(method.getDeclaredAnnotationsByType(InteractionInfo.class))
             .map(annotation -> populateResponse(
                 annotation.responseStatus(),
-                RawHeadersParser.parseAll(annotation.responseHeaders()),
-                feignClientMethod,
+                RawHeadersParser.parseAll(ArrayUtils.addAll(annotation.responseHeaders(), responseHeaders)),
+                method,
                 annotation.description(),
                 annotation.emptyBodyExpected()))
             .collect(Collectors.toList());
 
-        return !results.isEmpty() ? results :
-            Lists.newArrayList(populateResponse(HttpStatus.OK, Lists.newArrayList(), feignClientMethod, "", false));
+        return !results.isEmpty()
+            ? results
+            : Lists.newArrayList(
+                populateResponse(HttpStatus.OK, RawHeadersParser.parseAll(responseHeaders), method, "", false));
     }
 
     private static ResponseRepresentation populateResponse(HttpStatus status,
