@@ -1,23 +1,7 @@
 package com.hltech.pact.gen.domain.pact
 
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.hltech.pact.gen.domain.client.feign.sample.AdditionalNotAnnotatedMethodsFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.BrokenNestedRequestFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.BrokenRequestFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.BrokenResponseFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.DescriptionFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ExcludedInteractionFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ExpectedEmptyResponseBodyFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.OptionalResponseFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.PathFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.RequestBodyFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.RequestHeadersFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.RequestParamFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.RequestTypeFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ResponseBodyFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.ResponseHeadersFeignClient
-import com.hltech.pact.gen.domain.client.feign.sample.InteractionInfoFeignClient
+import com.hltech.pact.gen.domain.client.feign.sample.*
 import com.hltech.pact.gen.domain.pact.model.Interaction
 import com.hltech.pact.gen.domain.pact.model.Pact
 import org.apache.commons.lang3.StringUtils
@@ -260,6 +244,26 @@ class PactFactoryUT extends Specification {
                 interactions.any { interaction ->
                     interaction.request.method == 'POST' &&
                         StringUtils.isBlank(interaction.response.body.asText())
+                }
+            }
+    }
+
+    def "should get media type from feign client"() {
+        when:
+            final Pact pact = pactFactory.createFromFeignClient(MediaTypeFeignClient, 'SpecConsumer', objectMapper)
+
+        then:
+            with(pact) {
+                consumer.name == 'SpecConsumer'
+                provider.name == 'SpecProvider'
+                interactions.size() == 2
+                interactions.every { interaction ->
+                    interaction.request.headers.containsKey('Content-Type')
+                    interaction.request.headers.get('Content-Type') == 'application/json;charset=utf-8'
+                    interaction.request.headers.containsKey('Accept')
+                    interaction.request.headers.get('Accept') == 'application/problem+json'
+                    interaction.response.headers.containsKey('Content-Type')
+                    interaction.response.headers.get('Content-Type') == 'application/problem+json'
                 }
             }
     }

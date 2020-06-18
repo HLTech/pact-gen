@@ -13,7 +13,7 @@ class FeignClientsFinderUT extends Specification {
             Set<Class<?>> feignClients = finder.findFeignClients('com.hltech.pact.gen.domain.client.feign.sample')
 
         then:
-            feignClients.size() == 18
+            feignClients.size() == 19
             verifyFeignClient(feignClients, 'BrokenRequestFeignClient')
             verifyFeignClient(feignClients, 'BrokenNestedRequestFeignClient')
             verifyFeignClient(feignClients, 'BrokenResponseFeignClient')
@@ -34,6 +34,7 @@ class FeignClientsFinderUT extends Specification {
             verifyFeignClient(feignClients, 'AdditionalNotAnnotatedMethodsFeignClient')
             !verifyFeignClient(feignClients, 'ExcludedFeignClient')
             verifyFeignClient(feignClients, 'ExcludedInteractionFeignClient')
+            verifyFeignClient(feignClients, 'MediaTypeFeignClient')
     }
 
     def "should not find feign clients"() {
