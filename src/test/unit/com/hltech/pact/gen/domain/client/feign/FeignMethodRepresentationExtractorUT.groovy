@@ -32,31 +32,33 @@ class FeignMethodRepresentationExtractorUT extends Specification {
     }
 
     def verifyRequestRepresentation(RequestRepresentation representation) {
-        representation.getHttpMethod() == HttpMethod.GET
-        representation.getPath() == '/'
-        representation.getHeaders().isEmpty()
-        !representation.getBody().getType()
-        !representation.getBody().getGenericArgumentTypes()
-        !representation.getRequestParameters()
-        !representation.getPathParameters()
+        assert representation.getHttpMethod() == HttpMethod.GET
+        assert representation.getPath() == '/'
+        assert representation.getHeaders().isEmpty()
+        assert !representation.getBody().getType()
+        assert !representation.getBody().getGenericArgumentTypes()
+        assert !representation.getRequestParameters()
+        assert !representation.getPathParameters()
+        true
     }
 
     def verifyResponseRepresentation(ResponseRepresentation representation) {
-        representation.getStatus() == HttpStatus.OK
-        representation.getHeaders().any { param ->
+        assert representation.getStatus() == HttpStatus.OK
+        assert representation.getHeaders().any { param ->
             param.name == 'key1'
             !param.type
             !param.genericArgumentType
             param.defaultValue == 'val1'
         }
-        representation.getHeaders().any { param ->
+        assert representation.getHeaders().any { param ->
             param.name == 'key2'
             !param.type
             !param.genericArgumentType
             param.defaultValue == 'val2'
         }
-        representation.getBody().type == Void.TYPE
-        representation.getBody().genericArgumentTypes.size() == 0
-        !representation.getDescription()
+        assert representation.getBody().type == Void.TYPE
+        assert representation.getBody().genericArgumentTypes.size() == 0
+        assert !representation.getDescription()
+        true
     }
 }
