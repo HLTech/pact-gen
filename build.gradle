@@ -22,6 +22,7 @@ buildscript {
         nexusStagingPluginVersion = '0.20.0'
         nexusPublishPluginVersion = '0.2.0'
         sonarqubePluginVersion = '2.7'
+        jaxRsVersion = '2.1.1'
     }
     repositories (repos)
     dependencies {
@@ -63,6 +64,7 @@ dependencies {
     compile "com.lmax:disruptor:$disruptorVersion"
     compile "org.reflections:reflections:$reflectionsVersion"
     compile "org.springframework.cloud:spring-cloud-starter-openfeign:$feignVersion"
+    compile "javax.ws.rs:javax.ws.rs-api:$jaxRsVersion"
     compile "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "uk.co.jemos.podam:podam:$podamVersion"
@@ -71,6 +73,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testCompile 'org.glassfish.jersey.core:jersey-common:2.22.2'
 
     testCompile "org.codehaus.groovy:groovy-all:$groovyAllVersion"
     testCompile "org.spockframework:spock-core:$spockVersion"
