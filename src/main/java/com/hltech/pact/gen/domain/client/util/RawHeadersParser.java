@@ -12,7 +12,7 @@ public final class RawHeadersParser {
 
     public static List<Param> parseAll(String[] stringHeaderArray) {
         return Arrays.stream(stringHeaderArray)
-            .map(stringHeader -> stringHeader.split("="))
+            .map(stringHeader -> stringHeader.split("=", 2))
             .map(RawHeadersParser::parse)
             .collect(Collectors.toList());
     }
