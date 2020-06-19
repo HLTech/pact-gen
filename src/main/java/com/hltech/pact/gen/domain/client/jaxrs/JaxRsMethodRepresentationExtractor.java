@@ -1,12 +1,20 @@
 package com.hltech.pact.gen.domain.client.jaxrs;
 
+import com.google.common.collect.Lists;
 import com.hltech.pact.gen.domain.client.ClientMethodRepresentationExtractor;
 import com.hltech.pact.gen.domain.client.annotation.handlers.AnnotatedMethodHandler;
+import com.hltech.pact.gen.domain.client.feign.InteractionInfo;
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation;
 import com.hltech.pact.gen.domain.client.model.RequestRepresentation;
+import com.hltech.pact.gen.domain.client.model.ResponseRepresentation;
+import com.hltech.pact.gen.domain.client.util.RawHeadersParser;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class JaxRsMethodRepresentationExtractor implements ClientMethodRepresentationExtractor {
 
@@ -16,11 +24,11 @@ public class JaxRsMethodRepresentationExtractor implements ClientMethodRepresent
         this.annotatedMethodHandlers = annotatedMethodHandlers;
     }
 
-    //TODO add respose extraction
     @Override
     public ClientMethodRepresentation extractClientMethodRepresentation(Method clientMethod) {
         return ClientMethodRepresentation.builder()
                 .requestRepresentation(extractRequestProperties(clientMethod))
+                .responseRepresentationList(extractResponseProperties(clientMethod))
                 .build();
     }
 
@@ -28,6 +36,24 @@ public class JaxRsMethodRepresentationExtractor implements ClientMethodRepresent
         return this.annotatedMethodHandlers.stream()
                 .filter(annotationHandler -> annotationHandler.isSupported(clientMethod))
                 .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown HTTP method"))
-                .handle(clientMethod);
+                .handleRequest(clientMethod);
+    }
+
+    private static List<ResponseRepresentation> extractResponseProperties(Method method) {
+        method.getGenericReturnType();
+
+        List<ResponseRepresentation> results = Arrays
+            .stream(method.getDeclaredAnnotationsByType(InteractionInfo.class))
+            .map(annotation -> ResponseRepresentation.from(
+                annotation.responseStatus(),
+                RawHeadersParser.parseAll(annotation.responseHeaders()),
+                method,
+                annotation.description(),
+                annotation.emptyBodyExpected()))
+            .collect(Collectors.toList());
+
+        return !results.isEmpty()
+            ? results
+            : Lists.newArrayList(ResponseRepresentation.getDefaultForMethod(method));
     }
 }

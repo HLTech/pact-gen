@@ -3,8 +3,10 @@ package com.hltech.pact.gen.domain.client.jaxrs
 import com.hltech.pact.gen.domain.client.jaxrs.sample.GETAnnotatedClassClient
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation
 import com.hltech.pact.gen.domain.client.model.RequestRepresentation
+import com.hltech.pact.gen.domain.client.model.ResponseRepresentation
 import com.hltech.pact.gen.domain.pact.PactFactory
 import org.springframework.http.HttpMethod
+import org.springframework.http.HttpStatus
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -31,7 +33,10 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
 
         then:
             verifyRequestRepresentation(representation.getRequestRepresentation())
-            //TODO add verification for response representation list
+
+        and:
+            representation.getResponseRepresentationList().size() == 1
+            verifyResponseRepresentation(representation.getResponseRepresentationList().get(0))
     }
 
     def verifyRequestRepresentation(RequestRepresentation representation) {
@@ -46,6 +51,26 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
         assert representation.getRequestParameters().get(1).type == Integer.class
         assert representation.getPathParameters().get(0).name == 'pathParamK'
         assert representation.getPathParameters().get(0).type == String.class
+        true
+    }
+
+    def verifyResponseRepresentation(ResponseRepresentation representation) {
+        assert representation.getStatus() == HttpStatus.OK
+        assert representation.getHeaders().any { param ->
+            param.name == 'key1'
+            !param.type
+            !param.genericArgumentType
+            param.defaultValue == 'val1'
+        }
+        assert representation.getHeaders().any { param ->
+            param.name == 'key2'
+            !param.type
+            !param.genericArgumentType
+            param.defaultValue == 'val2'
+        }
+        assert representation.getBody().type == GETAnnotatedClassClient.ExampleDto.class
+        assert representation.getBody().genericArgumentTypes.size() == 0
+        assert !representation.getDescription()
         true
     }
 }

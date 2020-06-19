@@ -2,10 +2,11 @@ group = 'com.hltech'
 
 buildscript {
     ext {
-        repos = {
-            gradlePluginPortal()
+        hltechRepo = {
+            maven {
+                url 'http://nexus.tech.hl.uk/repository/gradle-plugins/'
+            }
             mavenLocal()
-            mavenCentral()
         }
         groovyAllVersion = '2.4.13'
         lombokVersion = '1.18.2'
@@ -24,7 +25,7 @@ buildscript {
         sonarqubePluginVersion = '2.7'
         jaxRsVersion = '2.1.1'
     }
-    repositories (repos)
+    repositories (hltechRepo)
     dependencies {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
@@ -34,7 +35,7 @@ buildscript {
     }
 }
 
-repositories(repos)
+repositories (hltechRepo)
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -69,6 +70,8 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "uk.co.jemos.podam:podam:$podamVersion"
 
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
@@ -99,6 +102,10 @@ task sourcesJar(type: Jar) {
 
 artifacts {
     archives javadocJar, sourcesJar
+}
+
+jacoco {
+    toolVersion = "0.8.4"
 }
 
 publishing {
