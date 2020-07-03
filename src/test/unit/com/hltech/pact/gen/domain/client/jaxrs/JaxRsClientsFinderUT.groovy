@@ -13,9 +13,15 @@ class JaxRsClientsFinderUT extends Specification {
             Set<Class<?>> jaxRsClients = finder.findJaxRsClients('com.hltech.pact.gen.domain.client.jaxrs.sample')
 
         then:
-            jaxRsClients.size() == 2
+            jaxRsClients.size() == 8
             verifyJaxRsClient(jaxRsClients, 'PathJaxRsClassAnnotatedClient')
             verifyJaxRsClient(jaxRsClients, 'PathJaxRsMethodAnnotatedClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestBodyJaxRsClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestHeaderParamJaxRsClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestPathParamJaxRsClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestQueryParamJaxRsClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestFormParamJaxRsClient')
+            verifyJaxRsClient(jaxRsClients, 'RequestMatrixParamJaxRsClient')
     }
 
     def "should not find feign clients"() {
