@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient("SpecProvider")
 public interface RequestParamFeignClient {
 
-    @GetMapping(path = "/")
+    @GetMapping(path = "?aaa=first&bbb=111")
     @InteractionInfo(responseStatus = HttpStatus.OK)
     void getTestObject(@RequestParam(name = "longP", defaultValue = "123") Long longParam,
                        @RequestParam("parameter") String param,

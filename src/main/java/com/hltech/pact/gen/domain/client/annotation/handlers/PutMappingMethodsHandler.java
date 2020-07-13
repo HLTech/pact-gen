@@ -36,7 +36,9 @@ public class PutMappingMethodsHandler implements AnnotatedMethodHandler {
                 ArrayUtils.addAll(method.getAnnotation(PutMapping.class).headers(), getRequestMediaHeaders(method)),
                 RequestHeaderParamsExtractor.extractAll(method)))
             .body(RequestBodyExtractor.extract(method.getParameters()))
-            .requestParameters(RequestParametersExtractor.extractAll(method))
+            .requestParameters(RequestParametersExtractor.extractAll(
+                method.getParameters(),
+                method.getAnnotation(PutMapping.class).path()))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
     }
