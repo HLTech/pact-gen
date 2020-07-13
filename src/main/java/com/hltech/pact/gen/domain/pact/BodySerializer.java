@@ -8,7 +8,6 @@ import com.hltech.pact.gen.domain.client.model.Body;
 import lombok.extern.slf4j.Slf4j;
 import uk.co.jemos.podam.api.PodamFactory;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -30,10 +29,6 @@ final class BodySerializer {
             log.error("Unable to write {} to json. Original error message '{}'",
                 body, ex.getMessage());
             throw new PactGenerationException("Unable to serialize body", ex);
-        } catch (IOException ex) {
-            log.error("Unable to convert {} to json node. Original error message '{}'",
-                serializedBody, ex.getMessage());
-            throw new PactGenerationException("Unable to convert serialized body to json node", ex);
         }
 
         return bodyJsonNode;
