@@ -1,7 +1,9 @@
 language: java
 sudo: true
 jdk:
-  - openjdk8
+  - openjdk11
+# todo: JDK 11.0.5 fixed a bug in SSL implementation, when Travis updates its openjdk for default arch, below line can be removed
+arch: arm64
 
 cache:
   directories:

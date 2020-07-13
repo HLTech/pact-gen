@@ -13,7 +13,7 @@ class PactFactoryUT extends Specification {
     @Subject
     private PactFactory pactFactory = new PactFactory()
 
-    final ObjectMapper objectMapper = new ObjectMapper()
+    def objectMapper = new ObjectMapper()
 
     def "should get http method from feign client"() {
         when:
@@ -44,7 +44,7 @@ class PactFactoryUT extends Specification {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
                 interactions.size() == 2
-                verifyDescription(interactions, 'getTestObject request; 200 response')
+                verifyDescription(interactions, 'getTestObject request; 200 OK response')
                 verifyDescription(interactions, 'Update test object in the test service')
             }
     }
