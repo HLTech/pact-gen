@@ -36,7 +36,9 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
                 ArrayUtils.addAll(method.getAnnotation(DeleteMapping.class).headers(), getRequestMediaHeaders(method)),
                 RequestHeaderParamsExtractor.extractAll(method)))
             .body(RequestBodyExtractor.extract(method.getParameters()))
-            .requestParameters(RequestParametersExtractor.extractAll(method))
+            .requestParameters(RequestParametersExtractor.extractAll(
+                method.getParameters(),
+                method.getAnnotation(DeleteMapping.class).path()))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
     }

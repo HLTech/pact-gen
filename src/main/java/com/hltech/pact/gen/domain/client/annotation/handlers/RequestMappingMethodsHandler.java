@@ -37,7 +37,9 @@ public class RequestMappingMethodsHandler implements AnnotatedMethodHandler {
                 ArrayUtils.addAll(method.getAnnotation(RequestMapping.class).headers(), getRequestMediaHeaders(method)),
                 RequestHeaderParamsExtractor.extractAll(method)))
             .body(RequestBodyExtractor.extract(method.getParameters()))
-            .requestParameters(RequestParametersExtractor.extractAll(method))
+            .requestParameters(RequestParametersExtractor.extractAll(
+                method.getParameters(),
+                method.getAnnotation(RequestMapping.class).path()))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
     }

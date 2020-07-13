@@ -4,27 +4,50 @@ import com.hltech.pact.gen.domain.client.model.Param;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ValueConstants;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class RequestParametersExtractor {
 
     private RequestParametersExtractor() {}
 
-    public static List<Param> extractAll(Method feignClientMethod) {
-        return Arrays.stream(feignClientMethod.getParameters())
-            .filter(param -> param.getAnnotation(RequestParam.class) != null)
-            .filter(param -> param.getType() != Map.class)
-            .map(RequestParametersExtractor::extract)
+    public static List<Param> extractAll(Parameter[] parameters, String[] path) {
+        return Stream.concat(extractParamsFromMethod(parameters), extractParamsFromAnnotation(path))
             .collect(Collectors.toList());
     }
 
-    private static Param extract(Parameter param) {
+    private static Stream<Param> extractParamsFromAnnotation(String[] path) {
+
+        if (path.length < 1) {
+            return Stream.empty();
+        }
+
+        String[] splitPath = path[0].split("\\?");
+
+        if (splitPath.length < 2) {
+            return Stream.empty();
+        }
+
+        return Arrays.stream(splitPath[1].split("&"))
+            .map(paramString -> Param.builder()
+                .name(paramString.split("=")[0])
+                .defaultValue(paramString.split("=")[1])
+                .build());
+    }
+
+    private static Stream<Param> extractParamsFromMethod(Parameter[] parameters) {
+        return Arrays.stream(parameters)
+            .filter(param -> param.getAnnotation(RequestParam.class) != null)
+            .filter(param -> param.getType() != Map.class)
+            .map(RequestParametersExtractor::extractParam);
+    }
+
+    private static Param extractParam(Parameter param) {
         Param.ParamBuilder builder = Param.builder();
 
         extractParamDefaultValue(param).ifPresent(builder::defaultValue);

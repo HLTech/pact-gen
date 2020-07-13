@@ -176,7 +176,7 @@ class PactFactoryUT extends Specification {
                 consumer.name == 'SpecConsumer'
                 provider.name == 'SpecProvider'
                 interactions.size() == 1
-                interactions[0].request.query =~ /longP=123&parameter=.+&params=.+/
+                interactions[0].request.query =~ /longP=123&parameter=.+&params=.+&aaa=first&bbb=111/
             }
     }
 

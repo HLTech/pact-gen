@@ -36,7 +36,9 @@ public class PatchMappingMethodsHandler implements AnnotatedMethodHandler {
                 ArrayUtils.addAll(method.getAnnotation(PatchMapping.class).headers(), getRequestMediaHeaders(method)),
                 RequestHeaderParamsExtractor.extractAll(method)))
             .body(RequestBodyExtractor.extract(method.getParameters()))
-            .requestParameters(RequestParametersExtractor.extractAll(method))
+            .requestParameters(RequestParametersExtractor.extractAll(
+                method.getParameters(),
+                method.getAnnotation(PatchMapping.class).path()))
             .pathParameters(PathParametersExtractor.extractAll(method))
             .build();
     }
