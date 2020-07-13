@@ -62,7 +62,9 @@ public class DeleteMappingMethodsHandler implements AnnotatedMethodHandler {
 
     private String getPathFromMethod(Method method) {
         DeleteMapping annotation = method.getAnnotation(DeleteMapping.class);
-        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
+        return annotation.path().length == 1
+            ? annotation.path()[0].split("\\?")[0]
+            : annotation.value()[0].split("\\?")[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {

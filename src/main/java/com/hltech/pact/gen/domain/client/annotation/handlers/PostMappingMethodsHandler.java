@@ -62,7 +62,9 @@ public class PostMappingMethodsHandler implements AnnotatedMethodHandler {
 
     private String getPathFromMethod(Method method) {
         PostMapping annotation = method.getAnnotation(PostMapping.class);
-        return annotation.path().length == 1 ? annotation.path()[0] : annotation.value()[0];
+        return annotation.path().length == 1
+            ? annotation.path()[0].split("\\?")[0]
+            : annotation.value()[0].split("\\?")[0];
     }
 
     private static List<Param> combineHeaders(String[] rawHeaders, List<Param> headers) {
