@@ -7,9 +7,12 @@ import com.hltech.pact.gen.domain.client.jaxrs.sample.RequestMatrixParamJaxRsCli
 import com.hltech.pact.gen.domain.client.jaxrs.sample.RequestPathParamJaxRsClient
 import com.hltech.pact.gen.domain.client.jaxrs.sample.RequestQueryParamJaxRsClient
 import com.hltech.pact.gen.domain.client.model.ClientMethodRepresentation
+import com.hltech.pact.gen.domain.client.model.RequestRepresentation
+import com.hltech.pact.gen.domain.client.model.ResponseRepresentation
 import com.hltech.pact.gen.domain.pact.PactFactory
 import org.springframework.http.HttpMethod
-import spock.lang.Ignore
+import org.springframework.http.HttpStatus
+import spock.lang.PendingFeature
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -21,7 +24,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
     @Subject
     JaxRsMethodRepresentationExtractor extractor = new JaxRsMethodRepresentationExtractor(PactFactory.annotatedMethodHandlers)
 
-    @Ignore
+    @PendingFeature
     //TODO turned off - unfinished
     def "Should correctly extract jaxrs method representation - request with body"() {
         given:
@@ -36,7 +39,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
             assert representation.getRequestRepresentation().getBody().getType() == String.class
     }
 
-    @Ignore
+    @PendingFeature
     //TODO turned off - unfinished
     def "Should correctly extract jaxrs method representation - request with headers by @HeaderParam"() {
         given:
@@ -52,7 +55,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
             assert representation.getRequestRepresentation().getHeaders().get(1).name == 'Header-B'
     }
 
-    @Ignore
+    @PendingFeature
     //TODO not implemented yet
     def "Should correctly extract jaxrs method representation - request with headers by @Context"() {
         given:
@@ -67,7 +70,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
             assert representation.getRequestRepresentation().getHeaders().get(0).name == 'Header-A'
     }
 
-    @Ignore
+    @PendingFeature
     //TODO turned off - unfinished
     def "Should correctly extract jaxrs method representation - request with query parameters"() {
         given:
@@ -85,7 +88,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
             assert representation.getRequestRepresentation().getRequestParameters().get(1).type == Integer.class
     }
 
-    @Ignore
+    @PendingFeature
     //TODO not implemented yet
     def "Should correctly extract jaxrs method representation - request with matrix parameters"() {
         given:
@@ -104,7 +107,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
 
     }
 
-    @Ignore
+    @PendingFeature
     //TODO not implemented yet
     def "Should correctly extract jaxrs method representation - request with form parameters"() {
         given:
@@ -123,7 +126,7 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
 
     }
 
-    @Ignore
+    @PendingFeature
     //TODO turned off - unfinished
     def "Should correctly extract jaxrs method representation - request path parameters"() {
         given:
@@ -137,6 +140,64 @@ class JaxRsMethodRepresentationExtractorUT extends Specification {
             assert representation.getRequestRepresentation().getPath() == '/testWithPathParameters/{pathParamK}'
             assert representation.getRequestRepresentation().getPathParameters().get(0).name == 'pathParamK'
             assert representation.getRequestRepresentation().getPathParameters().get(0).type == String.class
+    }
 
+    //TODO remove @PendingFeature after handler for jaxrs GET implemented
+    @PendingFeature
+    def "Should correctly extract jaxrs method representation"() {
+        given:
+        Method method = GETAnnotatedClassClient.getMethod('httpGetResponseAccepted',
+            String.class,
+            String.class,
+            String.class,
+            Integer.class,
+            String.class,
+            String.class,
+        )
+
+        when:
+        ClientMethodRepresentation representation = extractor.extractClientMethodRepresentation(method)
+
+        then:
+        verifyRequestRepresentation(representation.getRequestRepresentation())
+
+        and:
+        representation.getResponseRepresentationList().size() == 1
+        verifyResponseRepresentation(representation.getResponseRepresentationList().get(0))
+    }
+
+    def verifyRequestRepresentation(RequestRepresentation representation) {
+        assert representation.getHttpMethod() == HttpMethod.GET
+        assert representation.getPath() == '/testPathGet/{pathParamK}'
+        assert representation.getHeaders().get(0).name == 'Header-A'
+        assert representation.getHeaders().get(1).name == 'Header-B'
+        assert representation.getBody().getType() == String.class
+        assert representation.getRequestParameters().get(0).name == 'Param-Q'
+        assert representation.getRequestParameters().get(0).type == String.class
+        assert representation.getRequestParameters().get(1).name == 'Param-W'
+        assert representation.getRequestParameters().get(1).type == Integer.class
+        assert representation.getPathParameters().get(0).name == 'pathParamK'
+        assert representation.getPathParameters().get(0).type == String.class
+        true
+    }
+
+    def verifyResponseRepresentation(ResponseRepresentation representation) {
+        assert representation.getStatus() == HttpStatus.OK
+        assert representation.getHeaders().any { param ->
+            param.name == 'key1'
+            !param.type
+            !param.genericArgumentType
+            param.defaultValue == 'val1'
+        }
+        assert representation.getHeaders().any { param ->
+            param.name == 'key2'
+            !param.type
+            !param.genericArgumentType
+            param.defaultValue == 'val2'
+        }
+        assert representation.getBody().type == GETAnnotatedClassClient.ExampleDto.class
+        assert representation.getBody().genericArgumentTypes.size() == 0
+        assert !representation.getDescription()
+        true
     }
 }
