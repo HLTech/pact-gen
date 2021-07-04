@@ -1,25 +1,25 @@
-language: java
-sudo: true
-jdk:
-  - openjdk11
-# todo: JDK 11.0.5 fixed a bug in SSL implementation, when Travis updates its openjdk for default arch, below line can be removed
-arch: arm64
-
-cache:
-  directories:
-  - $HOME/.gradle/caches/
-  - $HOME/.gradle/wrapper/
-
-jobs:
-  include:
-  - stage: build with gradle & generate reports
-    script:
-    - ./gradlew clean build jacocoTestReport coveralls
-  - stage: release to maven central
-    deploy:
-      skip_cleanup: true
-      provider: script
-      on:
-        branch: master
-        tags: true
-      script: bash deploy-to-maven-central.sh
+#language: java
+#sudo: true
+#jdk:
+#  - openjdk11
+## todo: JDK 11.0.5 fixed a bug in SSL implementation, when Travis updates its openjdk for default arch, below line can be removed
+#arch: arm64
+#
+#cache:
+#  directories:
+#  - $HOME/.gradle/caches/
+#  - $HOME/.gradle/wrapper/
+#
+#jobs:
+#  include:
+#  - stage: build with gradle & generate reports
+#    script:
+#    - ./gradlew clean build jacocoTestReport coveralls
+#  - stage: release to maven central
+#    deploy:
+#      skip_cleanup: true
+#      provider: script
+#      on:
+#        branch: master
+#        tags: true
+#      script: bash deploy-to-maven-central.sh
