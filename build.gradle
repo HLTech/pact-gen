@@ -20,17 +20,17 @@ buildscript {
         cglibNodepVersion = '3.2.5'
         axionReleasePluginVersion = '1.10.0'
         nexusStagingPluginVersion = '0.20.0'
-        nexusPublishPluginVersion = '0.2.0'
         sonarqubePluginVersion = '2.7'
         jaxRsVersion = '2.1.1'
+        publishingPluginVersion = '1.0.0'
     }
     repositories (repos)
     dependencies {
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$coverallsVersion"
         classpath "pl.allegro.tech.build:axion-release-plugin:$axionReleasePluginVersion"
         classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:$nexusStagingPluginVersion"
-        classpath "de.marcphilipp.gradle:nexus-publish-plugin:$nexusPublishPluginVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$sonarqubePluginVersion"
+        classpath "io.github.gradle-nexus:publish-plugin:$publishingPluginVersion"
     }
 }
 
@@ -43,8 +43,8 @@ apply plugin: 'groovy'
 apply plugin: 'signing'
 apply plugin: 'pl.allegro.tech.build.axion-release'
 apply plugin: 'org.sonarqube'
-apply plugin: 'de.marcphilipp.nexus-publish'
 apply plugin: 'io.codearte.nexus-staging'
+apply plugin: "io.github.gradle-nexus.publish-plugin"
 apply from: 'gradle/test.gradle'
 apply from: 'gradle/codequality.gradle'
 
@@ -99,6 +99,15 @@ task sourcesJar(type: Jar) {
 
 artifacts {
     archives javadocJar, sourcesJar
+}
+
+nexusPublishing {
+    repositories {
+        sonatype{
+            username = System.getenv('SONATYPE_USER')
+            password = System.getenv('SONATYPE_PASSWORD')
+        }
+    }
 }
 
 publishing {
