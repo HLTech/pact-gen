@@ -21,7 +21,7 @@ buildscript {
         axionReleasePluginVersion = '1.10.0'
         nexusStagingPluginVersion = '0.20.0'
         nexusPublishPluginVersion = '0.2.0'
-        sonarqubePluginVersion = '2.7'
+        sonarqubePluginVersion = '3.3'
         jaxRsVersion = '2.1.1'
     }
     repositories (repos)
