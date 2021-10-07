@@ -8,7 +8,7 @@ buildscript {
             mavenCentral()
         }
         groovyAllVersion = '2.5.10'
-        lombokVersion = '1.18.12'
+        lombokVersion = '1.18.22'
         spockVersion = '1.3-groovy-2.5'
         spockReportsVersion = '1.7.1'
         coverallsVersion = '2.8.2'
