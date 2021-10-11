@@ -1,7 +1,12 @@
 buildscript{
     ext {
+        groovyAllVersion = '3.0.9'
+        spockVersion = '2.0-groovy-3.0'
+        spockReportsVersion = '1.7.1'
         jsonSchemaValidatorVersion = '2.2.14'
         jacksonDatatypeJsr310Version = '2.8.10'
+        cglibNodepVersion = '3.3.0'
+        jerseyCommonVerion = '2.22.2'
     }
     repositories(repos)
 }
@@ -15,8 +20,15 @@ sourceSets {
 }
 
 dependencies {
-    testCompile "com.github.java-json-tools:json-schema-validator:$jsonSchemaValidatorVersion"
-    testCompile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonDatatypeJsr310Version"
+    testCompile "org.glassfish.jersey.core:jersey-common:${jerseyCommonVerion}"
+    testCompile "org.codehaus.groovy:groovy-all:${groovyAllVersion}"
+    testCompile "org.spockframework:spock-core:${spockVersion}"
+    testCompile("com.athaydes:spock-reports:${spockReportsVersion}") {
+        transitive = false //this avoids affecting your version of Groovy/Spock in Spock reports
+    }
+    testCompile "cglib:cglib-nodep:${cglibNodepVersion}"
+    testCompile "com.github.java-json-tools:json-schema-validator:${jsonSchemaValidatorVersion}"
+    testCompile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:${jacksonDatatypeJsr310Version}"
 }
 
 idea {
