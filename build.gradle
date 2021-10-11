@@ -14,7 +14,7 @@ buildscript {
         coverallsVersion = '2.8.2'
         disruptorVersion = '3.4.4'
         reflectionsVersion = '0.9.11'
-        feignVersion = '2.2.3.RELEASE'
+        feignVersion = '3.0.4'
         jacksonVersion = '2.11.1'
         podamVersion = '7.2.3.RELEASE'
         cglibNodepVersion = '3.3.0'
