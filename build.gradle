@@ -15,7 +15,7 @@ buildscript {
         disruptorVersion = '3.4.4'
         reflectionsVersion = '0.9.11'
         feignVersion = '3.0.5'
-        jacksonVersion = '2.11.1'
+        jacksonVersion = '2.13.0'
         podamVersion = '7.2.3.RELEASE'
         cglibNodepVersion = '3.3.0'
         axionReleasePluginVersion = '1.13.5'
