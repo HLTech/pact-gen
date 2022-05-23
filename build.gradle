@@ -18,7 +18,7 @@ buildscript {
         jacksonVersion = '2.13.3'
         podamVersion = '7.2.9.RELEASE'
         cglibNodepVersion = '3.3.0'
-        axionReleasePluginVersion = '1.13.7'
+        axionReleasePluginVersion = '1.13.9'
         nexusStagingPluginVersion = '0.30.0'
         nexusPublishPluginVersion = '0.4.0'
         sonarqubePluginVersion = '3.3'
