@@ -16,7 +16,7 @@ buildscript {
         reflectionsVersion = '0.9.11'
         feignVersion = '3.1.4'
         jacksonVersion = '2.13.4'
-        podamVersion = '7.2.9.RELEASE'
+        podamVersion = '7.2.10.RELEASE'
         cglibNodepVersion = '3.3.0'
         axionReleasePluginVersion = '1.13.14'
         nexusStagingPluginVersion = '0.30.0'
