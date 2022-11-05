@@ -1,7 +1,7 @@
 buildscript{
     ext {
         jsonSchemaValidatorVersion = '2.2.14'
-        jacksonDatatypeJsr310Version = '2.13.4'
+        jacksonDatatypeJsr310Version = '2.14.0'
     }
     repositories(repos)
 }
