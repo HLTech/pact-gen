@@ -13,7 +13,7 @@ buildscript {
         spockReportsVersion = '1.8.0'
         coverallsVersion = '2.8.3'
         disruptorVersion = '3.4.4'
-        reflectionsVersion = '0.9.11'
+        reflectionsVersion = '0.10.2'
         feignVersion = '3.1.5'
         jacksonVersion = '2.14.1'
         podamVersion = '7.2.11.RELEASE'
