@@ -10,7 +10,7 @@ buildscript {
         groovyAllVersion = '2.5.20'
         lombokVersion = '1.18.24'
         spockVersion = '1.3-groovy-2.5'
-        spockReportsVersion = '1.8.0'
+        spockReportsVersion = '2.5.1-groovy-4.0'
         coverallsVersion = '2.8.3'
         disruptorVersion = '3.4.4'
         reflectionsVersion = '0.9.11'
